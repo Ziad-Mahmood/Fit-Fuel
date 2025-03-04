@@ -5,8 +5,12 @@ import LoginView from '@/views/auth/LoginView.vue';
 import HomePage from '@/views/HomePage.vue';
 import Register from '@/views/auth/RegisterView.vue'
 import CartView from "@/views/CartView.vue";
+
+import CheckoutView from "@/views/CheckoutView.vue";
+
 import DvrDashboard from "@/views/dashboards/DvrDashboard.vue";
 import PlansView from "@/views/PlansView.vue";
+
 
 
 const router = createRouter({
@@ -36,6 +40,12 @@ const router = createRouter({
       component: CartView,
     },
     {
+
+      path: "/checkout",
+      name: "checkout",
+      component: CheckoutView,
+    },
+
       path: "/dashboard/delivery",
       name: "dvrDashboard",
       component: DvrDashboard,
@@ -45,6 +55,7 @@ const router = createRouter({
       name: "plans",
       component: PlansView,
     }
+
   ],
 });
 
