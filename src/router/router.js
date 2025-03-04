@@ -9,6 +9,7 @@ import CheckoutView from "@/views/CheckoutView.vue";
 import DvrDashboard from "@/views/dashboards/DvrDashboard.vue";
 import KitchenDashboard from "@/views/dashboards/KitchenDashboard.vue";
 import PlansView from "@/views/PlansView.vue";
+import ContactView from '@/views/ContactView.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -52,7 +53,12 @@ const router = createRouter({
       path: "/meal-plans",
       name: "plans",
       component: PlansView,
-    }
+    },
+    {
+      path: "/contact",
+      name: "contact",
+      component: ContactView,
+    },
   ],
 });
 
