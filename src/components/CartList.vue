@@ -25,7 +25,7 @@
   <!-- Checkout Button -->
   <div class="text-center mt-10">
     <button
-      class="bg-green-500 text-white px-10 py-3 rounded-full hover:bg-green-600 transition-colors"
+      class="bg-green-600 text-white px-10 py-3 rounded-full hover:bg-green-700 hover:cursor-pointer transition-colors"
     >
       Check Out
     </button>
