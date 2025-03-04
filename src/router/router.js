@@ -5,26 +5,20 @@ import LoginView from '@/views/auth/LoginView.vue';
 import HomePage from '@/views/HomePage.vue';
 import Register from '@/views/auth/RegisterView.vue'
 import CartView from "@/views/CartView.vue";
-
 import CheckoutView from "@/views/CheckoutView.vue";
-
 import DvrDashboard from "@/views/dashboards/DvrDashboard.vue";
+import KitchenDashboard from "@/views/dashboards/KitchenDashboard.vue";
 import PlansView from "@/views/PlansView.vue";
-
-
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-
       path: '/',
       name: 'Home',
-      component:HomePage
-
+      component: HomePage
     },
     {
-
       path: '/login',
       name: 'login',
       component: LoginView
@@ -40,22 +34,25 @@ const router = createRouter({
       component: CartView,
     },
     {
-
       path: "/checkout",
       name: "checkout",
       component: CheckoutView,
     },
-
+    {
       path: "/dashboard/delivery",
       name: "dvrDashboard",
       component: DvrDashboard,
+    },
+    {
+      path: "/dashboard/kitchen",
+      name: "kitchenDashboard",
+      component: KitchenDashboard,
     },
     {
       path: "/meal-plans",
       name: "plans",
       component: PlansView,
     }
-
   ],
 });
 

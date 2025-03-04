@@ -6,7 +6,7 @@
           <tr>
             <th class="px-4 lg:px-8 text-left text-[#191919] text-base lg:text-lg font-semibold">Order ID</th>
             <th class="px-4 lg:px-8 text-left text-[#191919] text-base lg:text-lg font-semibold">Order Date</th>
-            <th class="px-4 lg:px-8 text-left text-[#191919] text-base lg:text-lg font-semibold">Delivery Address</th>
+            <th class="px-4 lg:px-8 text-left text-[#191919] text-base lg:text-lg font-semibold"> {{$route.path.includes('delivery') ? 'Delivery Address' : 'Order Name'}}</th>
             <th class="px-4 lg:px-8 text-left text-[#191919] text-base lg:text-lg font-semibold">Order</th>
             <th class="px-4 lg:px-8 text-left text-[#191919] text-base lg:text-lg font-semibold">Is Complete</th>
           </tr>
