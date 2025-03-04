@@ -71,3 +71,15 @@
     </p>
   </form>
 </template>
+<script>
+  export default {
+    name: 'LoginForm',
+    data() {
+      return {
+        email: '',
+        password: '',
+        showPassword: false,
+      }
+    },
+  }
+</script>

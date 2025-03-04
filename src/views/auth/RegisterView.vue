@@ -1,7 +1,7 @@
 <template>
-    <div class="min-h-screen w-screen relative">
+    <div class="relative pt-[92px]">
       <div 
-        class="w-full h-full fixed left-0 top-0 bg-cover bg-center backdrop-blur-md" 
+        class="w-full h-full fixed left-0 top-0 bg-cover bg-center backdrop-blur-md -z-10" 
         :style="{ 
           backgroundImage: `url(${backgroundImage})`,
           filter: 'blur(5px)'
@@ -9,7 +9,7 @@
       ></div>
       
       <!-- Form Card Container -->
-      <div class="relative min-h-screen flex items-center justify-center p-4">
+      <div class="relative min-h-[calc(100vh-92px)] flex items-center justify-center p-4">
         <div class="w-[90%] sm:w-[95%] max-w-[1000px] min-h-[550px] bg-white rounded-[10px] border border-[#e9e9e9] flex flex-col md:flex-row overflow-hidden">
           <!-- Left side - Image -->
           <div class="w-full md:w-1/2 h-[200px] md:h-auto">
