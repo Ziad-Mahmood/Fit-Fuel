@@ -1,2 +1,12 @@
-@import './base.css';
+/* @import './base.css'; */
 @import 'tailwindcss';
+
+body{
+    font-family: "Poppins", serif;
+}
+.btn{
+    @apply bg-[#339e3f] text-white font-semibold rounded-full hover:bg-[#339e40e0] hover:shadow-xl;
+}
+.btn-outline{
+    @apply border border-[#191919] text-[#191919] rounded-full;
+}
