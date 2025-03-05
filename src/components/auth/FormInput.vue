@@ -30,6 +30,8 @@ import emailIcon from '@/assets/images/email.png'
 import lockIcon from '@/assets/images/lock.png'
 import userIcon from '@/assets/images/user.png'
 import eyeIcon from '@/assets/images/eye.png'
+import phoneIcon from '@/assets/images/phone2.png'
+import addressIcon from '@/assets/images/address.png'
 
 export default {
   name: 'FormInput',
@@ -45,7 +47,7 @@ export default {
     iconType: {
       type: String,
       required: true,
-      validator: (value) => ['email', 'password', 'user'].includes(value)
+      validator: (value) => ['email', 'password', 'user','phone','address'].includes(value)
     },
     placeholder: {
       type: String,
@@ -65,7 +67,9 @@ export default {
       const icons = {
         email: emailIcon,
         password: lockIcon,
-        user: userIcon
+        user: userIcon,
+        phone: phoneIcon,
+        address: addressIcon
       }
       return icons[this.iconType]
     },
