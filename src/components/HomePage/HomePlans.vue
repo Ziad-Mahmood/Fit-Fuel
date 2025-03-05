@@ -12,7 +12,7 @@
         </div>
         <h3 class="text-2xl font-bold text-[#339E3F] my-7">{{ plan.name }}</h3>
         <p class="text-gray-600 my-7 lg:w-[80%] m-auto">{{ plan.description }}</p>
-        <button class="view-plan text-[#339E3F] font-bold">View Plan</button>
+        <button class="view-plan text-[#339E3F] font-bold cursor-pointer" @click="$router.push('/meal-plans')">View Plan</button>
       </div>
     </div>
   </section>
