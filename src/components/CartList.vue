@@ -23,7 +23,7 @@
   </div>
 
   <!-- Checkout Button -->
-  <div class="text-center">
+  <div class="text-center mb-10">
     <button
       class="bg-green-600 text-white px-10 py-3 rounded-full hover:bg-green-700 hover:cursor-pointer transition-colors"
     >

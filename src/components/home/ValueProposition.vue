@@ -10,7 +10,7 @@
             Our Value To Help You
           </h3>
         </div>
-        <div class="space-y-8 mt-10 mb-5 ms-10 md:ms-25">
+        <div class="space-y-8 mt-10 mb-10 ms-10 md:ms-25">
           <div
             v-for="value in values"
             :key="value.title"
