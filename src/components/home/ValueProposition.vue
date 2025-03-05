@@ -1,6 +1,6 @@
 <template>
   <section class="container mx-auto px-4 py-16">
-    <div class="grid md:grid-cols-2 items-center">
+    <div class="grid md:grid-cols-2 items-end">
       <div class="space-y-8">
         <div class="space-y-4 md:ms-35">
           <h2 class="text-lg text-green-600 font-medium ms-23 md:ms-0">
@@ -21,7 +21,7 @@
           </div>
         </div>
       </div>
-      <div class="relative">
+      <div>
         <img
           src="../../assets/images/about us3.png"
           alt="Man with groceries"
