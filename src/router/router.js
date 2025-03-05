@@ -18,6 +18,7 @@ import PlansView from "@/views/PlansView.vue";
 import OrderTrackingView from "@/views/OrderTrackingView.vue";
 
 import ContactView from '@/views/ContactView.vue';
+import ProfileView from '@/views/ProfileView.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -79,13 +80,17 @@ const router = createRouter({
       name: "order-tracking",
       component: OrderTrackingView,
     },
-
+    {
       path: "/contact",
       name: "contact",
       component: ContactView,
     },
-
-
+    {
+      path: "/profile",
+      name: "profile",
+      component: ProfileView,
+    },
+    
   ],
 });
 

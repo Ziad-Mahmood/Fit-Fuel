@@ -8,9 +8,9 @@
   
       <!-- Contact Form Section -->
       <div class="container mx-auto px-4 py-16">
-        <div class="flex flex-col-reverse lg:flex-row gap-12 max-w-6xl mx-auto">
+        <div class="flex flex-row gap-12 max-w-6xl mx-auto">
           <!-- Left Side - Form -->
-          <div class="w-full lg:w-1/2 lg:ml-8">
+          <div class="w-full lg:w-1/2">
             <div class="mb-8">
               <h2 class="text-[#339e3f] text-2xl font-semibold font-['Poppins'] mb-3">Get in touch</h2>
               <p class="text-black text-base font-normal font-['Poppins']">We are here for you! How can we help?</p>
@@ -21,11 +21,15 @@
           </div>
   
           <!-- Right Side - Image -->
-          <div class="w-full lg:w-1/2">
+          <div class="hidden sm:block w-full lg:w-1/2">
             <img 
               src="@/assets/images/contact.png" 
               alt="Contact Illustration" 
-              class="w-full h-auto max-w-[450px] ml-auto"
+              class="w-full h-auto ml-auto 
+                xl:max-w-[450px] 
+                lg:max-w-[400px] 
+                md:max-w-[350px] 
+                sm:max-w-[300px]"
             />
           </div>
         </div>
