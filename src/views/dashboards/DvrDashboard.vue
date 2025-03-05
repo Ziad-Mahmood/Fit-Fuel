@@ -39,7 +39,7 @@ export default {
         {
           id: '123457',
           date: 'Feb 28, 2025',
-          address: '456 Park Avenue, Cairo',
+          address: '456 Park Street, Cairo',
           isComplete: true
         },
         {

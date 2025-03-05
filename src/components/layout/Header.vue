@@ -1,5 +1,5 @@
 <template>
-  <div class="relative w-full h-[439px]">
+  <div class="relative w-full h-96">
     <img :src="imageSrc" :alt="title" class="w-full h-full object-cover">
   
     <h1 

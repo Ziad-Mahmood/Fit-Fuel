@@ -6,7 +6,7 @@
 
     <div class="space-y-6">
       <!-- Payment Options -->
-      <div class="space-y-4 flex flex-col justify-evenly h-35">
+      <div class="space-y-4 flex flex-col justify-evenly ">
         <div class="flex items-center gap-3">
           <input
             type="radio"
@@ -106,7 +106,7 @@
       </div>
 
       <!-- Checkout Button -->
-      <div class="flex flex-col justify-evenly h-30">
+      <div class="flex flex-col justify-evenly ">
         <button
           @click="handleCheckout"
           class="w-full bg-green-600 text-white py-3 rounded-full hover:bg-green-700 hover:cursor-pointer transition-colors uppercase"
