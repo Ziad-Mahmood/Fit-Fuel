@@ -1,4 +1,5 @@
 <template>
+  <div>
   <div class="w-full md:w-[80%] px-16 py-6 mx-auto">
     <div class="space-y-8">
       <!-- Cart Header -->
@@ -24,12 +25,15 @@
 
   <!-- Checkout Button -->
   <div class="text-center mb-10">
+    <router-link to="/checkout">
     <button
-      class="bg-green-600 text-white px-10 py-3 rounded-full hover:bg-green-700 hover:cursor-pointer transition-colors"
+      class="px-10 py-3 btn"
     >
       Check Out
     </button>
+    </router-link>
   </div>
+</div>
 </template>
 
 <script>

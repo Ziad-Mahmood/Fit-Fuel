@@ -43,17 +43,17 @@
       </div>
 
       <div class="flex justify-center mt-8 space-x-2">
-        <button class="px-4 py-2 border border-[#E0E0E0] rounded-sm text-[#339e3f]">«</button>
+        <button class="px-4 py-2 border border-[#E0E0E0] rounded-sm text-[#339e3f] hover:cursor-pointer">«</button>
 
         <button
           v-for="page in totalPages"
           :key="page"
-          class="px-4 py-2 border border-[#E0E0E0] rounded-sm text-[#339e3f]"
+          class="px-4 py-2 border border-[#E0E0E0] rounded-sm text-[#339e3f] hover:cursor-pointer"
         >
           {{ page }}
         </button>
 
-        <button @click="nextPage" class="px-4 py-2 border border-[#E0E0E0] rounded-sm text-[#339e3f]">»</button>
+        <button @click="nextPage" class="px-4 py-2 border border-[#E0E0E0] rounded-sm text-[#339e3f] hover:cursor-pointer">»</button>
       </div>
     </div>
   </div>

@@ -36,9 +36,9 @@
         I agree to the <a href="#" class="text-[#339E3F] hover:text-[#2b843a]">Terms & Conditions</a>
       </label>
     </div>
-
-    <FormButton type="submit">Sign Up</FormButton>
-
+    <router-link to="/login">
+    <button type="submit" class="w-full py-2 md:py-3 btn">Sign Up</button>
+    </router-link >
     <p class="text-center text-xs md:text-sm text-slate-600 font-['Plus Jakarta Sans']">
       Already have an account? 
       <router-link to="/login" class="text-[#339E3F] hover:text-[#2b843a]">Login</router-link>
@@ -48,13 +48,13 @@
 
 <script>
 import FormInput from '@/components/auth/FormInput.vue'
-import FormButton from '@/components/auth/FormButton.vue'
+
 
 export default {
   name: 'RegisterForm',
   components: {
     FormInput,
-    FormButton
+  
   },
   data() {
     return {

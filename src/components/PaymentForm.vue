@@ -109,9 +109,9 @@
       <div class="flex flex-col justify-evenly">
         <button
           @click="handleCheckout"
-          class="w-full bg-green-600 text-white py-3 rounded-full hover:bg-green-700 hover:cursor-pointer transition-colors uppercase"
+          class="w-full btn py-3 "
         >
-          Ckeckout
+          Ckeck Out
         </button>
       </div>
     </div>

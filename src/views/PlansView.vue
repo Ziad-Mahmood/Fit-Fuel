@@ -41,6 +41,21 @@ export default {
       selectedPlan: 'Monthly'
     }
   },
+  created() {
+    // Set selected plan from URL query parameter if available
+    const planFromQuery = this.$route.query.plan
+    if (planFromQuery && ['Daily', 'Weekly', 'Monthly'].includes(planFromQuery)) {
+      this.selectedPlan = planFromQuery
+    }
+  },
+  watch: {
+    // Update selected plan when route changes
+    '$route.query.plan'(newPlan) {
+      if (newPlan && ['Daily', 'Weekly', 'Monthly'].includes(newPlan)) {
+        this.selectedPlan = newPlan
+      }
+    }
+  },
   computed: {
     mealTypes() {
       if (this.selectedPlan === 'Daily') {

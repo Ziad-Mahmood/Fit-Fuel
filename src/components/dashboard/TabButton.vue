@@ -2,10 +2,10 @@
   <button
     @click="$emit('click')"
     :class="[
-      'px-8 py-2 rounded-full text-base transition-colors',
+      'px-8 py-2',
       isActive
-        ? 'bg-green-600 text-white'
-        : 'border border-gray-300 text-gray-600 hover:bg-gray-50',
+        ? 'btn'
+        : 'btn-outline',
     ]"
   >
     {{ text }}

@@ -35,7 +35,8 @@
       />
   
       <div class="flex gap-4 mt-4">
-        <FormButton type="submit">Save Changes</FormButton>
+        
+        <button type="submit" class="w-full py-2 md:py-3 btn">Save Changes</button>
         <button 
           type="button"
           class="px-6 py-2 border border-slate-300 rounded-full text-slate-600 hover:bg-slate-50 transition-colors"
@@ -48,13 +49,12 @@
   
   <script>
   import FormInput from '@/components/auth/FormInput.vue'
-  import FormButton from '@/components/auth/FormButton.vue'
   
   export default {
     name: 'ProfileForm',
     components: {
       FormInput,
-      FormButton
+      
     },
     data() {
       return {

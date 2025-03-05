@@ -19,7 +19,7 @@
     <div class="flex items-center px-2 w-3/12">
       <button
         @click="updateQuantity(item.quantity - 1)"
-        class="w-8 h-8 flex items-center justify-center text-green-600 text-xl font-medium hover:text-green-700"
+        class="w-8 h-8 flex items-center justify-center text-green-600 text-xl font-medium hover:text-green-700 hover:cursor-pointer"
         :disabled="item.quantity <= 1"
       >
         -
@@ -32,7 +32,7 @@
       />
       <button
         @click="updateQuantity(item.quantity + 1)"
-        class="w-8 h-8 flex items-center justify-center text-green-600 text-xl font-medium hover:text-green-700"
+        class="w-8 h-8 flex items-center justify-center text-green-600 text-xl font-medium hover:text-green-700 hover:cursor-pointer"
       >
         +
       </button>
@@ -43,7 +43,7 @@
       <span class="text-gray-800">{{ item.price * item.quantity }} EG</span>
       <button
         @click="$emit('remove-item', item.id)"
-        class="text-gray-400 hover:text-gray-600 text-xl font-medium"
+        class="text-gray-400 hover:text-gray-600 text-xl font-medium hover:cursor-pointer"
       >
         ×
       </button>
