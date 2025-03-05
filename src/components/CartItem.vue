@@ -1,20 +1,22 @@
 <template>
   <div class="grid grid-cols-4 items-center py-4 border-b border-gray-200">
     <!-- Product Info -->
-    <div class="flex items-center gap-4">
+    <div class="flex flex-col md:flex-row items-center gap-4">
       <img
         :src="getImageSrc"
         :alt="item.name"
         class="w-20 h-20 object-cover rounded-lg"
       />
-      <span class="font-medium text-gray-800">{{ item.name }}</span>
+      <span class="font-medium text-gray-800 text-center">{{ item.name }}</span>
     </div>
 
     <!-- Price -->
-    <div class="text-gray-800">{{ item.price }} EG</div>
+    <div class="text-gray-800 text-center lg:text-left">
+      {{ item.price }} EG
+    </div>
 
     <!-- Quantity -->
-    <div class="flex items-center gap-3">
+    <div class="flex items-center px-2 w-3/12">
       <button
         @click="updateQuantity(item.quantity - 1)"
         class="w-8 h-8 flex items-center justify-center text-green-600 text-xl font-medium hover:text-green-700"
@@ -25,7 +27,7 @@
       <input
         type="number"
         v-model="item.quantity"
-        class="w-10 text-center bg-transparent focus:outline-none text-gray-800"
+        class="w-10 text-center bg-transparent focus:outline-none text-gray-800 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
         min="1"
       />
       <button

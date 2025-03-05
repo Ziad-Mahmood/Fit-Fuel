@@ -5,7 +5,7 @@
       <p class=" text-3xl lg:text-[45px] font-bold lg:w-[90%] leading-18">Have questions or need assistance?</p>
     </div>
     <div class="contact-btn mx-auto">
-      <button class="btn py-4 px-15">Contact US</button>
+      <button class="btn py-4 px-15" @click="$router.push('/contact')">Contact US</button>
     </div>
   </div>
 </template>

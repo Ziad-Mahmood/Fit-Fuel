@@ -1,12 +1,12 @@
 <template>
-  <div class="w-full px-16 py-6">
+  <div class="w-full md:w-[80%] px-16 py-6 mx-auto">
     <div class="space-y-8">
       <!-- Cart Header -->
-      <div class="grid grid-cols-4 text-gray-700 font-medium pb-4 border-b">
-        <div>Product</div>
-        <div>Price</div>
-        <div class="pl-4">Quantity</div>
-        <div>Total</div>
+      <div class="grid grid-cols-4 text-gray-700 font-medium text-lg pb-4">
+        <div class="w-3/12">Product</div>
+        <div class="text-center lg:text-left">Price</div>
+        <div class="w-3/12">Quantity</div>
+        <div class="w-3/12">Total</div>
       </div>
 
       <!-- Cart Items -->
@@ -23,7 +23,7 @@
   </div>
 
   <!-- Checkout Button -->
-  <div class="text-center mt-10">
+  <div class="text-center">
     <button
       class="bg-green-600 text-white px-10 py-3 rounded-full hover:bg-green-700 hover:cursor-pointer transition-colors"
     >
