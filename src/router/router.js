@@ -15,7 +15,9 @@ import PlansView from "@/views/PlansView.vue";
 import OrderTrackingView from "@/views/OrderTrackingView.vue";
 
 import ContactView from "@/views/ContactView.vue";
-import Dashboard from "@/components/Dashboard.vue";
+import ProfileView from "@/views/ProfileView.vue";
+
+import AdminDashBoard from "@/views/dashboards/AdminDashBoard.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -77,9 +79,14 @@ const router = createRouter({
       component: ContactView,
     },
     {
-      path: "/dashboard",
-      name: "dashboard",
-      component: Dashboard,
+      path: "/profile",
+      name: "profile",
+      component: ProfileView,
+    },
+    {
+      path: "/dashboard/admin",
+      name: "admin",
+      component: AdminDashBoard,
     },
   ],
 });

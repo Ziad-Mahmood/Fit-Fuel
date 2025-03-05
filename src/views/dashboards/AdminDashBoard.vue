@@ -29,8 +29,8 @@
 </template>
 
 <script>
-import TabButton from "./dashboard/TabButton.vue";
-import UsersTable from "./dashboard/UsersTable.vue";
+import TabButton from "@/components/dashboard/TabButton.vue";
+import UsersTable from "@/components/dashboard/UsersTable.vue";
 import Header from "@/components/layout/Header.vue";
 
 export default {
