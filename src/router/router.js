@@ -49,7 +49,7 @@ const router = createRouter({
       name: "Menu",
       component: MenuView
 
-    }
+    }, {
 
       path: "/checkout",
       name: "checkout",
