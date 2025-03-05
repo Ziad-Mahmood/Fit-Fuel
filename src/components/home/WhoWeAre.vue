@@ -1,16 +1,16 @@
 <template>
   <section class="container mx-auto px-4 py-16 mt-15">
-    <div class="grid md:grid-cols-2 gap-20 items-center">
+    <div class="grid md:grid-cols-2 gap-10 items-center">
       <div class="grid grid-cols-2 gap-7">
         <img
           src="../../assets/images/about us1.png"
           alt="Chef cooking"
-          class="rounded-lg w-full h-[90%] object-cover"
+          class="rounded-lg w-full h-[85%] object-cover"
         />
         <img
           src="@/assets/images/about us2.png"
           alt="Spicy wings"
-          class="rounded-lg w-full h-[75%] object-cover mt-25"
+          class="rounded-lg w-[%90] h-[75%] object-cover mt-25"
         />
       </div>
       <div class="space-y-6 mt-0 md:mt-20">
