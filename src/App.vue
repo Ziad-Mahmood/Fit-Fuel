@@ -7,16 +7,14 @@
 </template>
 
 <script>
-import Nav from './components/layout/Nav.vue'
-import Footer from './components/layout/Footer.vue'
+import Nav from "./components/layout/Nav.vue";
+import Footer from "./components/layout/Footer.vue";
 
 export default {
-  name: 'App',
+  name: "App",
   components: {
     Nav,
-    Footer
-  }
-}
+    Footer,
+  },
+};
 </script>
-
-

@@ -1,12 +1,12 @@
 <template>
   <div
-    class="flex flex-col w-full max-w-xl p-8 bg-gray-100 rounded-lg justify-evenly h-120"
+    class="flex flex-col w-full max-w-xl p-8 bg-gray-100 rounded-lg justify-around h-fit"
   >
     <h2 class="text-2xl font-medium text-green-600 mb-12">Payment Methods</h2>
 
     <div class="space-y-6">
       <!-- Payment Options -->
-      <div class="space-y-4 flex flex-col justify-evenly h-35">
+      <div class="space-y-4 flex flex-col justify-evenly">
         <div class="flex items-center gap-3">
           <input
             type="radio"
@@ -59,14 +59,14 @@
       <!-- Card Details -->
       <div
         v-if="paymentMethod === 'card'"
-        class="space-y-4 flex flex-col justify-evenly h-35"
+        class="space-y-4 flex flex-col justify-evenly"
       >
         <div class="relative">
           <input
             type="text"
             placeholder="Card number"
             v-model="cardNumber"
-            class="w-full px-4 py-3 bg-gray-200 rounded focus:outline-none"
+            class="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded focus:outline-none"
           />
           <img
             src="../assets/images/card.png"
@@ -81,7 +81,7 @@
               type="text"
               placeholder="MM / YY"
               v-model="expiry"
-              class="w-full px-4 py-3 bg-gray-200 rounded focus:outline-none"
+              class="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded focus:outline-none"
             />
             <img
               src="../assets/images/calendar.png"
@@ -94,7 +94,7 @@
               type="text"
               placeholder="CVV"
               v-model="cvv"
-              class="w-full px-4 py-3 bg-gray-200 rounded focus:outline-none"
+              class="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded focus:outline-none"
             />
             <img
               src="../assets/images/lockIcon.png"
@@ -106,7 +106,7 @@
       </div>
 
       <!-- Checkout Button -->
-      <div class="flex flex-col justify-evenly h-30">
+      <div class="flex flex-col justify-evenly">
         <button
           @click="handleCheckout"
           class="w-full bg-green-600 text-white py-3 rounded-full hover:bg-green-700 hover:cursor-pointer transition-colors uppercase"

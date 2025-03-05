@@ -1,9 +1,8 @@
+import { createRouter, createWebHistory } from "vue-router";
 
-import { createRouter, createWebHistory } from 'vue-router'
-
-import LoginView from '@/views/auth/LoginView.vue';
-import HomePage from '@/views/HomePage.vue';
-import Register from '@/views/auth/RegisterView.vue'
+import LoginView from "@/views/auth/LoginView.vue";
+import HomePage from "@/views/HomePage.vue";
+import Register from "@/views/auth/RegisterView.vue";
 import CartView from "@/views/CartView.vue";
 
 
@@ -15,8 +14,10 @@ import CheckoutView from "@/views/CheckoutView.vue";
 import DvrDashboard from "@/views/dashboards/DvrDashboard.vue";
 import KitchenDashboard from "@/views/dashboards/KitchenDashboard.vue";
 import PlansView from "@/views/PlansView.vue";
-import ContactView from '@/views/ContactView.vue';
 
+import OrderTrackingView from "@/views/OrderTrackingView.vue";
+
+import ContactView from '@/views/ContactView.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -31,11 +32,12 @@ const router = createRouter({
       path: '/login',
       name: 'login',
       component: LoginView
+
     },
     {
-      path: '/register',
-      name: 'Register',
-      component: Register
+      path: "/register",
+      name: "Register",
+      component: Register,
     },
     {
       path: "/cart",
@@ -50,6 +52,7 @@ const router = createRouter({
       component: MenuView
 
     }
+
 
       path: "/checkout",
       name: "checkout",
@@ -71,10 +74,17 @@ const router = createRouter({
       component: PlansView,
     },
     {
+
+      path: "/order-tracking",
+      name: "order-tracking",
+      component: OrderTrackingView,
+    },
+
       path: "/contact",
       name: "contact",
       component: ContactView,
     },
+
 
   ],
 });
