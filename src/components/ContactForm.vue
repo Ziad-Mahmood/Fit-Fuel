@@ -26,19 +26,19 @@
       ></textarea>
     </div>
 
-    <FormButton type="submit">Send Message</FormButton>
+    <button type="submit" class="w-full py-2 md:py-3 btn">Send Message</button>
   </form>
 </template>
 
 <script>
 import FormInput from '@/components/auth/FormInput.vue'
-import FormButton from '@/components/auth/FormButton.vue'
+
 
 export default {
   name: 'ContactForm',
   components: {
     FormInput,
-    FormButton
+   
   },
   data() {
     return {

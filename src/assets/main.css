@@ -5,8 +5,8 @@ body{
     font-family: "Poppins", serif;
 }
 .btn{
-    @apply bg-[#339e3f] text-white font-semibold rounded-full hover:bg-[#2b843a] transition-colors text-sm md:text-base
+    @apply bg-[#339e3f] text-white font-semibold rounded-full hover:bg-[#2b843a] hover:cursor-pointer transition-colors text-sm md:text-base 
 }
 .btn-outline{
-    @apply border border-[#191919] text-[#191919] rounded-full;
+    @apply border border-gray-300 text-gray-600 rounded-full hover:bg-gray-50;
 }

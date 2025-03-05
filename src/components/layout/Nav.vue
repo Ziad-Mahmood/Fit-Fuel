@@ -42,7 +42,7 @@
         </router-link>
       </div>
 
-      <!-- Icons/Profile Section -->
+      <!-- Icons/login Section -->
       <div class="flex items-center gap-4 md:w-[115px] md:h-[35px]">
         <template v-if="!isDashboardRoute">
           <button
@@ -56,10 +56,10 @@
             />
           </button>
           <router-link
-            to="/profile"
+            to="/login"
             class="hover:opacity-80 transition-opacity"
           >
-            <img src="@/assets/images/user.png" alt="Profile" class="w-5 h-5" />
+            <img src="@/assets/images/user.png" alt="login" class="w-5 h-5" />
           </router-link>
           <router-link to="/cart" class="hover:opacity-80 transition-opacity">
             <img src="@/assets/images/cart.png" alt="Cart" class="w-5 h-5" />
@@ -74,10 +74,10 @@
         </template>
         <template v-else>
           <router-link
-            to="/profile"
+            to="/login"
             class="hover:opacity-80 transition-opacity"
           >
-            <img src="@/assets/images/user.png" alt="Profile" class="w-5 h-5" />
+            <img src="@/assets/images/user.png" alt="login" class="w-5 h-5" />
           </router-link>
           <span class="text-[#339e3f] font-bold font-['Poppins']">name</span>
         </template>

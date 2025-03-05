@@ -41,24 +41,24 @@
         />
       </div>
       
+      <div v-if="activeTab === 'Meal Details'" class="w-[50%] m-auto border-b border-[#339e3f] py-4">
+        
+          <IngredientItem 
+            v-for="detail in nutritionDetails" 
+            :key="detail.name"
+            :name="`${detail.name}: ${detail.value}`"
+          />
+        
+      </div>
+      
       <div class="mt-16 container mx-auto px-4 py-12">
         <h3 class="text-4xl font-bold text-[#339e3f] w-[55%] m-auto my-25">Similar Products</h3>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 m-auto w-[80%]">
-          <div class="flex justify-center" v-for="meal in similarMeals" :key="meal.id">
-            <MealCard :meal="meal" /> 
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 m-auto w-[50%] ">
+          <div class="flex justify-center " v-for="meal in similarMeals" :key="meal.id">
+            <MealCard :meal="meal"  class="max-h-96"/> 
           </div>
         </div>
         
-        <!-- Add pagination dots -->
-        <div class="flex justify-center gap-2 mt-8">
-          <button 
-            v-for="index in 3" 
-            :key="index"
-            class="w-2.5 h-2.5 rounded-full transition-colors"
-            :class="index === 1 ? 'bg-[#339e3f]' : 'bg-gray-300'"
-            @click="currentPage = index"
-          ></button>
-        </div>
       </div>
     </div>
    
@@ -89,6 +89,14 @@ export default {
     return {
       currentPage: 1,
       activeTab: 'Ingredients',
+      nutritionDetails: [
+        { name: 'Calories', value: '650 kcal' },
+        { name: 'Protein', value: '52g' },
+        { name: 'Carbohydrates', value: '35g' },
+        { name: 'Fat', value: '28g' },
+        { name: 'Fiber', value: '4g' },
+        { name: 'Iron', value: '3.5mg' }
+      ],
       ingredients: [
         'Steak (Lean Cut)',
         'Olive Oil',
@@ -105,22 +113,23 @@ export default {
           id: 1,
           name: 'Lamb Steak ',
           price: '120 EG',
-          image: new URL('../assets/images/steak.png', import.meta.url).href
+          image: new URL('../assets/images/meal8.jpg', import.meta.url).href
         },
         {
           id: 2,
           name: 'Grilled Meat',
           price: '120 EG',
-          image: new URL('../assets/images/Grilled-Meat.png', import.meta.url).href
+          image: new URL('../assets/images/meal6.jpg', import.meta.url).href
         },
         {
           id: 3,
           name: 'Salmon',
           price: '120 EG',
-          image: new URL('../assets/images/Salmon.png', import.meta.url).href
+          image: new URL('../assets/images/meal4.jpg', import.meta.url).href
         }
       ]
     }
   }
+  
 }
 </script>

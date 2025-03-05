@@ -30,9 +30,9 @@
       </div>
       <a href="#" class="text-xs md:text-sm text-[#339E3F] hover:text-[#2b843a] font-['Plus Jakarta Sans']">Forgot Password?</a>
     </div>
-
-    <FormButton type="submit">Sign In</FormButton>
-
+    <router-link to="/">
+    <button type="submit" class="w-full py-2 md:py-3 btn">Sign In</button>
+    </router-link>
     <p class="text-center text-xs md:text-sm text-slate-600 font-['Plus Jakarta Sans']">
       Don't have an account? 
       <router-link to="/register" class="text-[#339E3F] hover:text-[#2b843a]">Sign Up</router-link>
@@ -42,13 +42,13 @@
 
 <script>
 import FormInput from '@/components/auth/FormInput.vue'
-import FormButton from '@/components/auth/FormButton.vue'
+
 
 export default {
   name: 'LoginForm',
   components: {
     FormInput,
-    FormButton
+    
   },
   data() {
     return {

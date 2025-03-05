@@ -20,6 +20,7 @@ import ProfileView from "@/views/ProfileView.vue";
 
 import AdminDashBoard from "@/views/dashboards/AdminDashBoard.vue";
 import AboutUsView from "@/views/AboutUsView.vue";
+import NotFound from "@/views/NotFound.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -99,6 +100,11 @@ const router = createRouter({
       name: "about us",
       component: AboutUsView,
     },
+    {
+      path: "/:pathMatch(.*)*",
+      name: "NotFound",
+      component: NotFound
+    }
   ],
 });
 

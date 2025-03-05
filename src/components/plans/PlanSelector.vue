@@ -5,10 +5,10 @@
       :key="plan"
       @click="$emit('select-plan', plan)"
       :class="[
-        'px-6 py-2 rounded-full text-base transition-colors',
+        'px-6 py-2 ',
         selectedPlan === plan 
-          ? 'bg-[#339e3f] text-white' 
-          : 'bg-white text-[#191919] border border-gray-200'
+          ? 'btn' 
+          : 'btn-outline'
       ]"
     >
       {{ plan }} Plan

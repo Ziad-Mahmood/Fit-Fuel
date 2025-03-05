@@ -20,9 +20,11 @@
 
       <div class="mt-8 flex flex-col md:flex-row items-center justify-start gap-10">
         <p class="text-2xl font-bold text-[#339e3f]">{{ price }} EG</p>
-        <button class="bg-[#339e3f] text-white px-6 py-2 rounded-full hover:bg-[#2b843a] transition-colors">
+        <router-link to="/cart">
+        <button class=" px-6 py-2 btn">
           Subscribe Now
         </button>
+        </router-link>
       </div>
     </div>
   </div>

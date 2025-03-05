@@ -12,7 +12,12 @@
         </div>
         <h3 class="text-2xl font-bold text-[#339E3F] my-7">{{ plan.name }}</h3>
         <p class="text-gray-600 my-7 lg:w-[80%] m-auto">{{ plan.description }}</p>
-        <button class="view-plan text-[#339E3F] font-bold cursor-pointer" @click="$router.push('/meal-plans')">View Plan</button>
+        <button 
+          class="view-plan text-[#339E3F] font-bold cursor-pointer" 
+          @click="goToPlan(plan.type)"
+        >
+          View Plan
+        </button>
       </div>
     </div>
   </section>
@@ -31,24 +36,35 @@ export default {
         {
           id: 1,
           name: 'Daily Plan',
+          type: 'Daily',
           description: 'A full day of balanced and fresh meals.',
           img: dailyPlan,
         },
         {
           id: 2,
           name: 'Weekly Plan',
+          type: 'Weekly',
           description: 'A week of nutritious meals delivered to your door.',
           img: weeklyPlan,
         },
         {
           id: 3,
           name: 'Monthly Plan',
+          type: 'Monthly',
           description: 'Consistent healthy eating with a month-long plan.',
           img: monthlyPlan,
         },
       ],
     }
   },
+  methods: {
+    goToPlan(planType) {
+      this.$router.push({
+        path: '/meal-plans',
+        query: { plan: planType }
+      })
+    }
+  }
 }
 </script>
 

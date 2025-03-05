@@ -32,13 +32,15 @@
       </button>
     </div>
     </div>
-    
-    <button
+    <router-link to="/cart">
+      <button
       @click="addToCart"
-      class="bg-[#339e3f] text-white h-12 rounded-lg flex items-center justify-center gap-2 hover:bg-[#2b843a] transition-colors"
+      class="btn py-3 w-full"
     >
       Add to cart
     </button>
+    </router-link>
+    
   </div>
 </template>
 
