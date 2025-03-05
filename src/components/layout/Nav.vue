@@ -3,7 +3,7 @@
     class="w-full h-20 fixed z-50 flex items-center justify-center transition-all duration-300"
     :class="[
       isDashboardRoute ? 'bg-white shadow-sm' : 
-      isScrolled ? 'opacity-0 hover:opacity-90 bg-white' : 'bg-white'
+      isScrolled ? 'opacity-0 hover:opacity-80 bg-white' : 'bg-white'
     ]"
   >
     <div class="w-full h-[39px] flex items-center justify-between px-4 m-auto py-8 md:px-0 md:w-[810px] md:h-[39px]">
