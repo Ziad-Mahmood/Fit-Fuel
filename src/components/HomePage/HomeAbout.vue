@@ -31,7 +31,7 @@
         home-cooked meals are made with fresh, high-quality ingredients to nourish your body and
         support a balanced lifestyle
       </p>
-      <button class="btn py-3 px-11">Learn More</button>
+      <button class="btn py-3 px-11" @click="$router.push('/aboutus')">Learn More</button>
     </div>
   </section>
 </template>

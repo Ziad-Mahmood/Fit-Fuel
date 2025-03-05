@@ -1,5 +1,5 @@
 <template>
-  <Header title="About Us" bgImage="aboutUs header.png" position="right" />
+  <Header title="About Us" bgImage="aboutPage1..jpg" position="left" />
   <div>
     <who-we-are class="w-[80%]" />
     <services class="w-[80%]" />
