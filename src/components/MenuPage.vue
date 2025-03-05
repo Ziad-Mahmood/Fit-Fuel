@@ -1,13 +1,13 @@
 <template>
   <div class="menu-section">
-    <div class="menu-header h-[300px] relative bg-amber-300">
+    <!-- <div class="menu-header h-[300px] relative bg-amber-300">
       <h2
         class="menu-info text-4xl font-bold absolute bottom-[35%] right-[20%]"
       >
         Menu
       </h2>
-    </div>
-    <!-- <Header title="Menu" bgImage="menu-banner.png" position="right" /> -->
+    </div> -->
+    <Header title="Menu" bgImage="menu-banner.png" position="right" />
     <div class="w-[80%] m-auto">
       <div class="menu-filter my-10 flex flex-col md:flex-row items-center gap-10 ml-5">
         <div class="form-group flex md:gap-5 items-center">

@@ -10,7 +10,7 @@
         Fuel your body with balanced, delicious meals made from fresh, high-quality
         ingredient—packed with the nutrition you need and the flavors you love
       </p>
-      <button class="btn py-3 px-11">Order Now</button>
+      <button class="btn py-3 px-11" @click="$router.push('/menu')">Order Now</button>
     </div>
 
     <div class="hero-image xl:w-1/2 flex justify-end items-start">
