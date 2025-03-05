@@ -1,5 +1,5 @@
 <template>
-  <footer class="w-full  bg-white flex  items-center my-2">
+  <footer class="w-full  bg-white flex  items-center mt-2 py-8">
     <div class="w-full  flex justify-between px-16">
       <!-- Brand Section -->
       <div class="flex flex-col gap-6">
