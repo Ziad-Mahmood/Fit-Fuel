@@ -5,8 +5,8 @@ import HomePage from "@/views/HomePage.vue";
 import Register from "@/views/auth/RegisterView.vue";
 import CartView from "@/views/CartView.vue";
 
-import MenuView from '@/views/MenuView.vue';
-import MealDetails from '@/views/MealDetails.vue';
+import MenuView from "@/views/MenuView.vue";
+import MealDetails from "@/views/MealDetails.vue";
 
 import CheckoutView from "@/views/CheckoutView.vue";
 import DvrDashboard from "@/views/dashboards/DvrDashboard.vue";
@@ -47,8 +47,8 @@ const router = createRouter({
     {
       path: "/menu",
       name: "Menu",
-      component: MenuView
-    }, 
+      component: MenuView,
+    },
     {
       path: "/meal",
       name: "mealDetails",
@@ -75,7 +75,7 @@ const router = createRouter({
       component: PlansView,
     },
     {
-      path: "/order-tracking",
+      path: "/my-orders",
       name: "order-tracking",
       component: OrderTrackingView,
     },
@@ -95,7 +95,7 @@ const router = createRouter({
       component: AdminDashBoard,
     },
     {
-      path: "/aboutus",
+      path: "/about",
       name: "about us",
       component: AboutUsView,
     },
