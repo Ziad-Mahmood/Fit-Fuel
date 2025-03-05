@@ -5,10 +5,7 @@ import HomePage from "@/views/HomePage.vue";
 import Register from "@/views/auth/RegisterView.vue";
 import CartView from "@/views/CartView.vue";
 
-
-
-import MenuView from '@/views/MenuView.vue';
-
+import MenuView from "@/views/MenuView.vue";
 
 import CheckoutView from "@/views/CheckoutView.vue";
 import DvrDashboard from "@/views/dashboards/DvrDashboard.vue";
@@ -17,22 +14,21 @@ import PlansView from "@/views/PlansView.vue";
 
 import OrderTrackingView from "@/views/OrderTrackingView.vue";
 
-import ContactView from '@/views/ContactView.vue';
+import ContactView from "@/views/ContactView.vue";
+import Dashboard from "@/components/Dashboard.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/',
-      name: 'Home',
-      component: HomePage
-
+      path: "/",
+      name: "Home",
+      component: HomePage,
     },
     {
-      path: '/login',
-      name: 'login',
-      component: LoginView
-
+      path: "/login",
+      name: "login",
+      component: LoginView,
     },
     {
       path: "/register",
@@ -46,14 +42,11 @@ const router = createRouter({
     },
 
     {
-
       path: "/menu",
       name: "Menu",
-      component: MenuView
-
-    }, {
-
-
+      component: MenuView,
+    },
+    {
       path: "/checkout",
       name: "checkout",
       component: CheckoutView,
@@ -74,18 +67,20 @@ const router = createRouter({
       component: PlansView,
     },
     {
-
       path: "/order-tracking",
       name: "order-tracking",
       component: OrderTrackingView,
     },
-
+    {
       path: "/contact",
       name: "contact",
       component: ContactView,
     },
-
-
+    {
+      path: "/dashboard",
+      name: "dashboard",
+      component: Dashboard,
+    },
   ],
 });
 
