@@ -14,7 +14,7 @@
         />
       </div>
       <div class="space-y-6 mt-0 md:mt-20">
-        <h2 class="text-5xl font-bold text-gray-800 text-center">
+        <h2 class="text-5xl font-bold text-gray-800 text-start">
           Who we are ?
         </h2>
         <p class="text-gray-600 leading-relaxed text-lg">

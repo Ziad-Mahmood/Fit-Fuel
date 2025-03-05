@@ -120,8 +120,8 @@ export default {
         { path: "/", name: "Home" },
         { path: "/menu", name: "Menu" },
         { path: "/meal-plans", name: "Meal plans" },
-        { path: "/my-orders", name: "My Orders" },
-        { path: "/about", name: "About" },
+        { path: "/order-tracking", name: "Orders" },
+        { path: "/aboutus", name: "About" },
         { path: "/contact", name: "Contact" },
       ],
     };
