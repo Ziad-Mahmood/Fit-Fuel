@@ -75,7 +75,7 @@ const router = createRouter({
       component: PlansView,
     },
     {
-      path: "/my-orders",
+      path: "/order-tracking",
       name: "order-tracking",
       component: OrderTrackingView,
     },
@@ -95,7 +95,7 @@ const router = createRouter({
       component: AdminDashBoard,
     },
     {
-      path: "/about",
+      path: "/aboutus",
       name: "about us",
       component: AboutUsView,
     },
