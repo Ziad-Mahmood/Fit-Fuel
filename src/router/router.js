@@ -19,6 +19,7 @@ import ContactView from "@/views/ContactView.vue";
 import ProfileView from "@/views/ProfileView.vue";
 
 import AdminDashBoard from "@/views/dashboards/AdminDashBoard.vue";
+import AboutUsView from "@/views/AboutUsView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -92,6 +93,11 @@ const router = createRouter({
       path: "/dashboard/admin",
       name: "admin",
       component: AdminDashBoard,
+    },
+    {
+      path: "/aboutus",
+      name: "about us",
+      component: AboutUsView,
     },
   ],
 });
