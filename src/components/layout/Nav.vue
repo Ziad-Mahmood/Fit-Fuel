@@ -1,7 +1,10 @@
 <template>
   <div 
-    class="w-full h-[92px] fixed z-50 flex items-center justify-center"
-    :class="isDashboardRoute ? 'bg-white shadow-sm' : 'opacity-60 bg-[#d9d9d9]'"
+    class="w-full h-20 fixed z-50 flex items-center justify-center transition-all duration-300"
+    :class="[
+      isDashboardRoute ? 'bg-white shadow-sm' : 
+      isScrolled ? 'opacity-0 hover:opacity-90 bg-white' : 'bg-white'
+    ]"
   >
     <div class="w-full h-[39px] flex items-center justify-between px-4 m-auto py-8 md:px-0 md:w-[810px] md:h-[39px]">
       <!-- Logo -->
@@ -80,6 +83,7 @@ export default {
   data() {
     return {
       isMenuOpen: false,
+      isScrolled: false,
       navLinks: [
         { path: '/', name: 'Home' },
         { path: '/menu', name: 'Menu' },
@@ -95,9 +99,18 @@ export default {
       return this.$route.path.includes('dashboard');
     }
   },
+  mounted() {
+    window.addEventListener('scroll', this.handleScroll);
+  },
+  unmounted() {
+    window.removeEventListener('scroll', this.handleScroll);
+  },
   methods: {
     toggleMenu() {
       this.isMenuOpen = !this.isMenuOpen;
+    },
+    handleScroll() {
+      this.isScrolled = window.scrollY > 100;
     }
   },
 };

@@ -1,55 +1,58 @@
 <template>
-  <footer class="w-full min-h-[398px] bg-white flex justify-around items-center">
-    <div class="w-full max-w-[1440px] flex justify-between px-16">
+  <footer class="w-full  bg-white flex  items-center my-2">
+    <div class="w-full  flex justify-between px-16">
       <!-- Brand Section -->
       <div class="flex flex-col gap-6">
-        <div class="w-[110px]">
+        <div class="w-12">
           <router-link to="/">
-            <img src="@/assets/images/Logo.png" alt="FitFuel Logo" class="h-16 w-auto" />
+            <img src="@/assets/images/Logo.png" alt="FitFuel Logo" class="h-13 w-auto" />
           </router-link>
         </div>
-        <p class="w-[339px] text-[#191919] text-lg font-normal font-['Poppins']">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+        <p class="w-80 text-[#191919] text-sm  font-normal font-['Poppins']">
+          healthy meal options through an efficient order and delivery system.
         </p>
         <div>
-          <img src="@/assets/images/Social media.png" alt="Social Media Icons" class="w-[106px] h-[24px]" />
+          <img src="@/assets/images/Social media.png" alt="Social Media Icons" class="w-25 h-6" />
         </div>
       </div>
 
       <!-- Pages Section -->
       <div class="hidden md:flex flex-col gap-4">
-        <h3 class="text-[#339e3f] text-2xl font-semibold font-['Poppins']">
+        <h3 class="text-[#339e3f] text-xl font-semibold font-['Poppins']">
           Pages
         </h3>
         <nav class="flex flex-col gap-3">
-          <router-link to="/about" class="text-[#191919] text-lg font-normal font-['Poppins'] hover:text-[#339e3f] transition-colors">
-            About Us
+          <router-link to="/" class="text-[#191919] text-sm font-normal font-['Poppins'] hover:text-[#339e3f] transition-colors">
+            Home
+          </router-link>    
+          <router-link to="/menu" class="text-[#191919] text-sm font-normal font-['Poppins'] hover:text-[#339e3f] transition-colors">
+            Menu
           </router-link>
-          <router-link to="/contact" class="text-[#191919] text-lg font-normal font-['Poppins'] hover:text-[#339e3f] transition-colors">
+          <router-link to="/contact" class="text-[#191919] text-sm font-normal font-['Poppins'] hover:text-[#339e3f] transition-colors">
             Contact Us
           </router-link>
         </nav>
       </div>
 
       <!-- Contact Section -->
-      <div class="flex flex-col gap-8">
+      <div class="flex md:flex-col  gap-4">
         <div class="flex items-center">
-          <img src="@/assets/images/Phone.png" alt="Phone" class="w-[42px] h-[46px]" />
-          <span class="hidden md:inline-block ml-[63px] text-black text-lg font-normal font-['Inter']">
+          <img src="@/assets/images/Phone.png" alt="Phone" class="w-6 h-auto" />
+          <span class="hidden md:inline-block ml- text-black text-sm font-normal font-['Inter']">
             +123 488 9652
           </span>
         </div>
         
         <div class="flex items-center">
-          <img src="@/assets/images/Circled Envelope.png" alt="Email" class="w-[42px] h-[46px]" />
-          <span class="hidden md:inline-block ml-[63px] text-black text-lg font-normal font-['Inter']">
+          <a href="mailto:FitFuel@gmail.com"><img src="@/assets/images/Circled Envelope.png" alt="Email" class="w-6 h-auto" /></a>
+          <span class="hidden md:inline-block ml- text-black text-sm font-normal font-['Inter']">
             FitFuel@gmail.com
           </span>
         </div>
         
         <div class="flex items-center">
-          <img src="@/assets/images/Place Marker.png" alt="Location" class="w-[42px] h-[46px]" />
-          <span class="hidden md:inline-block ml-[63px] text-black text-lg font-normal font-['Inter']">
+          <a href="https://www.google.com/maps"><img src="@/assets/images/Place Marker.png" alt="Location" class="w-6 h-auto" /></a>
+          <span class="hidden md:inline-block ml- text-black text-sm font-normal font-['Inter']">
             Cairo,Egypt
           </span>
         </div>

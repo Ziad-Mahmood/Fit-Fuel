@@ -1,23 +1,24 @@
 <template>
-  <tr class="border-t border-gray-100">
-    <td class="px-6 py-6 text-[#191919]">#{{ item.id }}</td>
-    <td class="px-6 py-6 text-[#191919]">{{ item.date }}</td>
-    <td class="px-6 py-6 text-[#191919]">{{ item.address }}</td>
-    <td class="px-6 py-6">
+  <tr class="border-b border-gray-200 ">
+    <td class="px-1 sm:px-6 py-6 text-[#191919]  text-sm sm:text-base text-center ">#{{ item.id }}</td>
+    <td class="px-1 sm:px-6 py-6 text-[#191919] text-sm sm:text-base text-center">{{ item.date }}</td>
+    <td class="px-1 sm:px-6 py-6 text-[#191919] text-sm sm:text-base text-center">{{ item.address }}</td>
+    <td class="px-1 sm:px-6 py:1 sm:py-6 ">
       <button 
-        class="bg-[#339e3f] text-white px-6 py-1.5 rounded-full text-sm"
+        class="bg-[#339e3f] text-white text-center px-1 sm:px-6 py-1.5 rounded-full text-sm lg:w-full mx-auto"
         @click="$emit('accept-order', item.id)"
       >
         Accept
       </button>
     </td>
-    <td class="px-8 py-6">
+    <td class="px-1 sm:px-8 py-6 flex justify-center items-end">
+        <button >
       <img 
         v-if="item.isComplete" 
         :src="checkMarkSrc"
         alt="Complete" 
-        class="w-10 h-10"
-      />
+        class="w-10 h-10 "
+      /></button>
     </td>
   </tr>
 </template>

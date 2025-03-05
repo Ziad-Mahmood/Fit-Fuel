@@ -1,8 +1,8 @@
 <template>
-  <div class="relative w-full h-[439px]">
-    <img :src="imageSrc" :alt="title" class="w-full h-full object-cover" />
-
-    <h1
+  <div class="relative w-full h-96">
+    <img :src="imageSrc" :alt="title" class="w-full h-full object-cover">
+  
+    <h1 
       class="absolute text-5xl sm:text-6xl font-bold font-poppins text-[#010f1c]"
       :class="titlePosition"
     >
