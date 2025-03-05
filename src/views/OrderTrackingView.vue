@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="mb-10">
     <Header
       class="mb-10"
       title="Your Orders"

@@ -1,30 +1,32 @@
 <template>
-  <Header title="Admin" bgImage="admin header.png" position="right" />
+  <div class="mb-20">
+    <Header title="Admin" bgImage="admin header.png" position="right" />
 
-  <div class="flex gap-4 mt-15 mb-10 justify-center">
-    <tab-button
-      text="Users"
-      :isActive="activeTab === 'users'"
-      @click="activeTab = 'users'"
-    />
-    <tab-button
-      text="Chefs"
-      :isActive="activeTab === 'chefs'"
-      @click="activeTab = 'chefs'"
-    />
-    <tab-button
-      text="Drivers"
-      :isActive="activeTab === 'drivers'"
-      @click="activeTab = 'drivers'"
-    />
-  </div>
+    <div class="flex gap-4 mt-15 mb-10 justify-center">
+      <tab-button
+        text="Users"
+        :isActive="activeTab === 'users'"
+        @click="activeTab = 'users'"
+      />
+      <tab-button
+        text="Chefs"
+        :isActive="activeTab === 'chefs'"
+        @click="activeTab = 'chefs'"
+      />
+      <tab-button
+        text="Drivers"
+        :isActive="activeTab === 'drivers'"
+        @click="activeTab = 'drivers'"
+      />
+    </div>
 
-  <div
-    class="bg-white p-6 text-xs break-words sm:text-sm sm:break-words md:text-base md:break-normal"
-  >
-    <users-table v-if="activeTab === 'users'" :users="users" />
-    <users-table v-if="activeTab === 'chefs'" :users="chefs" />
-    <users-table v-if="activeTab === 'drivers'" :users="drivers" />
+    <div
+      class="bg-white p-6 text-xs break-words sm:text-sm sm:break-words md:text-base md:break-normal"
+    >
+      <users-table v-if="activeTab === 'users'" :users="users" />
+      <users-table v-if="activeTab === 'chefs'" :users="chefs" />
+      <users-table v-if="activeTab === 'drivers'" :users="drivers" />
+    </div>
   </div>
 </template>
 
