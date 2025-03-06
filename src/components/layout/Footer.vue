@@ -35,7 +35,7 @@
       </div>
 
       <!-- Contact Section -->
-      <div class="flex md:flex-col  gap-4">
+      <div class="flex flex-col  gap-4">
         <div class="flex items-center">
           <img src="@/assets/images/Phone.png" alt="Phone" class="w-6 h-auto" />
           <span class="hidden md:inline-block ml- text-black text-sm font-normal font-['Inter']">

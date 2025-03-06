@@ -3,7 +3,7 @@
     class="w-full h-20 fixed z-50 flex items-center justify-center transition-all duration-300"
     :class="[
 
-      isDashboardRoute ? 'bg-white shadow-sm' : 
+      isDashboardRoute ? isScrolled ? 'opacity-0 hover:opacity-80 bg-white':'bg-white shadow-sm' : 
       isScrolled ? 'opacity-0 hover:opacity-80 bg-white' : 'bg-white'
 
     ]"
@@ -87,7 +87,7 @@
     <!-- Mobile Menu -->
     <div
       v-if="isMenuOpen && !isDashboardRoute"
-      class="md:hidden fixed top-[92px] left-0 w-full bg-white shadow-md"
+      class="md:hidden fixed top-20 left-0 text-center w-full bg-white shadow-md"
     >
       <div class="flex flex-col py-4">
         <router-link

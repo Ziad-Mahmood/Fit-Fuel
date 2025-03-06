@@ -38,7 +38,7 @@
           v-for="meal in meals"
           :key="meal.id"
           :meal="meal"
-          class="mx-auto"
+          class="mx-auto w-full"
         />
       </div>
 

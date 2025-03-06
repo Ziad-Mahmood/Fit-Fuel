@@ -1,4 +1,10 @@
 <template>
+   <Header
+      class="md:hidden"
+      title=""
+      bgImage="hero.png"
+      position="right"
+    />
   <HomeHeader />
   <HomeCategory />
   <HomeWork />
@@ -9,6 +15,7 @@
 </template>
 
 <script>
+import Header from '@/components/layout/Header.vue'
 import HomeHeader from '../components/HomePage/HomeHeader.vue'
 import HomeCategory from '../components/HomePage/HomeCategory.vue'
 import HomeWork from '../components/HomePage/HomeWork.vue'
@@ -20,6 +27,7 @@ import HomePlans from '@/components/HomePage/HomePlans.vue'
 export default {
   name: 'HomePage',
   components: {
+    Header,
     HomeHeader,
     HomeCategory,
     HomeWork,
