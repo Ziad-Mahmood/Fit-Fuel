@@ -36,6 +36,9 @@ export default {
     HomeReviewes,
     HomePlans,
   },
+  mounted() {
+  window.scrollTo(0, 0);
+}
 }
 </script>
 
