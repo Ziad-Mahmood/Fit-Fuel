@@ -1,5 +1,5 @@
 <template>
-  <div class="hero w-full h-screen flex items-start md:items-center">
+  <div class="hero w-full md:h-screen my-10 md:my-0 flex items-center">
     <div class="hero-content w-1/2 pl-10 xl:pl-[163px] mt-15">
       <div class="content-head">
       <h2 class="text-3xl md:text-4xl lg:text-5xl font-bold leading-14 lg:leading-16 mb-8 w-full">
