@@ -5,7 +5,7 @@
       bgImage="notfound.jpg"
       position="right"
     />
-  <div class="min-h-screen flex items-center justify-center bg-gray-50">
+  <div class="h-[50dvh] flex items-center justify-center bg-gray-50">
     <div class="text-center">
       <h1 class="text-9xl font-bold text-[#339e3f]">404</h1>
       <h2 class="text-3xl font-semibold text-gray-800 mt-4">Page Not Found</h2>
