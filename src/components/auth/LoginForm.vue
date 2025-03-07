@@ -35,9 +35,7 @@
       <a href="#" @click.prevent="handleForgotPassword" class="text-xs md:text-sm text-[#339E3F] hover:text-[#2b843a] font-['Plus Jakarta Sans']">Forgot Password?</a>
     </div>
     
-    <button type="submit" :disabled="isLoading" class="w-full py-2 md:py-3 btn">
-      {{ isLoading ? 'Signing In...' : 'Sign In' }}
-    </button>
+    <button type="submit" class="w-full py-2 md:py-3 btn">Sign In</button>
     
     <div class="relative flex items-center justify-center w-full my-2">
       <hr class="w-full border-t border-gray-300" />
@@ -64,25 +62,11 @@
 <script>
 import FormInput from '@/components/auth/FormInput.vue'
 import { loginWithEmail, loginWithGoogle, resetPassword } from '@/firebase/auth'
-import { useAuth } from '@/store/auth'
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
 
 export default {
   name: 'LoginForm',
   components: {
     FormInput,
-  },
-  setup() {
-    const router = useRouter()
-    const { error, setError, clearError } = useAuth()
-    
-    return { 
-      error, 
-      setError, 
-      clearError,
-      router
-    }
   },
   data() {
     return {
@@ -90,10 +74,21 @@ export default {
       password: '',
       showPassword: false,
       rememberMe: false,
-      isLoading: false,
+      error: null
     }
   },
   methods: {
+    setError(message) {
+      this.error = message
+      setTimeout(() => {
+        this.error = null
+      }, 5000)
+    },
+    
+    clearError() {
+      this.error = null
+    },
+    
     async handleSubmit() {
       this.clearError()
       
@@ -103,36 +98,32 @@ export default {
       }
       
       try {
-        this.isLoading = true
         await loginWithEmail(this.email, this.password)
-        this.router.push('/')
+        this.$router.push('/')
       } catch (error) {
         let errorMessage = 'Failed to sign in'
         
         if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
           errorMessage = 'Invalid email or password'
-        } else if (error.code === 'auth/too-many-requests') {
-          errorMessage = 'Too many failed login attempts. Please try again later'
         }
         
         this.setError(errorMessage)
       } finally {
-        this.isLoading = false
+        
       }
     },
     
     async handleGoogleSignIn() {
-      this.clearError()
-      
+      this.clearError()      
       try {
         this.isLoading = true
         await loginWithGoogle()
-        this.router.push('/')
+        this.$router.push('/')
       } catch (error) {
         this.setError('Failed to sign in with Google')
         console.error(error)
       } finally {
-        this.isLoading = false
+      
       }
     },
     

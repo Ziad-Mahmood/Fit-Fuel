@@ -8,7 +8,6 @@ import {
   } from 'firebase/auth';
   import { auth } from './config';
   
-  // Email/Password Authentication
   export const registerWithEmail = async (email, password) => {
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
@@ -27,7 +26,7 @@ import {
     }
   };
   
-  // Google Authentication
+
   export const loginWithGoogle = async () => {
     try {
       const provider = new GoogleAuthProvider();
@@ -38,7 +37,7 @@ import {
     }
   };
   
-  // Password Reset
+
   export const resetPassword = async (email) => {
     try {
       await sendPasswordResetEmail(auth, email);
@@ -48,7 +47,7 @@ import {
     }
   };
   
-  // Sign Out
+
   export const logoutUser = async () => {
     try {
       await signOut(auth);

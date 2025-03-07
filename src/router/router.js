@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from "vue-router";
-import { requireAuth, redirectIfAuthenticated } from './auth-guard';
 
 import LoginView from "@/views/auth/LoginView.vue";
 import HomePage from "@/views/HomePage.vue";
@@ -30,26 +29,16 @@ const router = createRouter({
       path: "/",
       name: "Home",
       component: HomePage,
-      // meta: { requiresAuth: true }
     },
     {
       path: "/login",
       name: "login",
       component: LoginView,
-      // beforeEnter: redirectIfAuthenticated
     },
     {
       path: "/register",
       name: "Register",
       component: Register,
-      // beforeEnter: redirectIfAuthenticated
-    },
-    {
-      path: '/profile',
-      name: 'Profile',
-      component: ProfileView,
-      // meta: { requiresAuth: true },
-      // beforeEnter: requireAuth
     },
     {
       path: "/cart",
@@ -97,6 +86,11 @@ const router = createRouter({
       component: ContactView,
     },
     {
+      path: "/profile",
+      name: "profile",
+      component: ProfileView,
+    },
+    {
       path: "/dashboard/admin",
       name: "admin",
       component: AdminDashBoard,
@@ -111,19 +105,7 @@ const router = createRouter({
       name: "NotFound",
       component: NotFound
     }
-  ]
-  ,
-  
+  ],
 });
-
-
-// Navigation guard for authenticated routes
-router.beforeEach((to, from, next) => {
-  if (to.matched.some(record => record.meta.requiresAuth)) {
-    requireAuth(to, from, next)
-  } else {
-    next()
-  }
-})
 
 export default router;

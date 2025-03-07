@@ -1,66 +1,41 @@
 <template>
-  <div class="p-4 bg-white rounded-lg shadow">
-    <div v-if="isLoading" class="flex justify-center p-4">
-      <div class="w-8 h-8 border-4 border-[#339E3F] border-t-transparent rounded-full animate-spin"></div>
-    </div>
-    
-    <div v-else-if="user" class="flex flex-col items-center">
-      <div class="w-20 h-20 rounded-full bg-[#339E3F] flex items-center justify-center text-white text-2xl font-bold mb-4">
-        {{ userInitials }}
+    <div class="relative pt-[92px]">
+      <div class="container mx-auto px-4 py-8">
+        <div class="max-w-4xl mx-auto">
+          <!-- Profile Header -->
+          <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+            <div class="flex items-center gap-6">
+              <div class="w-24 h-24 rounded-full overflow-hidden">
+                <img 
+                  src="@/assets/images/home-coustomer.png" 
+                  alt="Profile Picture"
+                  class="w-full h-full object-cover"
+                />
+              </div>
+              <div>
+                <h1 class="text-2xl font-bold text-slate-800 mb-2">Nagham</h1>
+                <p class="text-slate-600">nagham@gmail.com</p>
+              </div>
+            </div>
+          </div>
+  
+          <!-- Profile Form -->
+          <div class="bg-white rounded-lg shadow-sm p-6">
+            <h2 class="text-xl font-semibold text-slate-800 mb-6">Personal Information</h2>
+            <ProfileForm />
+          </div>
+        </div>
       </div>
-      
-      <h3 class="text-xl font-bold">{{ user.displayName || 'User' }}</h3>
-      <p class="text-gray-600">{{ user.email }}</p>
-      
-      <button @click="logout" class="mt-4 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">
-        Sign Out
-      </button>
     </div>
-    
-    <div v-else class="text-center p-4">
-      <p>Please sign in to view your profile</p>
-      <router-link to="/login" class="text-[#339E3F] hover:underline">Sign In</router-link>
-    </div>
-  </div>
-</template>
-
-<script>
-import { useAuth } from '@/store/auth'
-import { logoutUser } from '@/firebase/auth'
-import { computed } from 'vue'
-import { useRouter } from 'vue-router'
-
-export default {
-  name: 'UserProfile',
-  setup() {
-    const router = useRouter()
-    const { user, isLoading } = useAuth()
-    
-    const userInitials = computed(() => {
-      if (!user.value || !user.value.displayName) return '?'
-      
-      return user.value.displayName
-        .split(' ')
-        .map(name => name[0])
-        .join('')
-        .toUpperCase()
-    })
-    
-    const logout = async () => {
-      try {
-        await logoutUser()
-        router.push('/login')
-      } catch (error) {
-        console.error('Error signing out:', error)
-      }
-    }
-    
-    return {
-      user,
-      isLoading,
-      userInitials,
-      logout
+  </template>
+  
+  <script>
+  import ProfileForm from '@/components/ProfileForm.vue'
+  
+  export default {
+    name: 'ProfileView',
+    components: {
+      ProfileForm
     }
   }
-}
-</script>
+  </script>

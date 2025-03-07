@@ -41,9 +41,7 @@
       </label>
     </div>
     
-    <button type="submit" :disabled="isLoading" class="w-full py-2 md:py-3 btn">
-      {{ isLoading ? 'Signing Up...' : 'Sign Up' }}
-    </button>
+    <button type="submit" :disabled="isLoading" class="w-full py-2 md:py-3 btn"> Sign Up </button>
     
     <div class="relative flex items-center justify-center w-full my-2">
       <hr class="w-full border-t border-gray-300" />
@@ -70,26 +68,13 @@
 <script>
 import FormInput from '@/components/auth/FormInput.vue'
 import { registerWithEmail, loginWithGoogle } from '@/firebase/auth'
-import { useAuth } from '@/store/auth'
 import { updateProfile } from 'firebase/auth'
 import { auth } from '@/firebase/config'
-import { useRouter } from 'vue-router'
 
 export default {
   name: 'RegisterForm',
   components: {
     FormInput,
-  },
-  setup() {
-    const router = useRouter()
-    const { error, setError, clearError } = useAuth()
-    
-    return { 
-      error, 
-      setError, 
-      clearError,
-      router
-    }
   },
   data() {
     return {
@@ -98,10 +83,21 @@ export default {
       password: '',
       showPassword: false,
       acceptTerms: false,
-      isLoading: false
+      error: null
     }
   },
   methods: {
+    setError(message) {
+      this.error = message
+      setTimeout(() => {
+        this.error = null
+      }, 5000)
+    },
+    
+    clearError() {
+      this.error = null
+    },
+    
     async handleSubmit() {
       this.clearError()
       
@@ -121,15 +117,13 @@ export default {
       }
       
       try {
-        this.isLoading = true
         const user = await registerWithEmail(this.email, this.password)
         
-        // Update the user profile with the full name
         await updateProfile(auth.currentUser, {
           displayName: this.fullName
         })
         
-        this.router.push('/')
+        this.$router.push('/')
       } catch (error) {
         let errorMessage = 'Failed to create account'
         
@@ -158,7 +152,7 @@ export default {
       try {
         this.isLoading = true
         await loginWithGoogle()
-        this.router.push('/')
+        this.$router.push('/')
       } catch (error) {
         this.setError('Failed to sign up with Google')
         console.error(error)
