@@ -1,6 +1,6 @@
 <template>
-  <div class="container mx-auto px-4 my-20">
-    <h2 class="text-5xl font-bold text-center my-20">How does it work</h2>
+  <div class="container mx-auto px-4 my-30">
+    <h2 class="text-4xl font-bold text-center my-20">How does it work</h2>
     <div class="grid grid-cols-2 lg:grid-cols-4 w-[80%] mx-auto gap-8">
       <div class="text-center" v-for="(work, i) in works" :key="i">
         <img :src="work.img" :alt="work.title" class="mx-auto mb-4 w-[125px] h-[125px]" />

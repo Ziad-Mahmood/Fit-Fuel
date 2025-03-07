@@ -1,15 +1,10 @@
 <template>
   <div class="menu-section">
-    <!-- <div class="menu-header h-[300px] relative bg-amber-300">
-      <h2
-        class="menu-info text-4xl font-bold absolute bottom-[35%] right-[20%]"
-      >
-        Menu
-      </h2>
-    </div> -->
     <Header title="Menu" bgImage="menu-banner.png" position="right" />
     <div class="w-[80%] m-auto">
-      <div class="menu-filter my-10 flex flex-col md:flex-row items-center gap-10 ml-5">
+      <div
+        class="menu-filter my-10 flex flex-col md:flex-row md:items-center  gap-5 md:gap-0 md:justify-between ml-5"
+      >
         <div class="form-group flex md:gap-5 items-center">
           <label for="search">Search for meals</label>
           <div
@@ -18,24 +13,36 @@
             <input
               type="search"
               placeholder="Search"
-              class="search-input text-sm w-[100%] py-1"
+              class="search-input text-sm w-[90%] py-1"
               id="search"
+              v-model="search"
+              @input="searchMeal"
             />
             <i class="fa-solid fa-magnifying-glass text-[#3d3d3d]"></i>
           </div>
         </div>
         <div class="form-group flex gap-3 items-center">
-          <label for="search">Filter By </label>
-          <select class="border rounded w-[200px] px-5 py-2 border-[#E0E0E0]">
-            <option value="" v-for="(category, i) in categories" :key="i">
+          <!-- <label for="category">Filter By </label> -->
+          <select
+            class="border rounded w-[100%] md:w-[200px] px-5 py-2 border-[#E0E0E0]"
+            v-model="selectedCategory"
+            @change="filterByCategory"
+          >
+            <option value="">All Categories</option>
+            <option
+              v-for="(category, i) in categories"
+              :key="i"
+              :value="category"
+            >
               {{ category }}
             </option>
           </select>
         </div>
       </div>
+
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
         <MealCard
-          v-for="meal in meals"
+          v-for="meal in renderMeals"
           :key="meal.id"
           :meal="meal"
           class="mx-auto w-full"
@@ -43,17 +50,32 @@
       </div>
 
       <div class="flex justify-center mt-8 space-x-2">
-        <button class="px-4 py-2 border border-[#E0E0E0] rounded-sm text-[#339e3f] hover:cursor-pointer">«</button>
+        <button
+          @click="prev"
+          class="px-4 py-2 border border-[#E0E0E0] rounded-sm text-[#339e3f] cursor-pointer"
+        >
+          «
+        </button>
 
         <button
           v-for="page in totalPages"
           :key="page"
-          class="px-4 py-2 border border-[#E0E0E0] rounded-sm text-[#339e3f] hover:cursor-pointer"
+          @click="goToPage(page)"
+          :class="
+            currentPage === page
+              ? 'bg-[#339e3f] px-4 py-2 border border-[#E0E0E0] rounded-sm text-[#fff] cursor-pointer hover:bg-[#2b843a]'
+              : 'px-4 py-2 border border-[#E0E0E0] rounded-sm text-[#339e3f] cursor-pointer'
+          "
         >
           {{ page }}
         </button>
 
-        <button @click="nextPage" class="px-4 py-2 border border-[#E0E0E0] rounded-sm text-[#339e3f] hover:cursor-pointer">»</button>
+        <button
+          @click="next"
+          class="px-4 py-2 border border-[#E0E0E0] rounded-sm text-[#339e3f] cursor-pointer"
+        >
+          »
+        </button>
       </div>
     </div>
   </div>
@@ -61,58 +83,16 @@
 
 <script>
 import MealCard from "./HomePage/MealCard.vue";
-import meal8Image from "@/assets/images/meal8.jpg";
-import meal7Image from "@/assets/images/meal7.jpg";
-import meal9Image from "@/assets/images/meal9.jpg";
-import meal6Image from "@/assets/images/meal6.jpg";
-import meal5Image from "@/assets/images/meal5.jpg";
-import meal4Image from "@/assets/images/meal4.jpg";
 import Header from "./layout/Header.vue";
+import { db, collection, getDocs } from "@/firebase/config.js";
 
 export default {
   components: { MealCard, Header },
   data() {
     return {
-      meals: [
-        {
-          name: "Steak",
-          price: "120 EG",
-          category: "Dinner",
-          image: meal8Image,
-        },
-        {
-          name: "Egg Sandwich",
-          price: "120 EG",
-          category: "Breakfast",
-          image: meal7Image,
-        },
-        {
-          name: "Grilled Chicken",
-          price: "120 EG",
-          category: "Lunch",
-          image: meal9Image,
-        },
-        {
-          name: "Grilled Meat",
-          price: "150EG",
-          category: "Dinner",
-          image: meal6Image,
-        },
-        {
-          name: "Cauliflower Salad",
-          price: "150EG",
-          category: "Brealfast",
-          image: meal5Image,
-        },
-        {
-          name: "Salmon",
-          price: "150EG",
-          category: "Lunch",
-          image: meal4Image,
-        },
-      ],
+      meals: [],
+      filteredMeals: [],
       categories: [
-        "All Categories",
         "Breakfast",
         "Lunch",
         "Dinner",
@@ -120,8 +100,74 @@ export default {
         "Desserts",
         "Drinks",
       ],
-      totalPages: [1, 2, 3],
+      pageMealsNum: 6,
+      currentPage: 1,
+      search: "",
+      selectedCategory: "",
     };
+  },
+  methods: {
+    async getMeals() {
+      const mealsCollection = collection(db, "meals");
+      const allMeals = await getDocs(mealsCollection);
+      allMeals.forEach((meal) => {
+        this.meals.push({
+          id: meal.id,
+          ...meal.data(),
+        });
+      });
+      this.filteredMeals = this.meals;
+      console.log(this.filteredMeals);
+    },
+
+    prev() {
+      if (this.currentPage > 1) {
+        this.currentPage--;
+      }
+    },
+
+    next() {
+      if (this.currentPage < this.totalPages) {
+        this.currentPage++;
+      }
+    },
+
+    goToPage(page) {
+      this.currentPage = page;
+    },
+
+    searchMeal() {
+      this.filteredMeals = this.meals.filter((meal) =>
+        meal.name.toLowerCase().includes(this.search.toLowerCase())
+      );
+      this.currentPage = 1;
+    },
+
+    filterByCategory() {
+      if (this.selectedCategory === "") {
+        this.filteredMeals = this.meals;
+      } else {
+        this.filteredMeals = this.meals.filter(
+          (meal) => meal.category === this.selectedCategory
+        );
+      }
+      this.currentPage = 1;
+    },
+  },
+  computed: {
+    totalPages() {
+      return Math.ceil(this.filteredMeals.length / this.pageMealsNum);
+    },
+
+    renderMeals() {
+      return this.filteredMeals.slice(
+        (this.currentPage - 1) * this.pageMealsNum,
+        this.currentPage * this.pageMealsNum
+      );
+    },
+  },
+  mounted() {
+    this.getMeals();
   },
 };
 </script>
