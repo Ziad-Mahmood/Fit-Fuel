@@ -5,13 +5,23 @@
         v-for="(category, i) in categories"
         :key="i"
         @click="filterMeals(category)"
-        :class="seletedCategory === category ? 'btn py-2 px-5' : 'btn-outline py-2 px-5'"
+        :class="
+          seletedCategory === category
+            ? 'btn py-2 px-5'
+            : 'btn-outline py-2 px-5'
+        "
       >
         {{ category }}
       </button>
     </div>
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 m-auto w-[80%]">
-      <div class="card flex justify-center" v-for="(meal, i) in filterAllMeals" :key="i">
+    <div
+      class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 m-auto w-[80%]"
+    >
+      <div
+        class="card flex justify-center"
+        v-for="(meal, i) in filterAllMeals"
+        :key="i"
+      >
         <MealCard :meal="meal" />
       </div>
     </div>
@@ -19,85 +29,56 @@
 </template>
 
 <script>
-import MealCard from './MealCard.vue'
-import mealImage from '@/assets/images/meal.jpg';
-import meal2Image from '@/assets/images/meal2.jpg';
-import meal3Image from '@/assets/images/meal3.jpg';
-import meal10Image from '@/assets/images/meal10.jpg';
+import MealCard from "./MealCard.vue";
+import { db, collection, getDocs } from "@/firebase/config.js";
 
 export default {
-  name: 'HomeCategory',
+  name: "HomeCategory",
   components: {
     MealCard,
   },
   data() {
     return {
-      categories: ['Breakfast', 'Lunch', 'Dinner', 'Salads', 'Desserts', 'Drinks'],
-      seletedCategory: 'Breakfast',
-      meals: [
-        {
-          name: 'Strawberry Salad',
-          price: '120 EG',
-          category: 'Breakfast',
-          image: mealImage,
-        },
-        {
-          name: 'Strawberry Salad',
-          price: '120 EG',
-          category: 'Salads',
-          image: mealImage,
-        },
-        {
-          name: 'Oat Meal',
-          price: '120 EG',
-          category: 'Breakfast',
-          image: meal3Image,
-        },
-        {
-          name: 'Avocado Sandwich',
-          price: '120 EG',
-          category: 'Breakfast',
-          image: meal2Image,
-        },
-        {
-          name: 'Grilled Chicken',
-          price: '150EG',
-          category: 'Dinner',
-          image: mealImage,
-        },
-        {
-          name: 'Grilled Chicken',
-          price: '150EG',
-          category: 'Lunch',
-          image: meal10Image,
-        },
-        {
-          name: 'Chocolate Cake',
-          price: '100EG',
-          category: 'Desserts',
-          image: mealImage,
-        },
-        {
-          name: 'Fresh Orange Juice',
-          price: '50EG',
-          category: 'Drinks',
-          image: mealImage,
-        },
+      categories: [
+        "Breakfast",
+        "Lunch",
+        "Dinner",
+        "Salads",
+        "Desserts",
+        "Drinks",
       ],
-    }
+      seletedCategory: "Breakfast",
+      meals: [],
+    };
   },
   methods: {
     filterMeals(category) {
-      this.seletedCategory = category
-      console.log(this.seletedCategory)
+      this.seletedCategory = category;
+      console.log(this.seletedCategory);
+    },
+    async getMeals() {
+      const mealsCollection = collection(db, "meals");
+      const allMeals = await getDocs(mealsCollection);
+      allMeals.forEach((meal) => {
+        this.meals.push({
+          id: meal.id,
+          ...meal.data(),
+        });
+      });
+      console.log(this.meals);
     },
   },
   computed: {
     filterAllMeals() {
-      return this.meals.filter((meal) => meal.category === this.seletedCategory)
+      return this.meals
+        .filter((meal) => meal.category === this.seletedCategory)
+        .splice(0, 3);
     },
   },
-}
+  mounted() {
+    this.getMeals();
+  },
+};
 </script>
 
 <style scoped></style>
