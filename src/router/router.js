@@ -56,6 +56,12 @@ const router = createRouter({
       component: MealDetails,
     },
     {
+      path: '/meal/:id',
+      name: 'mealDetails',
+      component: MealDetails,
+      props: true
+    },
+    {
       path: "/checkout",
       name: "checkout",
       component: CheckoutView,

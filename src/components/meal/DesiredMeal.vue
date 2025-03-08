@@ -1,91 +1,95 @@
 <template>
-  <div class="flex flex-col gap-6 py-10  border-b border-[#339e3f]">
+  <div class="flex flex-col gap-6 py-10 border-b border-[#339e3f]">
     <div class="flex flex-col md:flex-row justify-between items-start">
-      <h1 class="text-[32px] font-bold text-[#191919]">{{ name }}</h1>
+      <h1 class="text-[32px] font-bold text-[#191919]">{{ meal.name }}</h1>
       <div class="flex items-center gap-1">
-        <span class=" text-[14px] text-gray-600">Category:</span>
-        <span class="text-[14px] text-[#339e3f]">{{ category }}</span>
+        <span class="text-[14px] text-gray-600">Category:</span>
+        <span class="text-[14px] text-[#339e3f]">{{ meal.category }}</span>
       </div>
     </div>
 
-    <p class="text-[14px] text-gray-600 leading-6 border-b border-[#339e3f] py-4">{{ description }}</p>
-<div class="flex flex-col md:flex-row  justify-between" >
-    <h2 class="text-[28px] font-bold text-[#191919]">{{ price }} EG</h2>
+    <p class="text-[14px] text-gray-600 leading-6 border-b border-[#339e3f] py-4">
+      {{ meal.description }}
+    </p>
 
-    <div class="flex items-center gap-1">
-      <button
-        @click="decreaseQuantity"
-        class="w-10 h-10 border border-gray-200 rounded grid place-items-center text-gray-600 hover:bg-gray-50"
-      >
-        -
-      </button>
-      <div
-        class="w-10 h-10 border border-gray-200 rounded grid place-items-center"
-      >
-        {{ quantity }}
+    <div class="flex flex-col md:flex-row justify-between">
+      <h2 class="text-[28px] font-bold text-[#191919]">{{ totalPrice }} EG</h2>
+      <div class="flex items-center gap-1">
+        <button
+          @click="decreaseQuantity"
+          class="w-10 h-10 border border-gray-200 rounded grid place-items-center text-gray-600 hover:bg-gray-50"
+        >
+          -
+        </button>
+        <div class="w-10 h-10 border border-gray-200 rounded grid place-items-center">
+          {{ quantity }}
+        </div>
+        <button
+          @click="increaseQuantity"
+          class="w-10 h-10 border border-gray-200 rounded grid place-items-center text-gray-600 hover:bg-gray-50"
+        >
+          +
+        </button>
       </div>
-      <button
-        @click="increaseQuantity"
-        class="w-10 h-10 border border-gray-200 rounded grid place-items-center text-gray-600 hover:bg-gray-50"
-      >
-        +
-      </button>
     </div>
-    </div>
-    <router-link to="/cart">
-      <button
-      @click="addToCart"
-      class="btn py-3 w-full"
-    >
+    <button @click="handleAddToCart" class="btn py-3 w-full">
       Add to cart
     </button>
-    </router-link>
-    
   </div>
 </template>
 
 <script>
+import { mapActions } from 'vuex'
+
 export default {
   name: "DesiredMeal",
   props: {
-    name: {
-      type: String,
-      required: true,
-    },
-    category: {
-      type: String,
-      required: true,
-    },
-    price: {
-      type: [String, Number],
-      required: true,
-    },
-    description: {
-      type: String,
-      required: true,
-    },
+    meal: {
+      type: Object,
+      required: true
+    }
   },
   data() {
     return {
-      quantity: 1,
-    };
+      quantity: 1
+    }
   },
   methods: {
+    ...mapActions('cart', ['addToCart', 'loadCart']),
     increaseQuantity() {
-      this.quantity++;
+      this.quantity++
     },
     decreaseQuantity() {
       if (this.quantity > 1) {
-        this.quantity--;
+        this.quantity--
       }
     },
-    addToCart() {
-      this.$emit("add-to-cart", {
-        name: this.name,
-        price: this.price,
-        quantity: this.quantity,
-      });
-    },
+    async handleAddToCart() {
+      try {
+        this.isAdding = true
+        const cartItem = {
+          name: this.meal.name,
+          price: Number(this.meal.price),
+          image: this.meal.image,
+          category: this.meal.category,
+          quantity: this.quantity,
+          total: this.totalPrice
+        }
+        
+        await this.addToCart({ id: this.meal.id, item: cartItem })
+        await this.loadCart()
+        this.$router.push('/cart')
+      } catch (error) {
+        console.error('Error adding to cart:', error)
+      } finally {
+        this.isAdding = false
+      }
+    }
+},
+  computed: {
+    totalPrice() {
+      return this.meal.price * this.quantity
+    }
   },
-};
+}
 </script>

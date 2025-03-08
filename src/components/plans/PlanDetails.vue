@@ -57,23 +57,27 @@ export default {
   },
   methods: {
     ...mapActions('cart', ['addToCart']),
-    addPlanToCart() {
+    async addPlanToCart() {
+      const planId = `plan-${this.planType.toLowerCase()}`
       const planItem = {
-        id: `plan-${this.planType.toLowerCase()}`,
         name: `${this.planType} Plan`,
-        price: parseInt(this.price),
-        quantity: 1,
+        price: Number(this.price),
         image: this.planImage,
-        total: parseInt(this.price), 
-        type: 'plan',
+        category: 'Plan',
+        quantity: 1,
+        total: Number(this.price),
         details: {
           subtitle: this.subtitle,
           mealTypes: this.mealTypes
         }
       }
       
-      this.addToCart(planItem)
-      this.$router.push('/cart')
+      try {
+        await this.addToCart({ id: planId, item: planItem })
+        this.$router.push('/cart')
+      } catch (error) {
+        console.error('Error adding plan to cart:', error)
+      }
     }
   }
 }
