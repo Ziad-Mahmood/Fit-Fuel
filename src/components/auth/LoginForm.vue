@@ -1,5 +1,9 @@
 <template>
   <form @submit.prevent="handleSubmit" class="flex flex-col gap-4 md:gap-6">
+    <div v-if="error" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
+      {{ error }}
+    </div>
+    
     <FormInput
       v-model="email"
       label="Email Address"
@@ -28,11 +32,26 @@
         />
         <label class="text-xs md:text-sm text-slate-600 font-['Plus Jakarta Sans']">Remember me</label>
       </div>
-      <a href="#" class="text-xs md:text-sm text-[#339E3F] hover:text-[#2b843a] font-['Plus Jakarta Sans']">Forgot Password?</a>
+      <a href="#" @click.prevent="handleForgotPassword" class="text-xs md:text-sm text-[#339E3F] hover:text-[#2b843a] font-['Plus Jakarta Sans']">Forgot Password?</a>
     </div>
-    <router-link to="/">
+    
     <button type="submit" class="w-full py-2 md:py-3 btn">Sign In</button>
-    </router-link>
+    
+    <div class="relative flex items-center justify-center w-full my-2">
+      <hr class="w-full border-t border-gray-300" />
+      <span class="px-2 text-xs md:text-sm text-gray-500 bg-white">OR</span>
+      <hr class="w-full border-t border-gray-300" />
+    </div>
+    
+    <button 
+      type="button" 
+      @click="handleGoogleSignIn" 
+      class="w-full flex justify-center items-center gap-2 py-2 md:py-3 border border-slate-300 rounded-full text-slate-700 hover:bg-slate-50"
+    >
+      <img src="@/assets/images/google.png" alt="Google" class="w-5 h-5" />
+      <span>Sign in with Google</span>
+    </button>
+    
     <p class="text-center text-xs md:text-sm text-slate-600 font-['Plus Jakarta Sans']">
       Don't have an account? 
       <router-link to="/register" class="text-[#339E3F] hover:text-[#2b843a]">Sign Up</router-link>
@@ -42,21 +61,85 @@
 
 <script>
 import FormInput from '@/components/auth/FormInput.vue'
-
+import { loginWithEmail, loginWithGoogle, resetPassword } from '@/firebase/auth'
 
 export default {
   name: 'LoginForm',
   components: {
     FormInput,
-    
   },
   data() {
     return {
       email: '',
       password: '',
       showPassword: false,
-      rememberMe: false
+      rememberMe: false,
+      error: null
+    }
+  },
+  methods: {
+    setError(message) {
+      this.error = message
+      setTimeout(() => {
+        this.error = null
+      }, 5000)
+    },
+    
+    clearError() {
+      this.error = null
+    },
+    
+    async handleSubmit() {
+      this.clearError()
+      
+      if (!this.email || !this.password) {
+        this.setError('Please enter both email and password')
+        return
+      }
+      
+      try {
+        await loginWithEmail(this.email, this.password)
+        this.$router.push('/')
+      } catch (error) {
+        let errorMessage = 'Failed to sign in'
+        
+        if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
+          errorMessage = 'Invalid email or password'
+        }
+        
+        this.setError(errorMessage)
+      } finally {
+        
+      }
+    },
+    
+    async handleGoogleSignIn() {
+      this.clearError()      
+      try {
+        this.isLoading = true
+        await loginWithGoogle()
+        this.$router.push('/')
+      } catch (error) {
+        this.setError('Failed to sign in with Google')
+        console.error(error)
+      } finally {
+      
+      }
+    },
+    
+    async handleForgotPassword() {
+      if (!this.email) {
+        this.setError('Please enter your email address')
+        return
+      }
+      
+      try {
+        await resetPassword(this.email)
+        alert('Password reset email sent. Please check your inbox.')
+      } catch (error) {
+        this.setError('Failed to send password reset email')
+      }
     }
   }
-}
+}  
 </script>
