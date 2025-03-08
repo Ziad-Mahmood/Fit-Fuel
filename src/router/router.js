@@ -105,9 +105,7 @@ const router = createRouter({
       name: "NotFound",
       component: NotFound
     }
-  ]
-  ,
-  
+  ],
 });
 
 export default router;

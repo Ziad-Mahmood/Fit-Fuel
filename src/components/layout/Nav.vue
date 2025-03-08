@@ -2,10 +2,8 @@
   <div
     class="w-full h-20 fixed z-50 flex items-center justify-center transition-all duration-300"
     :class="[
-
       isDashboardRoute ? isScrolled ? 'opacity-0 hover:opacity-80 bg-white':'bg-white shadow-sm' : 
       isScrolled ? 'opacity-0 hover:opacity-80 bg-white' : 'bg-white'
-
     ]"
   >
     <div
@@ -56,10 +54,10 @@
             />
           </button>
           <router-link
-            to="/login"
+            :to="isUserLoggedIn ? '/profile' : '/login'"
             class="hover:opacity-80 transition-opacity"
           >
-            <img src="@/assets/images/user.png" alt="login" class="w-5 h-5" />
+            <img src="@/assets/images/user.png" alt="Profile" class="w-5 h-5" />
           </router-link>
           <router-link to="/cart" class="hover:opacity-80 transition-opacity">
             <img src="@/assets/images/cart.png" alt="Cart" class="w-5 h-5" />
@@ -74,12 +72,12 @@
         </template>
         <template v-else>
           <router-link
-            to="/login"
+            :to="isUserLoggedIn ? '/profile' : '/login'"
             class="hover:opacity-80 transition-opacity"
           >
-            <img src="@/assets/images/user.png" alt="login" class="w-5 h-5" />
+            <img src="@/assets/images/user.png" alt="Profile" class="w-5 h-5" />
           </router-link>
-          <span class="text-[#339e3f] font-bold font-['Poppins']">name</span>
+          <span v-if="isUserLoggedIn && currentUser" class="text-[#339e3f] font-bold font-['Poppins']">{{ currentUser.displayName || 'User' }}</span>
         </template>
       </div>
     </div>
@@ -110,12 +108,17 @@
 </template>
 
 <script>
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth } from '@/firebase/config';
+
 export default {
   name: "Nav",
   data() {
     return {
       isMenuOpen: false,
       isScrolled: false,
+      isUserLoggedIn: false,
+      currentUser: null,
       navLinks: [
         { path: "/", name: "Home" },
         { path: "/menu", name: "Menu" },
@@ -133,9 +136,18 @@ export default {
   },
   mounted() {
     window.addEventListener("scroll", this.handleScroll);
+    
+    this.unsubscribe = onAuthStateChanged(auth, (user) => {
+      this.isUserLoggedIn = !!user;
+      this.currentUser = user;
+    });
   },
   unmounted() {
     window.removeEventListener("scroll", this.handleScroll);
+    
+    if (this.unsubscribe) {
+      this.unsubscribe();
+    }
   },
   methods: {
     toggleMenu() {
