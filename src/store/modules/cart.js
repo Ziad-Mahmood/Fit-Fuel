@@ -76,20 +76,20 @@ export default {
       }
     },
 
-    async updateCartItem({ commit }, { id, item }) {
+    updateCartItem({ commit }, { id, item }) {
       try {
         const mealDoc = doc(db, "cart", id);
-        await setDoc(mealDoc, item);
+        setDoc(mealDoc, item);
         commit("UPDATE_CART_ITEM", { id, item });
       } catch (error) {
         console.error("Error updating cart:", error);
       }
     },
 
-    async removeFromCart({ commit }, id) {
+    removeFromCart({ commit }, id) {
       try {
         const mealDoc = doc(db, "cart", id);
-        await deleteDoc(mealDoc);
+        deleteDoc(mealDoc);
         commit("REMOVE_FROM_CART", id);
       } catch (error) {
         console.error("Error removing from cart:", error);
