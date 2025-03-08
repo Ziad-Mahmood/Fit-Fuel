@@ -1,5 +1,5 @@
 <template>
-  <div class="flex  justify-around bg-white rounded-lg p-8">
+  <div class="flex justify-around bg-white rounded-lg p-8">
     <img :src="planImage" alt="Plan meals" class="w-4/12 rounded-lg object-cover hidden lg:block" />
     <div class="w-6/12">
       <h2 class="text-3xl font-bold text-[#191919] mb-2">{{ planType }} Plan</h2>
@@ -20,17 +20,17 @@
 
       <div class="mt-8 flex flex-col md:flex-row items-center justify-start gap-10">
         <p class="text-2xl font-bold text-[#339e3f]">{{ price }} EG</p>
-        <router-link to="/cart">
-        <button class=" px-6 py-2 btn">
+        <button @click="addPlanToCart" class="px-6 py-2 btn">
           Subscribe Now
         </button>
-        </router-link>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import { mapActions } from 'vuex'
+
 export default {
   name: 'PlanDetails',
   props: {
@@ -53,6 +53,27 @@ export default {
     mealTypes: {
       type: Object,
       required: true
+    }
+  },
+  methods: {
+    ...mapActions('cart', ['addToCart']),
+    addPlanToCart() {
+      const planItem = {
+        id: `plan-${this.planType.toLowerCase()}`,
+        name: `${this.planType} Plan`,
+        price: parseInt(this.price),
+        quantity: 1,
+        image: this.planImage,
+        total: parseInt(this.price), 
+        type: 'plan',
+        details: {
+          subtitle: this.subtitle,
+          mealTypes: this.mealTypes
+        }
+      }
+      
+      this.addToCart(planItem)
+      this.$router.push('/cart')
     }
   }
 }
