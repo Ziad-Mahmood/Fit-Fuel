@@ -1,4 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
+import { requireAuth, redirectIfAuthenticated, requireRole } from './auth-guard';
+
 
 import LoginView from "@/views/auth/LoginView.vue";
 import HomePage from "@/views/HomePage.vue";
@@ -61,14 +63,28 @@ const router = createRouter({
       component: CheckoutView,
     },
     {
+      path: "/profile",
+      name: "profile",
+      component: ProfileView,
+      beforeEnter: requireAuth
+    },
+    {
       path: "/dashboard/delivery",
       name: "dvrDashboard",
       component: DvrDashboard,
+      beforeEnter: requireRole(['delivery'])
     },
     {
       path: "/dashboard/kitchen",
       name: "kitchenDashboard",
       component: KitchenDashboard,
+      beforeEnter: requireRole(['kitchen'])
+    },
+    {
+      path: "/dashboard/admin",
+      name: "admin",
+      component: AdminDashBoard,
+      beforeEnter: requireRole(['admin'])
     },
     {
       path: "/meal-plans",
@@ -84,16 +100,6 @@ const router = createRouter({
       path: "/contact",
       name: "contact",
       component: ContactView,
-    },
-    {
-      path: "/profile",
-      name: "profile",
-      component: ProfileView,
-    },
-    {
-      path: "/dashboard/admin",
-      name: "admin",
-      component: AdminDashBoard,
     },
     {
       path: "/aboutus",
