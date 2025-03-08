@@ -5,8 +5,12 @@
     </div>
 
     <div v-else-if="userData">
-      <ProfileForm :user="userData" @update:email="updateEmail($event)" @update:phone="userData.phone = $event"
-        @update:address="userData.address = $event" @orders-click="handleOrdersClick" />
+      <ProfileForm 
+      :user="userData" 
+        @update:email="updateEmail($event)" 
+        @update:phone="userData.phone = $event"
+        @update:address="userData.address = $event" 
+        @orders-click="handleOrdersClick" />
 
       <div class="flex justify-center items-center ">
         <button @click="logout"

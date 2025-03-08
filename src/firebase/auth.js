@@ -6,8 +6,8 @@ import {
     signInWithPopup,
     sendPasswordResetEmail
   } from 'firebase/auth';
+  import { auth, db } from './config'; 
   import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
-  import { auth, db } from './config';  // Import auth from config, not from self
   
 
   const DEFAULT_ROLE = 'client';

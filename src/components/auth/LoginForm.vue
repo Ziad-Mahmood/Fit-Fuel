@@ -4,16 +4,28 @@
       {{ error }}
     </div>
 
-    <FormInput v-model="email" label="Email Address" icon-type="email" placeholder="user@gmail.com"
+    <FormInput 
+      v-model="email" 
+      label="Email Address" 
+      icon-type="email" 
+      placeholder="user@gmail.com"
       input-type="email" />
 
-    <FormInput v-model="password" label="Password" icon-type="password" placeholder="********"
-      :input-type="showPassword ? 'text' : 'password'" is-password @toggle-password="showPassword = !showPassword" />
+    <FormInput 
+      v-model="password" 
+      label="Password" 
+      icon-type="password" 
+      placeholder="********"
+      :input-type="showPassword ? 'text' : 'password'" 
+      is-password 
+      @toggle-password="showPassword = !showPassword" />
 
     <!-- Remember Me & Forgot Password -->
     <div class="flex items-center justify-between flex-wrap gap-2">
       <div class="flex items-center gap-2">
-        <input v-model="rememberMe" type="checkbox"
+        <input 
+          v-model="rememberMe" 
+          type="checkbox"
           class="h-3 w-3 md:h-4 md:w-4 text-[#339E3F] border-slate-300 rounded focus:ring-[#339E3F]" />
         <label class="text-xs md:text-sm text-slate-600 font-['Plus Jakarta Sans']">Remember me</label>
       </div>
