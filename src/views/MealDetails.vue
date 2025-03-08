@@ -31,8 +31,11 @@
     <div v-if="activeTab === 'Ingredients'" class="w-[50%] m-auto border-b border-[#339e3f] py-4">
       <IngredientItem 
         v-for="ingredient in meal?.ingredients" 
-        :key="ingredient"
-        :name="ingredient"
+        :key="ingredient.name"
+        :name="ingredient.name"
+        :isCore="isCoreIngredient(ingredient.name)"
+        :isRemoved="ingredient.removed"
+        @toggleIngredient="handleToggleIngredient"
       />
     </div>
     
@@ -57,7 +60,7 @@
 
 <script>
 import { db } from '../firebase/config'
-import { doc, getDoc, collection, query, where, getDocs, limit } from 'firebase/firestore'
+import { doc, getDoc, updateDoc, collection, query, where, getDocs, limit } from 'firebase/firestore'
 import Header from "@/components/layout/Header.vue"
 import MealCard from '../components/HomePage/MealCard.vue'
 import TabSelector from '../components/meal/TabSelector.vue'
@@ -102,7 +105,10 @@ export default {
             id: mealDoc.id,
             ...mealData,
             price: Number(mealData.price),
-            ingredients: mealData.ingredients || this.ingredients,
+            ingredients: (mealData.ingredients || []).map(ing => ({
+              name: typeof ing === 'string' ? ing : ing.name,
+              removed: typeof ing === 'string' ? false : ing.removed || false
+            })),
             nutritionDetails: mealData.nutritionDetails || this.nutritionDetails
           }
           this.fetchSimilarMeals()
@@ -111,6 +117,28 @@ export default {
         console.error('Error fetching meal:', error)
       }
     },
+
+    isCoreIngredient(ingredientName) {
+      return this.meal?.coreIngredients?.includes(ingredientName) || false
+    },
+
+    async handleToggleIngredient({ name, removed }) {
+      try {
+        const updatedIngredients = this.meal.ingredients.map(ing => 
+          ing.name === name ? { ...ing, removed } : ing
+        )
+        
+        const mealRef = doc(db, 'meals', this.meal.id)
+        await updateDoc(mealRef, {
+          ingredients: updatedIngredients
+        })
+        
+        this.meal.ingredients = updatedIngredients
+      } catch (error) {
+        console.error('Error updating ingredient:', error)
+      }
+    },  
+
     async fetchSimilarMeals() {
       if (!this.meal?.category) return
       

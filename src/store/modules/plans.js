@@ -1,6 +1,7 @@
 export default {
   namespaced: true,
   state: {
+    loading: false,
     selectedPlan: 'Monthly',
     plans: {
       Monthly: {
@@ -103,11 +104,21 @@ export default {
   mutations: {
     SET_SELECTED_PLAN(state, plan) {
       state.selectedPlan = plan
+    },
+    SET_LOADING(state, value) {
+      state.loading = value
     }
   },
   actions: {
     selectPlan({ commit }, plan) {
       commit('SET_SELECTED_PLAN', plan)
+    },
+    initializePlansData({ commit }) {
+      commit('SET_LOADING', true)
+      // Since data is already in state, just set loading to false
+      setTimeout(() => {
+        commit('SET_LOADING', false)
+      }, 500)
     }
   },
   getters: {
