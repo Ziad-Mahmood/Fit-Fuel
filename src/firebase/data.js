@@ -569,4 +569,4 @@ async function uploadData() {
     }
 }
 
-// uploadData()
+ uploadData()
