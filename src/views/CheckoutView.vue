@@ -3,7 +3,7 @@
     class="mb-10"
     title="Check Out"
     bgImage="checkout header.png"
-    position="center"
+    position="left"
   />
   <div class="container mx-auto px-4 py-8">
     <div
