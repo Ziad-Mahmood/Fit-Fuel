@@ -57,28 +57,16 @@ export default {
       }
     },
 
-    async clearCart({ commit, state }) {
-      try {
-        if (state.userId) {
-          const userCartRef = doc(db, "users", state.userId, "cart", "items");
-          await setDoc(userCartRef, { items: [] });
-        }
-        commit("CLEAR_CART");
-      } catch (error) {
-        console.error("Error clearing cart:", error);
-      }
-    },
-
     async loadCart({ commit, state }) {
       if (!state.userId) return;
       
       try {
-        const userCartRef = doc(db, "users", state.userId, "cart", "items");
+        const userCartRef = doc(db, "cart", state.userId);
         const cartDoc = await getDoc(userCartRef);
         
         if (cartDoc.exists()) {
-          const items = cartDoc.data().items || [];
-          commit("SET_CART_ITEMS", items);
+          const cartItems = cartDoc.data().cartItems || [];
+          commit("SET_CART_ITEMS", cartItems);
         } else {
           commit("SET_CART_ITEMS", []);
         }
@@ -91,13 +79,25 @@ export default {
       if (!state.userId) return;
       
       try {
-        const userCartRef = doc(db, "users", state.userId, "cart", "items");
+        const userCartRef = doc(db, "cart", state.userId);
         await setDoc(userCartRef, { 
-          items: state.cartItems,
+          cartItems: state.cartItems,
           updatedAt: new Date().toISOString()
         });
       } catch (error) {
         console.error("Error saving cart:", error);
+      }
+    },
+
+    async clearCart({ commit, state }) {
+      try {
+        if (state.userId) {
+          const userCartRef = doc(db, "cart", state.userId);
+          await setDoc(userCartRef, { cartItems: [] });
+        }
+        commit("CLEAR_CART");
+      } catch (error) {
+        console.error("Error clearing cart:", error);
       }
     },
 
