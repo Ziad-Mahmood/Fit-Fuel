@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-screen p-4 md:p-8">
     <div
-      class="mt-17 mb-15 w-full md:max-w-9/12 mx-auto bg-white rounded-2xl shadow-lg overflow-hidden transition-transform hover:scale-[1.02] duration-300"
+      class="mt-17 w-full md:max-w-9/12 mx-auto bg-white rounded-2xl shadow-lg overflow-hidden transition-transform hover:scale-[1.02] duration-300"
     >
       <div
         class="relative h-48 bg-gradient-to-r from-green-500 via-green-200 to-green-500"
@@ -19,7 +19,6 @@
         <div class="text-center mb-8">
           <h1 class="text-2xl font-bold text-gray-800">{{ user.name }}</h1>
           <p class="text-gray-600 mt-1">{{ user.username }}</p>
-          <p class="mt-4 text-gray-700 max-w-lg mx-auto">{{ user.bio }}</p>
         </div>
 
         <div class="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
@@ -146,7 +145,6 @@ export default {
       default: () => ({
         name: "",
         username: "",
-        bio: "",
         profilePicture: "",
         email: "",
         phone: "",

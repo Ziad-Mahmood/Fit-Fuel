@@ -34,6 +34,8 @@
 import TabButton from "@/components/dashboard/TabButton.vue";
 import UsersTable from "@/components/dashboard/UsersTable.vue";
 import Header from "@/components/layout/Header.vue";
+import { collection, query, where, getDocs } from "firebase/firestore";
+import { db } from "@/firebase/config";
 
 export default {
   name: "Dashboard",
@@ -45,69 +47,58 @@ export default {
   data() {
     return {
       activeTab: "users",
-      users: [
-        {
-          id: "123456",
-          name: "user1",
-          phone: "012345678",
-          email: "user1@gmail.com",
-          address: "123 Main Street, Cairo",
-          city: "Cairo",
-        },
-        {
-          id: "123456",
-          name: "user2",
-          phone: "012345678",
-          email: "user2@gmail.com",
-          address: "123 Main Street, Cairo",
-          city: "Cairo",
-        },
-        {
-          id: "123456",
-          name: "user3",
-          phone: "012345678",
-          email: "user3@gmail.com",
-          address: "123 Main Street, Cairo",
-          city: "Cairo",
-        },
-      ],
-      chefs: [
-        {
-          id: "123456",
-          name: "chef",
-          phone: "012345678",
-          email: "chef@gmail.com",
-          address: "123 Main Street, Cairo",
-          city: "Cairo",
-        },
-      ],
-      drivers: [
-        {
-          id: "123456",
-          name: "driver1",
-          phone: "012345678",
-          email: "driver1@gmail.com",
-          address: "123 Main Street, Cairo",
-          city: "Cairo",
-        },
-        {
-          id: "123456",
-          name: "driver2",
-          phone: "012345678",
-          email: "driver2@gmail.com",
-          address: "123 Main Street, Cairo",
-          city: "Cairo",
-        },
-        {
-          id: "123456",
-          name: "driver3",
-          phone: "012345678",
-          email: "driver3@gmail.com",
-          address: "123 Main Street, Cairo",
-          city: "Cairo",
-        },
-      ],
+      users: [],
+      chefs: [],
+      drivers: [],
     };
+  },
+  async created() {
+    await this.fetchAllUsers();
+  },
+  methods: {
+    async fetchAllUsers() {
+      try {
+        // Fetch clients (unchanged)
+        const clientsQuery = query(
+          collection(db, "users"),
+          where("role", "==", "client")
+        );
+        const clientSnapshot = await getDocs(clientsQuery);
+        this.users = clientSnapshot.docs.map((doc) => ({
+          id: doc.id,
+          name: doc.data().displayName || "No Name",
+          ...doc.data(),
+        }));
+
+        // Fetch kitchen staff with phone
+        const chefsQuery = query(
+          collection(db, "users"),
+          where("role", "==", "kitchen")
+        );
+        const chefsSnapshot = await getDocs(chefsQuery);
+        this.chefs = chefsSnapshot.docs.map((doc) => ({
+          id: doc.id,
+          name: doc.data().displayName || "No Name",
+          phone: doc.data().phone || "No Phone Number",
+          ...doc.data(),
+        }));
+
+        // Fetch delivery staff with phone
+        const driversQuery = query(
+          collection(db, "users"),
+          where("role", "==", "delivery")
+        );
+        const driversSnapshot = await getDocs(driversQuery);
+        this.drivers = driversSnapshot.docs.map((doc) => ({
+          id: doc.id,
+          name: doc.data().displayName || "No Name",
+          phone: doc.data().phone || "No Phone Number",
+          ...doc.data(),
+        }));
+      } catch (error) {
+        console.error("Error fetching users:", error);
+      }
+    },
   },
 };
 </script>
