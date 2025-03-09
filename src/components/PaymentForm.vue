@@ -3,7 +3,6 @@
     class="flex flex-col w-full max-w-xl p-8 bg-gray-100 rounded-lg justify-around h-fit"
   >
     <h2 class="text-2xl font-medium text-green-600 mb-12">Payment Methods</h2>
-
     <div class="space-y-6">
       <!-- Payment Options -->
       <div class="space-y-4 flex flex-col justify-evenly">
@@ -21,7 +20,6 @@
             <div class="text-gray-400 text-xs">Pay with cash on delivery</div>
           </label>
         </div>
-
         <div class="flex justify-between">
           <div class="flex items-center gap-3">
             <input
@@ -39,7 +37,6 @@
               </div>
             </label>
           </div>
-
           <!-- Card Icons -->
           <div class="flex justify-end gap-3">
             <img src="../assets/images/visa.png" alt="Visa" class="h-5" />
@@ -61,57 +58,13 @@
         v-if="paymentMethod === 'card'"
         class="space-y-4 flex flex-col justify-evenly"
       >
-        <div class="relative">
-          <input
-            type="text"
-            placeholder="Card number"
-            v-model="cardNumber"
-            class="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded focus:outline-none"
-          />
-          <img
-            src="../assets/images/card.png"
-            alt="Card"
-            class="absolute right-4 top-1/2 transform -translate-y-1/2 w-5 h-5"
-          />
-        </div>
-
-        <div class="grid grid-cols-2 gap-4">
-          <div class="relative">
-            <input
-              type="text"
-              placeholder="MM / YY"
-              v-model="expiry"
-              class="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded focus:outline-none"
-            />
-            <img
-              src="../assets/images/calendar.png"
-              alt="Calendar"
-              class="absolute right-4 top-1/2 transform -translate-y-1/2 w-5 h-5"
-            />
-          </div>
-          <div class="relative">
-            <input
-              type="text"
-              placeholder="CVV"
-              v-model="cvv"
-              class="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded focus:outline-none"
-            />
-            <img
-              src="../assets/images/lockIcon.png"
-              alt="Lock"
-              class="absolute right-4 top-1/2 transform -translate-y-1/2 w-5 h-5"
-            />
-          </div>
-        </div>
+        <!-- Stripe Card Element -->
+        <div id="card-element" ref="cardElement"></div>
       </div>
-
       <!-- Checkout Button -->
       <div class="flex flex-col justify-evenly">
-        <button
-          @click="handleCheckout"
-          class="w-full btn py-3 "
-        >
-          Ckeck Out
+        <button @click="handleCheckout" class="w-full btn py-3">
+          Check Out
         </button>
       </div>
     </div>
@@ -119,31 +72,80 @@
 </template>
 
 <script>
+import { loadStripe } from "@stripe/stripe-js";
+import Swal from "sweetalert2";
+
 export default {
   name: "PaymentForm",
   data() {
     return {
       paymentMethod: "card",
-      cardNumber: "",
-      expiry: "",
-      cvv: "",
+      stripe: null,
+      elements: null,
+      cardElement: null,
     };
   },
+  async mounted() {
+    this.stripe = await loadStripe(
+      "pk_test_51R08Xh2Lp7yP5iY753drEeImaUj7ENYGLzT5FIm41VqC4UWuziYWRIH22x25kCnUe2N1oycyFOuMdTFIh7PRDEU700m0PXVbc5"
+    );
+    this.elements = this.stripe.elements();
+    this.mountCardElement();
+  },
+  watch: {
+    paymentMethod(newMethod) {
+      if (newMethod === "card") {
+        this.$nextTick(() => {
+          this.mountCardElement();
+        });
+      }
+    },
+  },
   methods: {
-    handleCheckout() {
-      // Handle checkout logic here
-      const paymentDetails = {
-        method: this.paymentMethod,
-        card:
-          this.paymentMethod === "card"
-            ? {
-                number: this.cardNumber,
-                expiry: this.expiry,
-                cvv: this.cvv,
-              }
-            : null,
-      };
-      this.$emit("checkout", paymentDetails);
+    mountCardElement() {
+      if (!this.cardElement) {
+        const style = {
+          base: {
+            fontSize: "16px",
+            color: "#32325d",
+          },
+        };
+        this.cardElement = this.elements.create("card", { style });
+      }
+      this.cardElement.mount(this.$refs.cardElement);
+    },
+    async handleCheckout() {
+      if (this.paymentMethod === "card") {
+        try {
+          const { paymentMethod, error } =
+            await this.stripe.createPaymentMethod({
+              type: "card",
+              card: this.cardElement,
+            });
+
+          if (error) {
+            Swal.fire({
+              icon: "error",
+              title: "Oops...",
+              text:"An error occurred while processing your payment. Please try again" + error.message,
+            });
+          } else {
+            this.$emit("checkout", {
+              method: "card",
+              paymentMethod,
+            });
+          }
+        } catch (error) {
+          console.error("Error processing payment:", error);
+          Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "An error occurred while processing your payment. Please try again",
+          });
+        }
+      } else {
+        this.$emit("checkout", { method: "cod" });
+      }
     },
   },
 };

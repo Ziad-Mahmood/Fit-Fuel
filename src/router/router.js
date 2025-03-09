@@ -23,6 +23,7 @@ import ProfileView from "@/views/ProfileView.vue";
 import AdminDashBoard from "@/views/dashboards/AdminDashBoard.vue";
 import AboutUsView from "@/views/AboutUsView.vue";
 import NotFound from "@/views/NotFound.vue";
+import OrderConfirmation from "@/views/OrderConfirmation.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -111,6 +112,10 @@ const router = createRouter({
       path: "/aboutus",
       name: "about us",
       component: AboutUsView,
+    }, {
+      path: "/order-confirmation",
+      name: "OrderConfirmation",
+      component: OrderConfirmation,
     },
     {
       path: "/:pathMatch(.*)*",

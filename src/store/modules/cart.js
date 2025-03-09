@@ -95,6 +95,20 @@ export default {
         console.error("Error removing from cart:", error);
       }
     },
+    async clearCart({ commit }) {
+      try {
+        const cartCollection = collection(db, "cart");
+        const snapshot = await getDocs(cartCollection);
+
+        for (const docSnap of snapshot.docs) {
+          await deleteDoc(doc(cartCollection, docSnap.id));
+        }
+
+        commit("CLEAR_CART");
+      } catch (error) {
+        console.error("Error clearing cart:", error);
+      }
+    },
   },
   getters: {
     cartTotal: (state) => {
