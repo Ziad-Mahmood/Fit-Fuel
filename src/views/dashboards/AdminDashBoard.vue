@@ -34,7 +34,7 @@
 import TabButton from "@/components/dashboard/TabButton.vue";
 import UsersTable from "@/components/dashboard/UsersTable.vue";
 import Header from "@/components/layout/Header.vue";
-import { collection, query, where, getDocs } from "firebase/firestore";
+import { collection, query, where, onSnapshot } from "firebase/firestore";
 import { db } from "@/firebase/config";
 
 export default {
@@ -52,51 +52,108 @@ export default {
       drivers: [],
     };
   },
-  async created() {
-    await this.fetchAllUsers();
+  created() {
+    this.setupUsersListeners();
+  },
+  beforeUnmount() {
+    // Clean up listeners when component is destroyed
+    if (this.unsubscribeUsers) this.unsubscribeUsers();
+    if (this.unsubscribeChefs) this.unsubscribeChefs();
+    if (this.unsubscribeDrivers) this.unsubscribeDrivers();
+  },
+  data() {
+    return {
+      activeTab: "users",
+      users: [],
+      chefs: [],
+      drivers: [],
+      unsubscribeUsers: null,
+      unsubscribeChefs: null,
+      unsubscribeDrivers: null,
+    };
   },
   methods: {
-    async fetchAllUsers() {
+    setupUsersListeners() {
       try {
-        // Fetch clients (unchanged)
+        // Set up real-time listener for clients
         const clientsQuery = query(
           collection(db, "users"),
           where("role", "==", "client")
         );
-        const clientSnapshot = await getDocs(clientsQuery);
-        this.users = clientSnapshot.docs.map((doc) => ({
-          id: doc.id,
-          name: doc.data().displayName || "No Name",
-          ...doc.data(),
-        }));
+        this.unsubscribeUsers = onSnapshot(
+          clientsQuery,
+          (snapshot) => {
+            this.users = snapshot.docs.map((doc) => {
+              const userData = doc.data();
+              return {
+                id: doc.id,
+                name: userData.displayName || "No Name",
+                phone: userData.phone || "No Phone Number",
+                email: userData.email || "No Email",
+                address: userData.address?.street || "No Address",
+                city: userData.address?.city || "No City",
+                ...userData,
+              };
+            });
+          },
+          (error) => {
+            console.error("Error fetching users:", error);
+          }
+        );
 
-        // Fetch kitchen staff with phone
+        // Set up real-time listener for kitchen staff
         const chefsQuery = query(
           collection(db, "users"),
           where("role", "==", "kitchen")
         );
-        const chefsSnapshot = await getDocs(chefsQuery);
-        this.chefs = chefsSnapshot.docs.map((doc) => ({
-          id: doc.id,
-          name: doc.data().displayName || "No Name",
-          phone: doc.data().phone || "No Phone Number",
-          ...doc.data(),
-        }));
+        this.unsubscribeChefs = onSnapshot(
+          chefsQuery,
+          (snapshot) => {
+            this.chefs = snapshot.docs.map((doc) => {
+              const userData = doc.data();
+              return {
+                id: doc.id,
+                name: userData.displayName || "No Name",
+                phone: userData.phone || "No Phone Number",
+                email: userData.email || "No Email",
+                address: userData.address?.street || "No Address",
+                city: userData.address?.city || "No City",
+                ...userData,
+              };
+            });
+          },
+          (error) => {
+            console.error("Error fetching chefs:", error);
+          }
+        );
 
-        // Fetch delivery staff with phone
+        // Set up real-time listener for delivery staff
         const driversQuery = query(
           collection(db, "users"),
           where("role", "==", "delivery")
         );
-        const driversSnapshot = await getDocs(driversQuery);
-        this.drivers = driversSnapshot.docs.map((doc) => ({
-          id: doc.id,
-          name: doc.data().displayName || "No Name",
-          phone: doc.data().phone || "No Phone Number",
-          ...doc.data(),
-        }));
+        this.unsubscribeDrivers = onSnapshot(
+          driversQuery,
+          (snapshot) => {
+            this.drivers = snapshot.docs.map((doc) => {
+              const userData = doc.data();
+              return {
+                id: doc.id,
+                name: userData.displayName || "No Name",
+                phone: userData.phone || "No Phone Number",
+                email: userData.email || "No Email",
+                address: userData.address?.street || "No Address",
+                city: userData.address?.city || "No City",
+                ...userData,
+              };
+            });
+          },
+          (error) => {
+            console.error("Error fetching drivers:", error);
+          }
+        );
       } catch (error) {
-        console.error("Error fetching users:", error);
+        console.error("Error setting up listeners:", error);
       }
     },
   },

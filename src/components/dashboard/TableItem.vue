@@ -2,7 +2,7 @@
   <tr class="border-b border-gray-200 ">
     <td class="px-1 sm:px-6 py-6 text-[#191919]  text-sm sm:text-base text-center ">#{{ item.id }}</td>
     <td class="px-1 sm:px-6 py-6 text-[#191919] text-sm sm:text-base text-center">{{ item.date }}</td>
-    <td class="px-1 sm:px-6 py-6 text-[#191919] text-sm sm:text-base text-center">{{ item.address }}</td>
+    <td class="px-1 sm:px-6 py-6 text-[#191919] text-sm sm:text-base text-center">{{ item.address }} {{ item.city ? ', ' + item.city : '' }}</td>
     <td class="px-1 sm:px-6 py:1 sm:py-6 ">
       <button 
         class=" text-center px-1 sm:px-6 py-1.5 btn lg:w-full mx-auto"

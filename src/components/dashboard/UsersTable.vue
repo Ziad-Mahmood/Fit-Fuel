@@ -21,7 +21,9 @@
         <div class="py-10 break-words">{{ user.name }}</div>
         <div class="py-10 break-words">{{ user.phone }}</div>
         <div class="py-10 break-words">{{ user.email }}</div>
-        <div class="py-10 break-words">{{ user.address }}</div>
+        <div class="py-10 break-words">
+          {{ user.address.street || "No Address" }}
+        </div>
         <div class="py-10 break-words">{{ user.city }}</div>
       </div>
     </div>

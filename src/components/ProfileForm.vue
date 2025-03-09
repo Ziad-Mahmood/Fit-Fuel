@@ -28,14 +28,22 @@
             >
               <h2 class="text-sm font-semibold text-green-500">Email</h2>
               <div class="flex items-center justify-between">
-                <input
-                  v-if="editingEmail"
-                  v-model="editedEmail"
-                  type="email"
-                  class="w-[calc(100%-50px)] text-gray-800 mt-1 p-1 border rounded"
-                  @keyup.enter="saveEmail"
-                />
-                <p v-else class="text-gray-800 mt-1">{{ user.email }}</p>
+                <div class="w-[calc(100%-50px)]">
+                  <input
+                    v-if="editingEmail"
+                    v-model="editedEmail"
+                    type="email"
+                    class="w-full text-gray-800 mt-1 p-1 border rounded"
+                    @keyup.enter="saveEmail"
+                  />
+                  <p
+                    v-if="editingEmail && emailError"
+                    class="text-red-500 text-xs mt-1"
+                  >
+                    {{ emailError }}
+                  </p>
+                  <p v-else class="text-gray-800 mt-1">{{ user.email }}</p>
+                </div>
                 <button
                   @click="editingEmail ? saveEmail() : startEditingEmail()"
                   class="mr-2 px-2 py-1 text-sm text-green-500 hover:text-green-600"
@@ -56,14 +64,22 @@
             >
               <h2 class="text-sm font-semibold text-green-500">Phone</h2>
               <div class="flex items-center justify-between">
-                <input
-                  v-if="editingPhone"
-                  v-model="editedPhone"
-                  type="tel"
-                  class="w-[calc(100%-60px)] text-gray-800 mt-1 p-1 border rounded"
-                  @keyup.enter="savePhone"
-                />
-                <p v-else class="text-gray-800 mt-1">{{ user.phone }}</p>
+                <div class="w-[calc(100%-60px)]">
+                  <input
+                    v-if="editingPhone"
+                    v-model="editedPhone"
+                    type="tel"
+                    class="w-full text-gray-800 mt-1 p-1 border rounded"
+                    @keyup.enter="savePhone"
+                  />
+                  <p
+                    v-if="editingPhone && phoneError"
+                    class="text-red-500 text-xs mt-1"
+                  >
+                    {{ phoneError }}
+                  </p>
+                  <p v-else class="text-gray-800 mt-1">{{ user.phone }}</p>
+                </div>
                 <button
                   @click="editingPhone ? savePhone() : startEditingPhone()"
                   class="mr-2 px-2 py-1 text-sm text-green-500 hover:text-green-600"
@@ -161,6 +177,8 @@ export default {
       editedEmail: "",
       editedPhone: "",
       editedAddress: "",
+      emailError: "",
+      phoneError: "",
     };
   },
   computed: {
@@ -172,22 +190,52 @@ export default {
     startEditingEmail() {
       this.editedEmail = this.user.email;
       this.editingEmail = true;
+      this.emailError = "";
     },
     startEditingPhone() {
       this.editedPhone = this.user.phone;
       this.editingPhone = true;
+      this.phoneError = "";
     },
     startEditingAddress() {
       this.editedAddress = this.user.address;
       this.editingAddress = true;
     },
+    validateEmail(email) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!email) {
+        this.emailError = "Email is required";
+        return false;
+      } else if (!emailRegex.test(email)) {
+        this.emailError = "Please enter a valid email address";
+        return false;
+      }
+      this.emailError = "";
+      return true;
+    },
+    validatePhone(phone) {
+      const phoneRegex = /^\+?[0-9]{11}$/;
+      if (!phone) {
+        this.phoneError = "Phone number is required";
+        return false;
+      } else if (!phoneRegex.test(phone.replace(/\s+/g, ""))) {
+        this.phoneError = "Please enter a valid phone number (11 digits)";
+        return false;
+      }
+      this.phoneError = "";
+      return true;
+    },
     saveEmail() {
-      this.$emit("update:email", this.editedEmail);
-      this.editingEmail = false;
+      if (this.validateEmail(this.editedEmail)) {
+        this.$emit("update:email", this.editedEmail);
+        this.editingEmail = false;
+      }
     },
     savePhone() {
-      this.$emit("update:phone", this.editedPhone);
-      this.editingPhone = false;
+      if (this.validatePhone(this.editedPhone)) {
+        this.$emit("update:phone", this.editedPhone);
+        this.editingPhone = false;
+      }
     },
     saveAddress() {
       this.$emit("update:address", this.editedAddress);
@@ -195,7 +243,6 @@ export default {
     },
     handleOrdersClick() {
       this.$emit("orders-click", this.user.deliveredOrders);
-      console.log("adhjuas");
     },
   },
 };

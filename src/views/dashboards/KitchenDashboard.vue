@@ -5,9 +5,9 @@
       bgImage="header-Kitchen.png"
       position="left"
     />
-    
+
     <div class="container mx-auto px-4 lg:px-8 py-8 lg:py-12">
-      <DashTable 
+      <DashTable
         :items="orders"
         sideImage="sideKitchen.png"
         imageAlt="Kitchen"
@@ -18,49 +18,65 @@
 </template>
 
 <script>
-import Header from '../../components/layout/Header.vue'
-import DashTable from '../../components/dashboard/DashTable.vue'
+import Header from "../../components/layout/Header.vue";
+import DashTable from "../../components/dashboard/DashTable.vue";
+import { collection, query, where, onSnapshot } from "firebase/firestore";
+import { db } from "@/firebase/config";
 
 export default {
-  name: 'KitchenDashboard',
+  name: "KitchenDashboard",
   components: {
     Header,
-    DashTable
+    DashTable,
   },
   data() {
     return {
-      orders: [
-        {
-          id: '123456',
-          date: 'Feb 28, 2025',
-          address: 'Weekly Plan',
-          isComplete: true
-        },
-        {
-          id: '123457',
-          date: 'Feb 28, 2025',
-          address: 'Weekly Plan',
-          isComplete: true
-        },
-        {
-          id: '123458',
-          date: 'Feb 28, 2025',
-          address: 'Weekly Plan',
-          isComplete: true
-        },
-        {
-          id: '123459',
-          date: 'Feb 28, 2025',
-          address: 'Weekly Plan',
-          isComplete: true
-        }
-      ]
-    }
+      orders: [],
+      unsubscribeOrders: null,
+    };
+  },
+  created() {
+    this.setupOrdersListener();
+  },
+  beforeUnmount() {
+    // Clean up listener when component is destroyed
+    if (this.unsubscribeOrders) this.unsubscribeOrders();
   },
   methods: {
+    setupOrdersListener() {
+      try {
+        const ordersQuery = query(
+          collection(db, "orders"),
+          where("status", "==", "pending")
+        );
+        this.unsubscribeOrders = onSnapshot(
+          ordersQuery,
+          (snapshot) => {
+            this.orders = snapshot.docs.map((doc) => {
+              const orderData = doc.data();
+              return {
+                id: doc.id,
+                date: orderData.orderDate
+                  ? new Date(orderData.orderDate.toDate()).toLocaleDateString()
+                  : "No Date",
+                address: orderData.address?.street || "No Address",
+                city: orderData.address?.city || "No City",
+                isComplete: orderData.isComplete || false,
+              };
+            });
+          },
+          (error) => {
+            console.error("Error fetching orders:", error);
+          }
+        );
+      } catch (error) {
+        console.error("Error setting up orders listener:", error);
+      }
+    },
     acceptOrder(orderId) {
-      console.log('Accepted order:', orderId)
-    }
-  }
-}
+      console.log("Accepted order:", orderId);
+      // Here you would update the order status in Firestore
+    },
+  },
+};
 </script>
