@@ -2,7 +2,7 @@
   <div
     class="flex flex-col w-full max-w-xl p-8 bg-gray-100 rounded-lg justify-around h-fit"
   >
-    <h2 class="text-2xl font-medium text-green-600 mb-12">Payment Methods</h2>
+    <h2 class="text-2xl font-medium text-[#339e3f] mb-12">Payment Methods</h2>
     <div class="space-y-6">
       <!-- Payment Options -->
       <div class="space-y-4 flex flex-col justify-evenly">
@@ -13,7 +13,7 @@
             name="payment"
             v-model="paymentMethod"
             value="cod"
-            class="w-4 h-4 text-green-600 border-gray-300 accent-green-600"
+            class="w-4 h-4 text-[#339e3f] border-gray-300 accent-green-600"
           />
           <label for="cod">
             <div class="text-gray-700">Pay on Delivery</div>
@@ -28,7 +28,7 @@
               name="payment"
               v-model="paymentMethod"
               value="card"
-              class="w-4 h-4 text-green-600 border-gray-300 accent-green-600"
+              class="w-4 h-4 text-[#339e3f] border-gray-300 accent-green-600"
             />
             <label for="card">
               <div class="text-gray-700">Credit/Debit Cards</div>
@@ -53,7 +53,6 @@
           </div>
         </div>
       </div>
-      <!-- Card Details -->
       <div
         v-if="paymentMethod === 'card'"
         class="space-y-4 flex flex-col justify-evenly"
@@ -61,7 +60,7 @@
         <!-- Stripe Card Element -->
         <div id="card-element" ref="cardElement"></div>
       </div>
-      <!-- Checkout Button -->
+
       <div class="flex flex-col justify-evenly">
         <button @click="handleCheckout" class="w-full btn py-3">
           Check Out
@@ -127,7 +126,7 @@ export default {
             Swal.fire({
               icon: "error",
               title: "Oops...",
-              text:"An error occurred while processing your payment. Please try again" + error.message,
+              text:error.message,
             });
           } else {
             this.$emit("checkout", {
