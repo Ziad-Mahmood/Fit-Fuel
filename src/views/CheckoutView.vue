@@ -21,6 +21,7 @@ import PaymentForm from "@/components/PaymentForm.vue";
 import Header from "@/components/layout/Header.vue";
 import { loadStripe } from "@stripe/stripe-js";
 import { db, collection, addDoc } from "@/firebase/config.js";
+import { doc, updateDoc } from "firebase/firestore";
 import { mapActions, mapGetters } from "vuex";
 import { auth } from "@/firebase/config.js";
 import Swal from "sweetalert2";
@@ -121,6 +122,10 @@ export default {
           } else {
             order.paymentDetails.paymentIntentId = paymentIntent.id;
             await this.saveOrderToFirebase(order);
+
+            // Update user profile with shipping details
+            await this.updateUserProfile(user.uid, shippingDetails);
+
             Swal.fire({
               icon: "success",
               title: "Order placed successfully",
@@ -157,6 +162,26 @@ export default {
           title: "Oops...",
           text: "Failed to save order, Please try again",
         });
+      }
+    },
+
+    async updateUserProfile(userId, shippingDetails) {
+      try {
+        const userRef = doc(db, "users", userId);
+        await updateDoc(userRef, {
+          address: {
+            street: shippingDetails.address,
+            city: shippingDetails.city,
+            state: shippingDetails.state,
+            postalCode: shippingDetails.postalCode,
+          },
+          phone: shippingDetails.phone,
+        });
+        console.log("User profile updated with shipping details");
+      } catch (error) {
+        console.error("Error updating user profile:", error);
+        // We don't show an error to the user here as this is a background operation
+        // and shouldn't interrupt the checkout flow
       }
     },
   },

@@ -2,8 +2,13 @@
   <div
     class="w-full h-20 fixed z-50 flex items-center justify-center transition-all duration-300"
     :class="[
-      isDashboardRoute ? isScrolled ? 'opacity-0 hover:opacity-80 bg-white':'bg-white shadow-sm' : 
-      isScrolled ? 'opacity-0 hover:opacity-80 bg-white' : 'bg-white'
+      isDashboardRoute
+        ? isScrolled
+          ? 'opacity-0 hover:opacity-80 bg-white'
+          : 'bg-white shadow-sm'
+        : isScrolled
+        ? 'opacity-0 hover:opacity-80 bg-white'
+        : 'bg-white',
     ]"
   >
     <div
@@ -77,7 +82,11 @@
           >
             <img src="@/assets/images/user.png" alt="Profile" class="w-5 h-5" />
           </router-link>
-          <span v-if="isUserLoggedIn && currentUser" class="text-[#339e3f] font-bold font-['Poppins']">{{ currentUser.displayName || 'User' }}</span>
+          <span
+            v-if="isUserLoggedIn && currentUser"
+            class="text-[#339e3f] font-bold font-['Poppins']"
+            >{{ currentUser.displayName || "User" }}</span
+          >
         </template>
       </div>
     </div>
@@ -108,8 +117,9 @@
 </template>
 
 <script>
-import { onAuthStateChanged } from 'firebase/auth';
-import { auth } from '@/firebase/config';
+import { onAuthStateChanged } from "firebase/auth";
+import { auth, db } from "@/firebase/config";
+import { doc, getDoc } from "firebase/firestore";
 
 export default {
   name: "Nav",
@@ -136,15 +146,39 @@ export default {
   },
   mounted() {
     window.addEventListener("scroll", this.handleScroll);
-    
-    this.unsubscribe = onAuthStateChanged(auth, (user) => {
+
+    this.unsubscribe = onAuthStateChanged(auth, async (user) => {
       this.isUserLoggedIn = !!user;
-      this.currentUser = user;
+
+      if (user) {
+        // Fetch the complete user document from Firestore
+        try {
+          const userDocRef = doc(db, "users", user.uid);
+          const userDoc = await getDoc(userDocRef);
+
+          if (userDoc.exists()) {
+            // Combine auth user with Firestore data
+            this.currentUser = {
+              ...user,
+              ...userDoc.data(),
+            };
+          } else {
+            this.currentUser = user;
+          }
+        } catch (error) {
+          console.error("Error fetching user data:", error);
+          this.currentUser = user;
+        }
+      } else {
+        this.currentUser = null;
+      }
     });
+    console.log(`user: ${this.currentUser}`);
+    console.log(`is logged in: ${this.isUserLoggedIn}`);
   },
   unmounted() {
     window.removeEventListener("scroll", this.handleScroll);
-    
+
     if (this.unsubscribe) {
       this.unsubscribe();
     }

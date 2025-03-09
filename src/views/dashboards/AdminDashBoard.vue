@@ -34,6 +34,8 @@
 import TabButton from "@/components/dashboard/TabButton.vue";
 import UsersTable from "@/components/dashboard/UsersTable.vue";
 import Header from "@/components/layout/Header.vue";
+import { collection, query, where, onSnapshot } from "firebase/firestore";
+import { db } from "@/firebase/config";
 
 export default {
   name: "Dashboard",
@@ -45,69 +47,115 @@ export default {
   data() {
     return {
       activeTab: "users",
-      users: [
-        {
-          id: "123456",
-          name: "user1",
-          phone: "012345678",
-          email: "user1@gmail.com",
-          address: "123 Main Street, Cairo",
-          city: "Cairo",
-        },
-        {
-          id: "123456",
-          name: "user2",
-          phone: "012345678",
-          email: "user2@gmail.com",
-          address: "123 Main Street, Cairo",
-          city: "Cairo",
-        },
-        {
-          id: "123456",
-          name: "user3",
-          phone: "012345678",
-          email: "user3@gmail.com",
-          address: "123 Main Street, Cairo",
-          city: "Cairo",
-        },
-      ],
-      chefs: [
-        {
-          id: "123456",
-          name: "chef",
-          phone: "012345678",
-          email: "chef@gmail.com",
-          address: "123 Main Street, Cairo",
-          city: "Cairo",
-        },
-      ],
-      drivers: [
-        {
-          id: "123456",
-          name: "driver1",
-          phone: "012345678",
-          email: "driver1@gmail.com",
-          address: "123 Main Street, Cairo",
-          city: "Cairo",
-        },
-        {
-          id: "123456",
-          name: "driver2",
-          phone: "012345678",
-          email: "driver2@gmail.com",
-          address: "123 Main Street, Cairo",
-          city: "Cairo",
-        },
-        {
-          id: "123456",
-          name: "driver3",
-          phone: "012345678",
-          email: "driver3@gmail.com",
-          address: "123 Main Street, Cairo",
-          city: "Cairo",
-        },
-      ],
+      users: [],
+      chefs: [],
+      drivers: [],
     };
+  },
+  created() {
+    this.setupUsersListeners();
+  },
+  beforeUnmount() {
+    // Clean up listeners when component is destroyed
+    if (this.unsubscribeUsers) this.unsubscribeUsers();
+    if (this.unsubscribeChefs) this.unsubscribeChefs();
+    if (this.unsubscribeDrivers) this.unsubscribeDrivers();
+  },
+  data() {
+    return {
+      activeTab: "users",
+      users: [],
+      chefs: [],
+      drivers: [],
+      unsubscribeUsers: null,
+      unsubscribeChefs: null,
+      unsubscribeDrivers: null,
+    };
+  },
+  methods: {
+    setupUsersListeners() {
+      try {
+        // Set up real-time listener for clients
+        const clientsQuery = query(
+          collection(db, "users"),
+          where("role", "==", "client")
+        );
+        this.unsubscribeUsers = onSnapshot(
+          clientsQuery,
+          (snapshot) => {
+            this.users = snapshot.docs.map((doc) => {
+              const userData = doc.data();
+              return {
+                id: doc.id,
+                name: userData.displayName || "No Name",
+                phone: userData.phone || "No Phone Number",
+                email: userData.email || "No Email",
+                address: userData.address?.street || "No Address",
+                city: userData.address?.city || "No City",
+                ...userData,
+              };
+            });
+          },
+          (error) => {
+            console.error("Error fetching users:", error);
+          }
+        );
+
+        // Set up real-time listener for kitchen staff
+        const chefsQuery = query(
+          collection(db, "users"),
+          where("role", "==", "kitchen")
+        );
+        this.unsubscribeChefs = onSnapshot(
+          chefsQuery,
+          (snapshot) => {
+            this.chefs = snapshot.docs.map((doc) => {
+              const userData = doc.data();
+              return {
+                id: doc.id,
+                name: userData.displayName || "No Name",
+                phone: userData.phone || "No Phone Number",
+                email: userData.email || "No Email",
+                address: userData.address?.street || "No Address",
+                city: userData.address?.city || "No City",
+                ...userData,
+              };
+            });
+          },
+          (error) => {
+            console.error("Error fetching chefs:", error);
+          }
+        );
+
+        // Set up real-time listener for delivery staff
+        const driversQuery = query(
+          collection(db, "users"),
+          where("role", "==", "delivery")
+        );
+        this.unsubscribeDrivers = onSnapshot(
+          driversQuery,
+          (snapshot) => {
+            this.drivers = snapshot.docs.map((doc) => {
+              const userData = doc.data();
+              return {
+                id: doc.id,
+                name: userData.displayName || "No Name",
+                phone: userData.phone || "No Phone Number",
+                email: userData.email || "No Email",
+                address: userData.address?.street || "No Address",
+                city: userData.address?.city || "No City",
+                ...userData,
+              };
+            });
+          },
+          (error) => {
+            console.error("Error fetching drivers:", error);
+          }
+        );
+      } catch (error) {
+        console.error("Error setting up listeners:", error);
+      }
+    },
   },
 };
 </script>

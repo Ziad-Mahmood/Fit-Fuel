@@ -17,12 +17,14 @@
         :key="user.id"
         class="grid grid-cols-6 text-gray-700 border-b border-gray-300 text-center"
       >
-        <div class="py-10">#{{ user.id }}</div>
-        <div class="py-10">{{ user.name }}</div>
-        <div class="py-10">{{ user.phone }}</div>
-        <div class="py-10">{{ user.email }}</div>
-        <div class="py-10">{{ user.address }}</div>
-        <div class="py-10">{{ user.city }}</div>
+        <div class="py-10 break-words">#{{ user.id }}</div>
+        <div class="py-10 break-words">{{ user.name }}</div>
+        <div class="py-10 break-words">{{ user.phone }}</div>
+        <div class="py-10 break-words">{{ user.email }}</div>
+        <div class="py-10 break-words">
+          {{ user.address.street || "No Address" }}
+        </div>
+        <div class="py-10 break-words">{{ user.city }}</div>
       </div>
     </div>
   </div>
