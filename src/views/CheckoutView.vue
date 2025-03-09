@@ -79,7 +79,7 @@ export default {
         paymentDetails,
         items: this.cartItems,
         totalPrice: this.cartTotal,
-        timestamp: new Date().toISOString(),
+        timestamp: new Date().toLocaleDateString(),
       };
 
       if (paymentDetails.method === "cod") {
