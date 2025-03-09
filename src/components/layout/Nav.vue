@@ -75,6 +75,26 @@
             <img src="@/assets/images/menu.png" alt="Menu" class="w-5 h-5" />
           </button>
         </template>
+        <template
+          v-else-if="
+            $route.path.includes('/dashboard/kitchen') ||
+            $route.path.includes('/dashboard/delivery')
+          "
+        >
+          <span
+            v-if="isUserLoggedIn && currentUser"
+            class="text-[#339e3f] font-bold font-['Poppins']"
+            >{{ currentUser.displayName || "User" }}</span
+          >
+          <div class="flex justify-center items-center">
+            <button
+              @click="logout"
+              class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors flex items-center"
+            >
+              <span>Logout</span>
+            </button>
+          </div>
+        </template>
         <template v-else>
           <router-link
             :to="isUserLoggedIn ? '/profile' : '/login'"
@@ -87,6 +107,14 @@
             class="text-[#339e3f] font-bold font-['Poppins']"
             >{{ currentUser.displayName || "User" }}</span
           >
+          <div class="flex justify-center items-center">
+            <button
+              @click="logout"
+              class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors flex items-center"
+            >
+              <span>Logout</span>
+            </button>
+          </div>
         </template>
       </div>
     </div>
