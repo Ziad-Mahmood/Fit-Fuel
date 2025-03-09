@@ -31,11 +31,12 @@
     <div v-if="activeTab === 'Ingredients'" class="w-[50%] m-auto border-b border-[#339e3f] py-4">
       <IngredientItem 
         v-for="ingredient in meal?.ingredients" 
-        :key="ingredient.name"
-        :name="ingredient.name"
-        :isCore="isCoreIngredient(ingredient.name)"
-        :isRemoved="ingredient.removed"
-        @toggleIngredient="handleToggleIngredient"
+        :key="ingredient"
+        :name="ingredient"
+        :is-core="isCoreIngredient(ingredient)"
+        :is-removed="removedIngredients.includes(ingredient)"
+        :show-actions="true"
+        @toggle-ingredient="toggleIngredient"
       />
     </div>
     
@@ -44,6 +45,7 @@
         v-for="detail in nutritionDetails" 
         :key="detail.name"
         :name="`${detail.name}: ${detail.value}`"
+        :show-actions="false"
       />
     </div>
     
@@ -82,6 +84,7 @@ export default {
       currentPage: 1,
       activeTab: 'Ingredients',
       similarMeals: [],
+      removedIngredients: [],
       nutritionDetails: [
         { name: 'Calories', value: '650 kcal' },
         { name: 'Protein', value: '52g' },
@@ -105,12 +108,9 @@ export default {
             id: mealDoc.id,
             ...mealData,
             price: Number(mealData.price),
-            ingredients: (mealData.ingredients || []).map(ing => ({
-              name: typeof ing === 'string' ? ing : ing.name,
-              removed: typeof ing === 'string' ? false : ing.removed || false
-            })),
             nutritionDetails: mealData.nutritionDetails || this.nutritionDetails
           }
+          this.removedIngredients = []
           this.fetchSimilarMeals()
         }
       } catch (error) {
@@ -120,6 +120,14 @@ export default {
 
     isCoreIngredient(ingredientName) {
       return this.meal?.coreIngredients?.includes(ingredientName) || false
+    },
+
+    toggleIngredient(ingredientName) {
+      if (this.removedIngredients.includes(ingredientName)) {
+        this.removedIngredients = this.removedIngredients.filter(ing => ing !== ingredientName)
+      } else {
+        this.removedIngredients.push(ingredientName)
+      }
     },
 
     async handleToggleIngredient({ name, removed }) {

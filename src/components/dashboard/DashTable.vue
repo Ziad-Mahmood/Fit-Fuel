@@ -16,8 +16,9 @@
             v-for="item in items" 
             :key="item.id"
             :item="item"
-            
+            :is-delivery-view="$route.path.includes('delivery')"
             @accept-order="$emit('accept-order', $event)"
+            @mark-ready="$emit('mark-ready', $event)"
           />
         </tbody>
       </table>
@@ -59,6 +60,6 @@ export default {
       return new URL(`../../assets/images/${this.sideImage}`, import.meta.url).href
     }
   },
-  emits: ['accept-order']
+  emits: ['accept-order', 'mark-ready']
 }
 </script>

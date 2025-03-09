@@ -11,6 +11,7 @@
           'text-yellow-600': order.status === 'On Delivery',
           'text-orange-600': order.status === 'Preparing',
           'text-green-600': order.status === 'Delivered',
+          'text-purple-600': order.status === 'Being Delivered'
         }"
         class="text-sm lg:text-base"
       >

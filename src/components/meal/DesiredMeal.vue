@@ -1,7 +1,12 @@
 <template>
   <div class="flex flex-col gap-6 py-10 border-b border-[#339e3f]">
     <div class="flex flex-col md:flex-row justify-between items-start">
-      <h1 class="text-[32px] font-bold text-[#191919]">{{ meal.name }}</h1>
+      <div>
+        <h1 class="text-[32px] font-bold text-[#191919]">{{ meal.name }}</h1>
+        <span v-if="isCustomized" class="text-sm text-purple-600 bg-purple-100 px-2 py-1 rounded-full">
+          Customized
+        </span>
+      </div>
       <div class="flex items-center gap-1">
         <span class="text-[14px] text-gray-600">Category:</span>
         <span class="text-[14px] text-[#339e3f]">{{ meal.category }}</span>
@@ -17,7 +22,7 @@
       <div class="flex items-center gap-1">
         <button
           @click="decreaseQuantity"
-          class="w-10 h-10 border border-gray-200 rounded grid place-items-center text-gray-600 hover:bg-gray-50"
+          class="w-10 h-10 hover:cursor-pointer border border-gray-200 rounded grid place-items-center text-gray-600 hover:bg-gray-50"
         >
           -
         </button>
@@ -26,7 +31,7 @@
         </div>
         <button
           @click="increaseQuantity"
-          class="w-10 h-10 border border-gray-200 rounded grid place-items-center text-gray-600 hover:bg-gray-50"
+          class="w-10 h-10 hover:cursor-pointer  border border-gray-200 rounded grid place-items-center text-gray-600 hover:bg-gray-50"
         >
           +
         </button>
@@ -47,6 +52,10 @@ export default {
     meal: {
       type: Object,
       required: true
+    },
+    removedIngredients: {
+      type: Array,
+      default: () => []
     }
   },
   data() {
@@ -68,12 +77,17 @@ export default {
       try {
         this.isAdding = true
         const cartItem = {
+          id: this.meal.id,
           name: this.meal.name,
           price: Number(this.meal.price),
           image: this.meal.image,
           category: this.meal.category,
           quantity: this.quantity,
-          total: this.totalPrice
+          total: Number(this.meal.price) * this.quantity,
+          removedIngredients: [...this.removedIngredients],
+          isCustomized: this.isCustomized,
+          ingredients: this.meal.ingredients,
+          coreIngredients: this.meal.coreIngredients
         }
         
         await this.addToCart({ id: this.meal.id, item: cartItem })
@@ -89,6 +103,9 @@ export default {
   computed: {
     totalPrice() {
       return this.meal.price * this.quantity
+    },
+    isCustomized() {
+      return this.removedIngredients.length > 0
     }
   },
 }
