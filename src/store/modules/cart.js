@@ -1,18 +1,16 @@
-import { db } from "@/firebase/config";
-import {
-  doc,
-  setDoc,
-  getDocs,
-  deleteDoc,
-  collection,
-} from "firebase/firestore";
+import { db, auth } from "@/firebase/config";
+import { doc, setDoc, getDoc, updateDoc } from "firebase/firestore";
 
 export default {
   namespaced: true,
   state: {
-    cartItems: JSON.parse(localStorage.getItem("cart")) || [],
+    cartItems: [],
+    userId: null
   },
   mutations: {
+    SET_USER_ID(state, id) {
+      state.userId = id;
+    },
     SET_CART_ITEMS(state, items) {
       state.cartItems = items;
       localStorage.setItem("cart", JSON.stringify(items));
@@ -51,64 +49,85 @@ export default {
     },
   },
   actions: {
-    async loadCart({ commit }) {
-      try {
-        const cartCollection = collection(db, "cart");
-        const snapshot = await getDocs(cartCollection);
-        const items = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        commit("SET_CART_ITEMS", items);
-      } catch (error) {
-        console.error("Error loading cart:", error);
-        commit("SET_CART_ITEMS", []);
+    async initializeCart({ commit, dispatch }) {
+      const user = auth.currentUser;
+      if (user) {
+        commit('SET_USER_ID', user.uid);
+        await dispatch('loadCart');
       }
     },
 
-    async addToCart({ commit }, { id, item }) {
+    async clearCart({ commit, state }) {
       try {
-        const mealDoc = doc(db, "cart", id);
-        await setDoc(mealDoc, item);
-        commit("ADD_TO_CART", { id, ...item });
-      } catch (error) {
-        console.error("Error adding to cart:", error);
-      }
-    },
-
-    async updateCartItem({ commit }, { id, item }) {
-      try {
-        const mealDoc = doc(db, "cart", id);
-        await setDoc(mealDoc, item);
-        commit("UPDATE_CART_ITEM", { id, item });
-      } catch (error) {
-        console.error("Error updating cart:", error);
-      }
-    },
-
-    async removeFromCart({ commit }, id) {
-      try {
-        const mealDoc = doc(db, "cart", id);
-        await deleteDoc(mealDoc);
-        commit("REMOVE_FROM_CART", id);
-      } catch (error) {
-        console.error("Error removing from cart:", error);
-      }
-    },
-    async clearCart({ commit }) {
-      try {
-        const cartCollection = collection(db, "cart");
-        const snapshot = await getDocs(cartCollection);
-
-        for (const docSnap of snapshot.docs) {
-          await deleteDoc(doc(cartCollection, docSnap.id));
+        if (state.userId) {
+          const userCartRef = doc(db, "users", state.userId, "cart", "items");
+          await setDoc(userCartRef, { items: [] });
         }
-
         commit("CLEAR_CART");
       } catch (error) {
         console.error("Error clearing cart:", error);
       }
     },
+
+    async loadCart({ commit, state }) {
+      if (!state.userId) return;
+      
+      try {
+        const userCartRef = doc(db, "users", state.userId, "cart", "items");
+        const cartDoc = await getDoc(userCartRef);
+        
+        if (cartDoc.exists()) {
+          const items = cartDoc.data().items || [];
+          commit("SET_CART_ITEMS", items);
+        } else {
+          commit("SET_CART_ITEMS", []);
+        }
+      } catch (error) {
+        console.error("Error loading cart:", error);
+      }
+    },
+
+    async saveCart({ state }) {
+      if (!state.userId) return;
+      
+      try {
+        const userCartRef = doc(db, "users", state.userId, "cart", "items");
+        await setDoc(userCartRef, { 
+          items: state.cartItems,
+          updatedAt: new Date().toISOString()
+        });
+      } catch (error) {
+        console.error("Error saving cart:", error);
+      }
+    },
+
+    async addToCart({ dispatch, commit, state }, { id, item }) {
+      try {
+        const newItem = { id, ...item };
+        commit("ADD_TO_CART", newItem);
+        await dispatch('saveCart');
+      } catch (error) {
+        console.error("Error adding to cart:", error);
+      }
+    },
+
+    async updateCartItem({ dispatch, commit }, { id, item }) {
+      try {
+        commit("UPDATE_CART_ITEM", { id, item });
+        await dispatch('saveCart');
+      } catch (error) {
+        console.error("Error updating cart:", error);
+      }
+    },
+
+    async removeFromCart({ dispatch, commit }, id) {
+      try {
+        commit("REMOVE_FROM_CART", id);
+        await dispatch('saveCart');
+      } catch (error) {
+        console.error("Error removing from cart:", error);
+      }
+    }
   },
   getters: {
     cartTotal: (state) => {
@@ -118,3 +137,4 @@ export default {
     cartItemCount: (state) => state.cartItems.length,
   },
 };
+

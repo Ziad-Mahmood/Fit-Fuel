@@ -80,6 +80,7 @@ export default {
         items: this.cartItems,
         totalPrice: this.cartTotal,
         timestamp: new Date().toISOString(),
+        status: 'Order Placed'
       };
 
       if (paymentDetails.method === "cod") {

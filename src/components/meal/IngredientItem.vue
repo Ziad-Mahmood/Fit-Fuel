@@ -5,26 +5,28 @@
       <span 
         :class="[
           'text-[14px] leading-6',
-          isRemoved ? 'text-red-500 line-through' : 'text-gray-600'
+          isCore ? 'text-gray-600' : isRemoved ? 'text-red-500 line-through' : 'text-gray-600'
         ]"
       >
         {{ name }}
       </span>
     </div>
     <button 
-      v-if="!isCore"
-      @click="toggleIngredient"
+      v-if="!isCore && isUserLoggedIn && showActions"
+      @click="$emit('toggle-ingredient', name)"
       :class="[
-        'px-2 py-1 rounded text-sm',
+        'px-2 py-1 hover:cursor-pointer rounded text-sm',
         isRemoved ? 'text-green-600 hover:text-green-700' : 'text-red-500 hover:text-red-600'
       ]"
     >
-      {{ isRemoved ? 'Restore' : 'Remove' }}
+      {{ isRemoved ? 'Add' : 'Remove' }}
     </button>
   </div>
 </template>
 
 <script>
+import { auth } from '@/firebase/config'
+
 export default {
   name: 'IngredientItem',
   props: {
@@ -39,16 +41,17 @@ export default {
     isRemoved: {
       type: Boolean,
       default: false
+    },
+    showActions: {
+      type: Boolean,
+      default: false
     }
   },
-  emits: ['toggleIngredient'],
-  methods: {
-    toggleIngredient() {
-      this.$emit('toggleIngredient', {
-        name: this.name,
-        removed: !this.isRemoved
-      })
+  computed: {
+    isUserLoggedIn() {
+      return auth.currentUser !== null
     }
-  }
+  },
+  emits: ['toggle-ingredient']
 }
 </script>

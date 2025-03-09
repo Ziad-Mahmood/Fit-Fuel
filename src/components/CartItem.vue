@@ -7,7 +7,15 @@
         :alt="item.name"
         class="w-20 h-20 object-cover rounded-lg"
       />
-      <span class="font-medium text-gray-800 text-center">{{ item.name }}</span>
+      <div class="flex flex-col items-center md:items-start">
+        <span class="font-medium text-gray-800 text-center">{{ item.name }}</span>
+        <span v-if="item.isCustomized" class="text-sm text-purple-600 bg-purple-100 px-2 py-1 rounded-full">
+          Customized
+        </span>
+        <div v-if="item.removedIngredients?.length" class="text-xs text-gray-500 mt-1">
+          Without: {{ item.removedIngredients.join(', ') }}
+        </div>
+      </div>
     </div>
 
     <!-- Price -->
