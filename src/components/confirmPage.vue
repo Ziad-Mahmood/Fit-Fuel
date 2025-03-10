@@ -46,17 +46,30 @@
           </h2>
           <div class="text-gray-700">
             <p>
+              <span class="font-semibold text-[#339e3f]">UserName: </span>
               {{ order.shippingDetails.firstName }}
               {{ order.shippingDetails.lastName }}
             </p>
-            <p>{{ order.shippingDetails.address }}</p>
             <p>
+              <span class="font-semibold text-[#339e3f]">Address: </span>
+              {{ order.shippingDetails.address }}
+            </p>
+            <p>
+              <span class="font-semibold text-[#339e3f]">City: </span>
               {{ order.shippingDetails.city }},
+              <span class="font-semibold text-[#339e3f]">State: </span>
               {{ order.shippingDetails.state }}
+              <span class="font-semibold text-[#339e3f]">PostalCode: </span>
               {{ order.shippingDetails.postalCode }}
             </p>
-            <p>{{ order.shippingDetails.email }}</p>
-            <p>{{ order.shippingDetails.phone }}</p>
+            <p>
+              <span class="font-semibold text-[#339e3f]">Email: </span
+              >{{ order.shippingDetails.email }}
+            </p>
+            <p>
+              <span class="font-semibold text-[#339e3f]">Phone: </span
+              >{{ order.shippingDetails.phone }}
+            </p>
           </div>
         </div>
 
@@ -85,7 +98,6 @@
           >
         </div>
       </div>
-
       <div v-else class="text-center">
         <h2 class="text-xl text-[#339e3f] font-semibold mb-8">
           No orders found for this user.
