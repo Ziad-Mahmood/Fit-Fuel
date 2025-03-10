@@ -78,7 +78,8 @@
         <template
           v-else-if="
             $route.path.includes('/dashboard/kitchen') ||
-            $route.path.includes('/dashboard/delivery')
+            $route.path.includes('/dashboard/delivery') ||
+            $route.path.includes('/dashboard/admin')
           "
         >
           <span
@@ -89,7 +90,7 @@
           <div class="flex justify-center items-center">
             <button
               @click="logout"
-              class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors flex items-center"
+              class="hover:cursor-pointer px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors flex items-center"
             >
               <span>Logout</span>
             </button>
@@ -107,14 +108,6 @@
             class="text-[#339e3f] font-bold font-['Poppins']"
             >{{ currentUser.displayName || "User" }}</span
           >
-          <div class="flex justify-center items-center">
-            <button
-              @click="logout"
-              class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors flex items-center"
-            >
-              <span>Logout</span>
-            </button>
-          </div>
         </template>
       </div>
     </div>
@@ -145,7 +138,7 @@
 </template>
 
 <script>
-import { onAuthStateChanged } from "firebase/auth";
+import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth, db } from "@/firebase/config";
 import { doc, getDoc } from "firebase/firestore";
 
@@ -217,6 +210,14 @@ export default {
     },
     handleScroll() {
       this.isScrolled = window.scrollY > 100;
+    },
+    async logout() {
+      try {
+        await signOut(auth);
+        this.$router.push("/login");
+      } catch (error) {
+        console.error("Error signing out:", error);
+      }
     },
   },
 };
