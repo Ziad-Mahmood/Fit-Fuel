@@ -52,11 +52,7 @@
             class="hover:opacity-80 transition-opacity"
             aria-label="Search"
           >
-            <img
-              src="@/assets/images/search.png"
-              alt="Search"
-              class="w-5 h-5"
-            />
+            
           </button>
           <router-link
             :to="isUserLoggedIn ? '/profile' : '/login'"
