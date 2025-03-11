@@ -81,11 +81,13 @@ export default {
         items: this.cartItems,
         totalPrice: this.cartTotal,
         timestamp: new Date().toISOString(),
-        status: 'Order Placed'
+        status: "Order Placed",
       };
 
       if (paymentDetails.method === "cod") {
         await this.saveOrderToFirebase(order);
+        // Update user profile with shipping details for COD orders too
+        await this.updateUserProfile(user.uid, shippingDetails);
         Swal.fire({
           icon: "success",
           title: "Order placed successfully",
