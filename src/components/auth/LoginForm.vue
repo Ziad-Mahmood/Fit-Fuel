@@ -103,10 +103,7 @@ export default {
 
       try {
         this.isLoading = true
-
         await loginWithEmail(this.email, this.password)
-
-
         this.redirectBasedOnRole()
       } catch (error) {
         let errorMessage = 'Failed to sign in'
@@ -122,7 +119,6 @@ export default {
         this.isLoading = false
       }
     },
-
 
     async handleGoogleSignIn() {
       this.clearError()

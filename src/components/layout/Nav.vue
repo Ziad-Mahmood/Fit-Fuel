@@ -90,7 +90,7 @@
           <div class="flex justify-center items-center">
             <button
               @click="logout"
-              class="hover:cursor-pointer px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors flex items-center"
+              class="btn-logout py-1 px-5 flex items-center"
             >
               <span>Logout</span>
             </button>
