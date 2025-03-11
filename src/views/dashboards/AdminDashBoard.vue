@@ -9,23 +9,117 @@
         @click="activeTab = 'users'"
       />
       <tab-button
-        text="Chefs"
-        :isActive="activeTab === 'chefs'"
-        @click="activeTab = 'chefs'"
+        text="Kitchen Staff"
+        :isActive="activeTab === 'kitchen'"
+        @click="activeTab = 'kitchen'"
       />
       <tab-button
-        text="Drivers"
-        :isActive="activeTab === 'drivers'"
-        @click="activeTab = 'drivers'"
+        text="Delivery Staff"
+        :isActive="activeTab === 'delivery'"
+        @click="activeTab = 'delivery'"
       />
     </div>
 
-    <div
-      class="bg-white p-6 text-xs break-words sm:text-sm sm:break-words md:text-base md:break-normal"
-    >
-      <users-table v-if="activeTab === 'users'" :users="users" />
-      <users-table v-if="activeTab === 'chefs'" :users="chefs" />
-      <users-table v-if="activeTab === 'drivers'" :users="drivers" />
+    <div class="bg-white p-6">
+      <!-- Users Tab Content -->
+      <div v-if="activeTab === 'users'">
+        <users-table :users="users" />
+      </div>
+      
+      <!-- Kitchen Staff Tab Content -->
+      <div v-if="activeTab === 'kitchen'">
+        <div class="mb-4 flex justify-between items-center">
+          <button 
+            @click="showAddStaffModal('kitchen')" 
+            class="bg-[#339E3F] text-white px-4 py-2 rounded hover:bg-[#2b843a]"
+          >
+            Add Kitchen Staff
+          </button>
+        </div>
+        <users-table :users="chefs" />
+      </div>
+      
+      <!-- Delivery Staff Tab Content -->
+      <div v-if="activeTab === 'delivery'">
+        <div class="mb-4 flex justify-between items-center">
+          <button 
+            @click="showAddStaffModal('delivery')" 
+            class="bg-[#339E3F] text-white px-4 py-2 rounded hover:bg-[#2b843a]"
+          >
+            Add Delivery Staff
+          </button>
+        </div>
+        <users-table :users="drivers" />
+      </div>
+    </div>
+
+    <!-- Add Staff Modal -->
+    <div v-if="showModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div class="bg-white rounded-lg p-6 w-full max-w-md">
+        <h2 class="text-lg font-medium mb-4">Add {{ staffRoleText }}</h2>
+        
+        <div v-if="modalError" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+          {{ modalError }}
+        </div>
+        
+        <div class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+            <input 
+              v-model="staffForm.displayName" 
+              type="text" 
+              class="w-full p-2 border rounded focus:ring-[#339E3F] focus:border-[#339E3F]"
+              placeholder="John Doe"
+            />
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+            <input 
+              v-model="staffForm.email" 
+              type="email" 
+              class="w-full p-2 border rounded focus:ring-[#339E3F] focus:border-[#339E3F]"
+              placeholder="staff@example.com"
+            />
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+            <input 
+              v-model="staffForm.password" 
+              type="password" 
+              class="w-full p-2 border rounded focus:ring-[#339E3F] focus:border-[#339E3F]"
+              placeholder="********"
+            />
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Phone Number (Optional)</label>
+            <input 
+              v-model="staffForm.phone" 
+              type="tel" 
+              class="w-full p-2 border rounded focus:ring-[#339E3F] focus:border-[#339E3F]"
+              placeholder="+1 234 567 8900"
+            />
+          </div>
+        </div>
+        
+        <div class="mt-6 flex justify-end space-x-3">
+          <button 
+            @click="closeModal" 
+            class="px-4 py-2 border border-gray-300 rounded text-gray-700 hover:bg-gray-50"
+          >
+            Cancel
+          </button>
+          <button 
+            @click="addStaffAccount" 
+            :disabled="isAddingStaff"
+            class="px-4 py-2 bg-[#339E3F] text-white rounded hover:bg-[#2b843a] disabled:bg-gray-400"
+          >
+            {{ isAddingStaff ? 'Adding...' : 'Add Staff' }}
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -36,9 +130,10 @@ import UsersTable from "@/components/dashboard/UsersTable.vue";
 import Header from "@/components/layout/Header.vue";
 import { collection, query, where, onSnapshot } from "firebase/firestore";
 import { db } from "@/firebase/config";
+import { createStaffAccount } from "@/firebase/auth";
 
 export default {
-  name: "Dashboard",
+  name: "AdminDashboard",
   components: {
     Header,
     TabButton,
@@ -50,7 +145,25 @@ export default {
       users: [],
       chefs: [],
       drivers: [],
+      unsubscribeUsers: null,
+      unsubscribeChefs: null,
+      unsubscribeDrivers: null,
+      showModal: false,
+      staffForm: {
+        displayName: '',
+        email: '',
+        password: '',
+        phone: '',
+        role: ''
+      },
+      isAddingStaff: false,
+      modalError: null
     };
+  },
+  computed: {
+    staffRoleText() {
+      return this.staffForm.role === 'kitchen' ? 'Kitchen Staff' : 'Delivery Staff';
+    }
   },
   created() {
     this.setupUsersListeners();
@@ -60,17 +173,6 @@ export default {
     if (this.unsubscribeUsers) this.unsubscribeUsers();
     if (this.unsubscribeChefs) this.unsubscribeChefs();
     if (this.unsubscribeDrivers) this.unsubscribeDrivers();
-  },
-  data() {
-    return {
-      activeTab: "users",
-      users: [],
-      chefs: [],
-      drivers: [],
-      unsubscribeUsers: null,
-      unsubscribeChefs: null,
-      unsubscribeDrivers: null,
-    };
   },
   methods: {
     setupUsersListeners() {
@@ -156,6 +258,72 @@ export default {
         console.error("Error setting up listeners:", error);
       }
     },
+    
+    showAddStaffModal(role) {
+      this.staffForm = {
+        displayName: '',
+        email: '',
+        password: '',
+        phone: '',
+        role: role
+      };
+      this.modalError = null;
+      this.showModal = true;
+    },
+    
+    closeModal() {
+      this.showModal = false;
+    },
+    
+    async addStaffAccount() {
+      this.modalError = null;
+      
+      // Validate form
+      if (!this.staffForm.displayName) {
+        this.modalError = "Please enter a name";
+        return;
+      }
+      
+      if (!this.staffForm.email) {
+        this.modalError = "Please enter an email";
+        return;
+      }
+      
+      if (!this.staffForm.password || this.staffForm.password.length < 6) {
+        this.modalError = "Password must be at least 6 characters";
+        return;
+      }
+      
+      try {
+        this.isAddingStaff = true;
+        
+        await createStaffAccount(
+          this.staffForm.email,
+          this.staffForm.password,
+          this.staffForm.displayName,
+          this.staffForm.role,
+          this.staffForm.phone
+        );
+        
+        this.closeModal();
+        
+        // Show success message
+        alert(`${this.staffRoleText} account created successfully`);
+      } catch (error) {
+        let errorMessage = `Failed to create ${this.staffRoleText.toLowerCase()} account`;
+        
+        if (error.code === 'auth/email-already-in-use') {
+          errorMessage = "This email is already in use";
+        } else if (error.code === 'auth/invalid-email') {
+          errorMessage = "Invalid email format";
+        }
+        
+        this.modalError = errorMessage;
+        console.error(error);
+      } finally {
+        this.isAddingStaff = false;
+      }
+    }
   },
 };
 </script>

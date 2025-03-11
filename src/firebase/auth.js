@@ -7,11 +7,10 @@ import {
   sendPasswordResetEmail,
   setPersistence,
   browserLocalPersistence,
-  signInAnonymously,
   updateProfile
 } from 'firebase/auth';
 import { auth, db } from './config'; 
-import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc, updateDoc, collection, getDocs, query, where } from 'firebase/firestore';
 
 const DEFAULT_ROLE = 'client';
 
@@ -24,123 +23,19 @@ export const registerWithEmail = async (email, password) => {
   }
 };
 
-export const createStaticUsers = async () => {
-  try {
-    const adminDoc = await getDoc(doc(db, 'users', 'admin'));
-    const kitchenDoc = await getDoc(doc(db, 'users', 'kitchen'));
-    const deliveryDoc = await getDoc(doc(db, 'users', 'delivery'));
-    
-    if (adminDoc.exists() && kitchenDoc.exists() && deliveryDoc.exists()) {
-      console.log('Static users already exist');
-      return;
-    }
-    
-    if (!adminDoc.exists()) {
-      await setDoc(doc(db, 'users', 'admin'), {
-        email: 'admin@example.com',
-        displayName: 'Administrator',
-        role: 'admin',
-        password: 'admin123', 
-        createdAt: new Date()
-      });
-      console.log('Admin user created');
-    }
-    
-    if (!kitchenDoc.exists()) {
-      await setDoc(doc(db, 'users', 'kitchen'), {
-        email: 'kitchen@example.com',
-        displayName: 'Kitchen Staff',
-        role: 'kitchen',
-        password: 'kitchen123', 
-        createdAt: new Date()
-      });
-      console.log('Kitchen user created');
-    }
-    
-    if (!deliveryDoc.exists()) {
-      await setDoc(doc(db, 'users', 'delivery'), {
-        email: 'delivery@example.com',
-        displayName: 'Delivery Staff',
-        role: 'delivery',
-        password: 'delivery123', 
-        createdAt: new Date()
-      });
-      console.log('Delivery user created');
-    }
-  } catch (error) {
-    console.error('Error creating static users:', error);
-  }
-};
-
 export const loginWithEmail = async (email, password) => {
-  const staticUsers = [
-    { email: 'admin@example.com', role: 'admin', id: 'admin' },
-    { email: 'kitchen@example.com', role: 'kitchen', id: 'kitchen' },
-    { email: 'delivery@example.com', role: 'delivery', id: 'delivery' }
-  ];
-  
-  const staticUser = staticUsers.find(user => user.email === email);
-  
-  if (staticUser) {
-    try {
-      const userDoc = await getDoc(doc(db, 'users', staticUser.id));
-      
-      if (userDoc.exists()) {
-        const userData = userDoc.data();
-
-        if (userData.password === password) {
-          // First, sign in anonymously to get a Firebase Auth session
-          await setPersistence(auth, browserLocalPersistence);
-          const anonymousAuth = await signInAnonymously(auth);
-          
-          // Update the profile to match the static user
-          await updateProfile(anonymousAuth.user, {
-            displayName: userData.displayName
-          });
-          
-          // Set role in localStorage
-          localStorage.setItem('userRole', staticUser.role);
-          localStorage.setItem('userId', staticUser.id);
-          localStorage.setItem('userEmail', email);
-          localStorage.setItem('userDisplayName', userData.displayName);
-          localStorage.setItem('isStaticUser', 'true');
-          
-          return {
-            uid: staticUser.id,
-            email: email,
-            displayName: userData.displayName
-          };
-        } else {
-          throw { code: 'auth/wrong-password' };
-        }
-      } else {
-        throw { code: 'auth/user-not-found' };
-      }
-    } catch (error) {
-      throw error;
-    }
-  } else {
-    try {
-      localStorage.removeItem('isStaticUser');
-      await setPersistence(auth, browserLocalPersistence);
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
-
-      await fetchUserRole(userCredential.user);
-      return userCredential.user;
-    } catch (error) {
-      throw error;
-    }
+  try {
+    await setPersistence(auth, browserLocalPersistence);
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    await fetchUserRole(userCredential.user);
+    return userCredential.user;
+  } catch (error) {
+    throw error;
   }
 };
 
 export const fetchUserRole = async (user) => {
   if (!user) return null;
-  
-  // Check if we're dealing with a static user from localStorage
-  const isStaticUser = localStorage.getItem('isStaticUser') === 'true';
-  if (isStaticUser) {
-    return localStorage.getItem('userRole') || DEFAULT_ROLE;
-  }
   
   try {
     const userDoc = await getDoc(doc(db, 'users', user.uid));
@@ -150,7 +45,7 @@ export const fetchUserRole = async (user) => {
       localStorage.setItem('userRole', userData.role || DEFAULT_ROLE);
       localStorage.setItem('userId', user.uid);
       localStorage.setItem('userEmail', user.email);
-      localStorage.setItem('userDisplayName', user.displayName || '');
+      localStorage.setItem('userDisplayName', user.displayName || userData.displayName || '');
       return userData.role || DEFAULT_ROLE;
     } else {
       await setDoc(doc(db, 'users', user.uid), {
@@ -171,10 +66,55 @@ export const fetchUserRole = async (user) => {
   }
 };
 
+// Create staff account (for admin use)
+export const createStaffAccount = async (email, password, displayName, role, phoneNumber = '') => {
+  try {
+    // Check if email already exists
+    const usersRef = collection(db, 'users');
+    const q = query(usersRef, where("email", "==", email));
+    const querySnapshot = await getDocs(q);
+    
+    if (!querySnapshot.empty) {
+      throw { code: 'auth/email-already-in-use' };
+    }
+    
+    // Create the user with Firebase Auth
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    const user = userCredential.user;
+    
+    // Update the user profile
+    await updateProfile(user, {
+      displayName: displayName
+    });
+    
+    // Store additional user data in Firestore
+    await setDoc(doc(db, 'users', user.uid), {
+      email: email,
+      displayName: displayName,
+      role: role,
+      phone: phoneNumber,
+      createdAt: new Date()
+    });
+    
+    // Sign out from the new account so admin stays logged in
+    await signOut(auth);
+    
+    // Re-authenticate the admin (they'll need to re-login)
+    
+    return {
+      uid: user.uid,
+      email: email,
+      displayName: displayName,
+      role: role
+    };
+  } catch (error) {
+    throw error;
+  }
+};
+
 // Login with Google
 export const loginWithGoogle = async () => {
   try {
-    localStorage.removeItem('isStaticUser');
     const provider = new GoogleAuthProvider();
     const result = await signInWithPopup(auth, provider);
     await fetchUserRole(result.user);
@@ -195,22 +135,11 @@ export const logoutUser = async () => {
   localStorage.removeItem('userId');
   localStorage.removeItem('userEmail');
   localStorage.removeItem('userDisplayName');
-  localStorage.removeItem('isStaticUser');
   return signOut(auth);
 };
 
-// Get current user with static user support
+// Get current user
 export const getCurrentUser = () => {
-  const isStaticUser = localStorage.getItem('isStaticUser') === 'true';
-  
-  if (isStaticUser) {
-    return {
-      uid: localStorage.getItem('userId'),
-      email: localStorage.getItem('userEmail'),
-      displayName: localStorage.getItem('userDisplayName')
-    };
-  }
-  
   return auth.currentUser;
 };
 
@@ -226,5 +155,19 @@ export const getUserHomeRoute = (role) => {
     case 'client':
     default:
       return '/';
+  }
+};
+
+// Update user role
+export const updateUserRole = async (userId, newRole) => {
+  try {
+    const userRef = doc(db, 'users', userId);
+    await updateDoc(userRef, {
+      role: newRole
+    });
+    return true;
+  } catch (error) {
+    console.error('Error updating user role:', error);
+    throw error;
   }
 };
