@@ -5,6 +5,11 @@
     <div class="flex flex-col mt-15 mb-10">
       <div class="flex gap-4 justify-center mb-4">
         <tab-button
+          text="Overview"
+          :isActive="activeTab === '' || activeTab === 'overview'"
+          @click="activeTab = 'overview'"
+        />
+        <tab-button
           text="Users"
           :isActive="activeTab === 'users'"
           @click="activeTab = 'users'"
@@ -39,6 +44,19 @@
           Add Delivery Staff
         </button>
       </div>
+    </div>
+
+    <!-- Chart Section -->
+    <div
+      v-if="activeTab === '' || activeTab === 'overview'"
+      class="bg-white p-6 mb-6"
+    >
+      <h2 class="text-xl font-semibold mb-5 text-center">Platform Overview</h2>
+      <AdminChart
+        :users-data="chartUsersData"
+        :orders-data="chartOrdersData"
+        :labels="chartLabels"
+      />
     </div>
 
     <div class="bg-white p-6">
@@ -157,6 +175,7 @@ import TabButton from "@/components/dashboard/TabButton.vue";
 import UsersTable from "@/components/dashboard/UsersTable.vue";
 import Header from "@/components/layout/Header.vue";
 import FormInput from "@/components/auth/FormInput.vue";
+import AdminChart from "@/components/dashboard/AdminChart.vue";
 import {
   collection,
   query,
@@ -164,6 +183,9 @@ import {
   onSnapshot,
   doc,
   updateDoc,
+  getDocs,
+  orderBy,
+  limit,
 } from "firebase/firestore";
 import { db } from "@/firebase/config";
 import { createStaffAccount } from "@/firebase/auth";
@@ -176,18 +198,23 @@ export default {
     TabButton,
     UsersTable,
     FormInput,
+    AdminChart,
   },
   data() {
     return {
-      activeTab: "users",
+      activeTab: "",
       users: [],
       chefs: [],
       drivers: [],
-      unsubscribeUsers: null,
-      unsubscribeChefs: null,
-      unsubscribeDrivers: null,
+      allUsers: [], // Added for chart data
+      deliveredOrders: [],
+      chartLabels: [],
+      chartUsersData: [],
+      chartOrdersData: [],
       showModal: false,
       showPassword: false,
+      isAddingStaff: false,
+      modalError: null,
       staffForm: {
         displayName: "",
         email: "",
@@ -197,8 +224,11 @@ export default {
         city: "",
         role: "",
       },
-      isAddingStaff: false,
-      modalError: null,
+      unsubscribeUsers: null,
+      unsubscribeChefs: null,
+      unsubscribeDrivers: null,
+      unsubscribeOrders: null,
+      unsubscribeChartUsers: null, // Added for chart users listener
     };
   },
   computed: {
@@ -210,11 +240,15 @@ export default {
   },
   created() {
     this.setupUsersListeners();
+    this.fetchChartData();
   },
   beforeUnmount() {
+    // Clean up all listeners
     if (this.unsubscribeUsers) this.unsubscribeUsers();
     if (this.unsubscribeChefs) this.unsubscribeChefs();
     if (this.unsubscribeDrivers) this.unsubscribeDrivers();
+    if (this.unsubscribeOrders) this.unsubscribeOrders();
+    if (this.unsubscribeChartUsers) this.unsubscribeChartUsers();
   },
   methods: {
     setupUsersListeners() {
@@ -296,6 +330,95 @@ export default {
       } catch (error) {
         console.error("Error setting up listeners:", error);
       }
+    },
+
+    async fetchChartData() {
+      try {
+        // Set up listener for client users only
+        const usersQuery = query(
+          collection(db, "users"),
+          where("role", "==", "client")
+        );
+
+        this.unsubscribeChartUsers = onSnapshot(usersQuery, (snapshot) => {
+          this.allUsers = snapshot.docs.map((doc) => {
+            const userData = doc.data();
+            return {
+              id: doc.id,
+              ...userData,
+            };
+          });
+          this.generateChartData();
+        });
+
+        // Set up listener for delivered orders
+        const ordersQuery = query(
+          collection(db, "orders"),
+          where("status", "==", "Delivered")
+        );
+
+        this.unsubscribeOrders = onSnapshot(ordersQuery, (snapshot) => {
+          this.deliveredOrders = snapshot.docs.map((doc) => {
+            const orderData = doc.data();
+            return {
+              id: doc.id,
+              ...orderData,
+            };
+          });
+          this.generateChartData();
+        });
+      } catch (error) {
+        console.error("Error fetching chart data:", error);
+      }
+    },
+
+    generateChartData() {
+      // Generate last 6 months labels
+      const months = [];
+      const usersData = [];
+      const ordersData = [];
+
+      const today = new Date();
+
+      for (let i = 5; i >= 0; i--) {
+        const month = new Date(today.getFullYear(), today.getMonth() - i, 1);
+        const nextMonth = new Date(
+          today.getFullYear(),
+          today.getMonth() - i + 1,
+          0
+        );
+        const monthName = month.toLocaleString("default", { month: "short" });
+        months.push(monthName);
+
+        // Filter users created in this month
+        const monthUsers = this.allUsers.filter((user) => {
+          if (!user.createdAt) return false;
+          const createdDate = user.createdAt.toDate
+            ? user.createdAt.toDate()
+            : new Date(user.createdAt);
+          return createdDate >= month && createdDate <= nextMonth;
+        });
+
+        // Filter orders delivered in this month
+        const monthOrders = this.deliveredOrders.filter((order) => {
+          if (!order.deliveredAt && !order.createdAt) return false;
+          const orderDate = order.deliveredAt
+            ? order.deliveredAt.toDate
+              ? order.deliveredAt.toDate()
+              : new Date(order.deliveredAt)
+            : order.createdAt.toDate
+            ? order.createdAt.toDate()
+            : new Date(order.createdAt);
+          return orderDate >= month && orderDate <= nextMonth;
+        });
+
+        usersData.push(monthUsers.length);
+        ordersData.push(monthOrders.length);
+      }
+
+      this.chartLabels = months;
+      this.chartUsersData = usersData;
+      this.chartOrdersData = ordersData;
     },
 
     showAddStaffModal(role) {
