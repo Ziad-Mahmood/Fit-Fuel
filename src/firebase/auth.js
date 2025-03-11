@@ -66,10 +66,8 @@ export const fetchUserRole = async (user) => {
   }
 };
 
-// Create staff account (for admin use)
-export const createStaffAccount = async (email, password, displayName, role, phoneNumber = '') => {
+export const createStaffAccount = async (email, password, displayName, role, phoneNumber = '', address = '', city = '') => {
   try {
-    // Check if email already exists
     const usersRef = collection(db, 'users');
     const q = query(usersRef, where("email", "==", email));
     const querySnapshot = await getDocs(q);
@@ -78,28 +76,26 @@ export const createStaffAccount = async (email, password, displayName, role, pho
       throw { code: 'auth/email-already-in-use' };
     }
     
-    // Create the user with Firebase Auth
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
     
-    // Update the user profile
     await updateProfile(user, {
       displayName: displayName
     });
     
-    // Store additional user data in Firestore
     await setDoc(doc(db, 'users', user.uid), {
       email: email,
       displayName: displayName,
       role: role,
       phone: phoneNumber,
+      address: {
+        street: address || '',
+        city: city || ''
+      },
       createdAt: new Date()
     });
     
-    // Sign out from the new account so admin stays logged in
     await signOut(auth);
-    
-    // Re-authenticate the admin (they'll need to re-login)
     
     return {
       uid: user.uid,
@@ -168,6 +164,41 @@ export const updateUserRole = async (userId, newRole) => {
     return true;
   } catch (error) {
     console.error('Error updating user role:', error);
+    throw error;
+  }
+};
+
+export const createAdminAccount = async (email, password, displayName = 'Administrator') => {
+  try {
+    const usersRef = collection(db, 'users');
+    const q = query(usersRef, where("role", "==", "admin"));
+    const querySnapshot = await getDocs(q);
+    
+    if (!querySnapshot.empty) {
+      throw { code: 'admin/already-exists', message: 'An admin account already exists' };
+    }
+    
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    const user = userCredential.user;
+    
+    await updateProfile(user, {
+      displayName: displayName
+    });
+    
+    await setDoc(doc(db, 'users', user.uid), {
+      email: email,
+      displayName: displayName,
+      role: 'admin',
+      createdAt: new Date()
+    });
+    
+    return {
+      uid: user.uid,
+      email: email,
+      displayName: displayName,
+      role: 'admin'
+    };
+  } catch (error) {
     throw error;
   }
 };
