@@ -18,6 +18,7 @@
       <DesiredMeal
         class="w-4/12"
         :meal="meal"
+        :removed-ingredients="removedIngredients"
       />
     </div>
       
@@ -130,23 +131,6 @@ export default {
       }
     },
 
-    async handleToggleIngredient({ name, removed }) {
-      try {
-        const updatedIngredients = this.meal.ingredients.map(ing => 
-          ing.name === name ? { ...ing, removed } : ing
-        )
-        
-        const mealRef = doc(db, 'meals', this.meal.id)
-        await updateDoc(mealRef, {
-          ingredients: updatedIngredients
-        })
-        
-        this.meal.ingredients = updatedIngredients
-      } catch (error) {
-        console.error('Error updating ingredient:', error)
-      }
-    },  
-
     async fetchSimilarMeals() {
       if (!this.meal?.category) return
       
@@ -168,6 +152,17 @@ export default {
           }))
       } catch (error) {
         console.error('Error fetching similar meals:', error)
+      }
+    },
+
+    toggleIngredient(ingredientName) {
+      if (!this.isCoreIngredient(ingredientName)) {
+        if (this.removedIngredients.includes(ingredientName)) {
+          this.removedIngredients = this.removedIngredients.filter(ing => ing !== ingredientName)
+        } else {
+          this.removedIngredients.push(ingredientName)
+        }
+        this.isCustomized = this.removedIngredients.length > 0
       }
     }
   },

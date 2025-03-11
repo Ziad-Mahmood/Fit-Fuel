@@ -76,8 +76,8 @@ export default {
                 date: orderData.orderDate
                   ? new Date(orderData.orderDate.toDate()).toLocaleDateString()
                   : "No Date",
-                address: orderData.address?.street || "No Address",
-                city: orderData.address?.city || "No City",
+                address: orderData.address?.city || "No Address",
+                city: orderData.address?.state || "No City",
                 isComplete: orderData.isComplete || false,
               };
             });
