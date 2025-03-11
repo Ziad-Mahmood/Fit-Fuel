@@ -20,21 +20,21 @@
           @click="activeTab = 'delivery'"
         />
       </div>
-      
+
       <!-- Conditional Add Staff Button -->
       <div class="flex justify-end">
-        <button 
+        <button
           v-if="activeTab === 'kitchen'"
-          @click="showAddStaffModal('kitchen')" 
-          class="px-4 py-2 md:py-3 btn"
+          @click="showAddStaffModal('kitchen')"
+          class="px-4 py-2 md:py-3 btn mr-40"
         >
           Add Kitchen Staff
         </button>
-        
-        <button 
+
+        <button
           v-if="activeTab === 'delivery'"
-          @click="showAddStaffModal('delivery')" 
-          class="px-4 py-2 md:py-3 btn"
+          @click="showAddStaffModal('delivery')"
+          class="px-4 py-2 md:py-3 btn mr-40"
         >
           Add Delivery Staff
         </button>
@@ -46,12 +46,12 @@
       <div v-if="activeTab === 'users'">
         <users-table :users="users" />
       </div>
-      
+
       <!-- Kitchen Staff Tab Content -->
       <div v-if="activeTab === 'kitchen'">
         <users-table :users="chefs" />
       </div>
-      
+
       <!-- Delivery Staff Tab Content -->
       <div v-if="activeTab === 'delivery'">
         <users-table :users="drivers" />
@@ -59,14 +59,22 @@
     </div>
 
     <!-- Add Staff Form -->
-    <div v-if="showModal" class="fixed inset-0 flex items-center justify-center z-50">
-      <div class="bg-white rounded-lg p-5 w-full max-w-3xl shadow-lg border border-gray-300">
+    <div
+      v-if="showModal"
+      class="fixed inset-0 flex items-center justify-center z-50"
+    >
+      <div
+        class="bg-white rounded-lg p-5 w-full max-w-3xl shadow-lg border border-gray-300"
+      >
         <h2 class="text-lg font-medium mb-3">Add {{ staffRoleText }}</h2>
-        
-        <div v-if="modalError" class="bg-red-100 border border-red-400 text-red-700 px-3 py-2 rounded mb-3 text-sm">
+
+        <div
+          v-if="modalError"
+          class="bg-red-100 border border-red-400 text-red-700 px-3 py-2 rounded mb-3 text-sm"
+        >
           {{ modalError }}
         </div>
-        
+
         <div class="space-y-3">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
             <FormInput
@@ -75,7 +83,7 @@
               iconType="user"
               placeholder="User Name"
               class="custom-form-input"
-            />      
+            />
             <FormInput
               label="Email"
               v-model="staffForm.email"
@@ -85,7 +93,7 @@
               class="custom-form-input"
             />
           </div>
-          
+
           <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
             <FormInput
               label="Password"
@@ -97,7 +105,7 @@
               @toggle-password="showPassword = !showPassword"
               class="custom-form-input"
             />
-            
+
             <FormInput
               label="Phone"
               v-model="staffForm.phone"
@@ -107,7 +115,7 @@
               class="custom-form-input"
             />
           </div>
-          
+
           <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
             <FormInput
               label="Address"
@@ -116,7 +124,7 @@
               placeholder="123 Main St"
               class="custom-form-input"
             />
-            
+
             <FormInput
               label="City"
               v-model="staffForm.city"
@@ -126,20 +134,17 @@
             />
           </div>
         </div>
-        
+
         <div class="mt-5 flex justify-end space-x-3">
-          <button 
-            @click="closeModal" 
-            class="btn-outline py-3 px-7"
-          >
+          <button @click="closeModal" class="btn-outline py-3 px-7">
             Cancel
           </button>
-          <button 
-            @click="addStaffAccount" 
+          <button
+            @click="addStaffAccount"
             :disabled="isAddingStaff"
             class="btn py-3 px-7"
           >
-            {{ isAddingStaff ? 'Adding...' : 'Add Staff' }}
+            {{ isAddingStaff ? "Adding..." : "Add Staff" }}
           </button>
         </div>
       </div>
@@ -152,10 +157,17 @@ import TabButton from "@/components/dashboard/TabButton.vue";
 import UsersTable from "@/components/dashboard/UsersTable.vue";
 import Header from "@/components/layout/Header.vue";
 import FormInput from "@/components/auth/FormInput.vue";
-import { collection, query, where, onSnapshot, doc, updateDoc } from "firebase/firestore";
+import {
+  collection,
+  query,
+  where,
+  onSnapshot,
+  doc,
+  updateDoc,
+} from "firebase/firestore";
 import { db } from "@/firebase/config";
 import { createStaffAccount } from "@/firebase/auth";
-import Swal from 'sweetalert2'
+import Swal from "sweetalert2";
 
 export default {
   name: "AdminDashboard",
@@ -177,22 +189,24 @@ export default {
       showModal: false,
       showPassword: false,
       staffForm: {
-        displayName: '',
-        email: '',
-        password: '',
-        phone: '',
-        address: '',
-        city: '',
-        role: ''
+        displayName: "",
+        email: "",
+        password: "",
+        phone: "",
+        address: "",
+        city: "",
+        role: "",
       },
       isAddingStaff: false,
-      modalError: null
+      modalError: null,
     };
   },
   computed: {
     staffRoleText() {
-      return this.staffForm.role === 'kitchen' ? 'Kitchen Staff' : 'Delivery Staff';
-    }
+      return this.staffForm.role === "kitchen"
+        ? "Kitchen Staff"
+        : "Delivery Staff";
+    },
   },
   created() {
     this.setupUsersListeners();
@@ -283,47 +297,47 @@ export default {
         console.error("Error setting up listeners:", error);
       }
     },
-    
+
     showAddStaffModal(role) {
       this.staffForm = {
-        displayName: '',
-        email: '',
-        password: '',
-        phone: '',
-        address: '',
-        city: '',
-        role: role
+        displayName: "",
+        email: "",
+        password: "",
+        phone: "",
+        address: "",
+        city: "",
+        role: role,
       };
       this.showPassword = false;
       this.modalError = null;
       this.showModal = true;
     },
-    
+
     closeModal() {
       this.showModal = false;
     },
-    
+
     async addStaffAccount() {
       this.modalError = null;
-      
+
       if (!this.staffForm.displayName) {
         this.modalError = "Please enter a name";
         return;
       }
-      
+
       if (!this.staffForm.email) {
         this.modalError = "Please enter an email";
         return;
       }
-      
+
       if (!this.staffForm.password || this.staffForm.password.length < 6) {
         this.modalError = "Password must be at least 6 characters";
         return;
       }
-      
+
       try {
         this.isAddingStaff = true;
-        
+
         const newUser = await createStaffAccount(
           this.staffForm.email,
           this.staffForm.password,
@@ -333,38 +347,38 @@ export default {
         );
 
         if (this.staffForm.address || this.staffForm.city) {
-          const userRef = doc(db, 'users', newUser.uid);
-          
+          const userRef = doc(db, "users", newUser.uid);
+
           await updateDoc(userRef, {
             address: {
-              street: this.staffForm.address || '',
-              city: this.staffForm.city || ''
-            }
+              street: this.staffForm.address || "",
+              city: this.staffForm.city || "",
+            },
           });
         }
-        
+
         this.closeModal();
 
         Swal.fire({
-  title: "Created Successfully!",
-  icon: "success",
-  draggable: true
-});
+          title: "Created Successfully!",
+          icon: "success",
+          draggable: true,
+        });
       } catch (error) {
         let errorMessage = `Failed to create ${this.staffRoleText.toLowerCase()} account`;
-        
-        if (error.code === 'auth/email-already-in-use') {
+
+        if (error.code === "auth/email-already-in-use") {
           errorMessage = "This email is already in use";
-        } else if (error.code === 'auth/invalid-email') {
+        } else if (error.code === "auth/invalid-email") {
           errorMessage = "Invalid email format";
         }
-        
+
         this.modalError = errorMessage;
         console.error(error);
       } finally {
         this.isAddingStaff = false;
       }
-    }
+    },
   },
 };
 </script>
