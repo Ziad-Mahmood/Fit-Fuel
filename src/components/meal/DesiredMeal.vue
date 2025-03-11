@@ -20,19 +20,15 @@
     <div class="flex flex-col md:flex-row justify-between">
       <h2 class="text-[28px] font-bold text-[#191919]">{{ totalPrice }} EG</h2>
       <div class="flex items-center gap-1">
-        <button
-          @click="decreaseQuantity"
-          class="w-10 h-10 hover:cursor-pointer border border-gray-200 rounded grid place-items-center text-gray-600 hover:bg-gray-50"
-        >
+        <button @click="decreaseQuantity"
+          class="w-10 h-10 hover:cursor-pointer border border-gray-200 rounded grid place-items-center text-gray-600 hover:bg-gray-50">
           -
         </button>
         <div class="w-10 h-10 border border-gray-200 rounded grid place-items-center">
           {{ quantity }}
         </div>
-        <button
-          @click="increaseQuantity"
-          class="w-10 h-10 hover:cursor-pointer  border border-gray-200 rounded grid place-items-center text-gray-600 hover:bg-gray-50"
-        >
+        <button @click="increaseQuantity"
+          class="w-10 h-10 hover:cursor-pointer  border border-gray-200 rounded grid place-items-center text-gray-600 hover:bg-gray-50">
           +
         </button>
       </div>
@@ -45,6 +41,7 @@
 
 <script>
 import { mapActions } from 'vuex'
+import Swal from 'sweetalert2'
 
 export default {
   name: "DesiredMeal",
@@ -89,17 +86,36 @@ export default {
           ingredients: this.meal.ingredients,
           coreIngredients: this.meal.coreIngredients
         }
-        
+
         await this.addToCart({ id: this.meal.id, item: cartItem })
         await this.loadCart()
-        this.$router.push('/cart')
+        this.showCheckoutAlert()
       } catch (error) {
         console.error('Error adding to cart:', error)
       } finally {
         this.isAdding = false
       }
+    },
+    showCheckoutAlert() {
+      Swal.fire({
+        title: "<strong>Item Added Successfully</strong>",
+        icon: "success",
+        html: `
+      You can view it in your cart
+    `,
+        showCloseButton: true,
+        showCancelButton: true,
+        focusConfirm: false,
+        confirmButtonText: `View cart`,
+        cancelButtonText: `Continue Shopping`,
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.$router.push('/cart');
+        } else {
+        }
+      });
     }
-},
+  },
   computed: {
     totalPrice() {
       return this.meal.price * this.quantity
