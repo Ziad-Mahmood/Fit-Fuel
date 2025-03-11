@@ -71,6 +71,27 @@
             <img src="@/assets/images/menu.png" alt="Menu" class="w-5 h-5" />
           </button>
         </template>
+        <template
+          v-else-if="
+            $route.path.includes('/dashboard/kitchen') ||
+            $route.path.includes('/dashboard/delivery') ||
+            $route.path.includes('/dashboard/admin')
+          "
+        >
+          <span
+            v-if="isUserLoggedIn && currentUser"
+            class="text-[#339e3f] font-bold font-['Poppins']"
+            >{{ currentUser.displayName || "User" }}</span
+          >
+          <div class="flex justify-center items-center">
+            <button
+              @click="logout"
+              class="btn-logout py-1 px-5 flex items-center"
+            >
+              <span>Logout</span>
+            </button>
+          </div>
+        </template>
         <template v-else>
           <router-link
             :to="isUserLoggedIn ? '/profile' : '/login'"
@@ -113,7 +134,7 @@
 </template>
 
 <script>
-import { onAuthStateChanged } from "firebase/auth";
+import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth, db } from "@/firebase/config";
 import { doc, getDoc } from "firebase/firestore";
 
@@ -185,6 +206,14 @@ export default {
     },
     handleScroll() {
       this.isScrolled = window.scrollY > 100;
+    },
+    async logout() {
+      try {
+        await signOut(auth);
+        this.$router.push("/login");
+      } catch (error) {
+        console.error("Error signing out:", error);
+      }
     },
   },
 };
