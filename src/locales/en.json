@@ -1,0 +1,47 @@
+{
+  "nav": {
+    "home": "Home",
+    "menu": "Menu",
+    "mealPlans": "Meal plans",
+    "orders": "Orders",
+    "about": "About",
+    "contact": "Contact"
+  },
+  "about": {
+    "aboutUs": "About us",
+    "title": "Who we are?",
+    "description": "We are a dedicated online platform that offers healthy, well-balanced meals tailored to fit various lifestyles. Whether you're looking for a quick nutritious meal or a long-term meal plan, we make healthy eating simple, accessible, and hassle-free."
+  },
+  "services": {
+    "title": "WHAT WE SERVE",
+    "description": "Your Healthy Food",
+    "easyOrder": {
+      "title": "Easy To Order",
+      "description": "You only need a few steps in ordering food"
+    },
+    "fastDelivery": {
+      "title": "Fastest Delivery",
+      "description": "Delivery that is always on time, even faster"
+    },
+    "bestQuality": {
+      "title": "Best Quality",
+      "description": "Not only fast, for us quality is also number one"
+    }
+  },
+  "valueProposition": {
+    "title": "Why Choose Us",
+    "description": "Our Value To Help You",
+    "balancedMeals": "Balanced, nutritious meals",
+    "highQuality": "Fresh, high-quality ingredients",
+    "easyOrdering": "Easy ordering with flexible subscriptions",
+    "reliableDelivery": "Reliable delivery for always-fresh meals"
+  },
+  "footer": {
+    "description": "Healthy meal options through an efficient order and delivery system.",
+    "pages": "Pages",
+    "home": "Home",
+    "menu": "Menu",
+    "contact": "Contact Us",
+    "location": "Cairo, Egypt"
+  }
+}
