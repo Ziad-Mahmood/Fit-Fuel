@@ -5,7 +5,12 @@ import App from './App.vue'
 import store from './store'
 import router from './router/router'
 import emailjs from '@emailjs/browser'
+
+import Swal from 'sweetalert2'
+window.Swal = Swal
+
 import i18n from './i18n'; 
+
 
 emailjs.init("service_p7anetg")
 

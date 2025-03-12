@@ -71,13 +71,32 @@ export default {
           mealTypes: this.mealTypes
         }
       }
-      
+
       try {
         await this.addToCart({ id: planId, item: planItem })
-        this.$router.push('/cart')
+        this.showCheckoutAlert()
       } catch (error) {
         console.error('Error adding plan to cart:', error)
       }
+    },
+    showCheckoutAlert() {
+      Swal.fire({
+        title: "<strong>Item Added Successfully</strong>",
+        icon: "success",
+        html: `
+      You can view it in your cart
+    `,
+        showCloseButton: true,
+        showCancelButton: true,
+        focusConfirm: false,
+        confirmButtonText: `View cart`,
+        cancelButtonText: `Continue Shopping`,
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.$router.push('/cart');
+        } else {
+        }
+      });
     }
   }
 }
