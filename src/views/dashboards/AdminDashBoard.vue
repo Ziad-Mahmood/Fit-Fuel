@@ -399,16 +399,34 @@ export default {
           return createdDate >= month && createdDate <= nextMonth;
         });
 
-        // Filter orders delivered in this month
+        // Filter orders delivered in this month - prioritize deliveredAt timestamp
         const monthOrders = this.deliveredOrders.filter((order) => {
-          if (!order.deliveredAt && !order.createdAt) return false;
-          const orderDate = order.deliveredAt
-            ? order.deliveredAt.toDate
+          // Skip orders without timestamp data
+          if (!order.deliveredAt && !order.createdAt && !order.timestamp)
+            return false;
+
+          // Determine the appropriate date to use
+          let orderDate;
+
+          // First priority: deliveredAt (specific to delivered orders)
+          if (order.deliveredAt) {
+            orderDate = order.deliveredAt.toDate
               ? order.deliveredAt.toDate()
-              : new Date(order.deliveredAt)
-            : order.createdAt.toDate
-            ? order.createdAt.toDate()
-            : new Date(order.createdAt);
+              : new Date(order.deliveredAt);
+          }
+          // Second priority: timestamp (from OrderTrackingView)
+          else if (order.timestamp) {
+            orderDate = order.timestamp.toDate
+              ? order.timestamp.toDate()
+              : new Date(order.timestamp);
+          }
+          // Last fallback: createdAt
+          else {
+            orderDate = order.createdAt.toDate
+              ? order.createdAt.toDate()
+              : new Date(order.createdAt);
+          }
+
           return orderDate >= month && orderDate <= nextMonth;
         });
 
