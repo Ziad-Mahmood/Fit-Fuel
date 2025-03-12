@@ -2,10 +2,8 @@
   <button
     @click="$emit('click')"
     :class="[
-      'px-8 py-2',
-      isActive
-        ? 'btn'
-        : 'btn-outline',
+      'px-8 py-2 hover:cursor-pointer',
+      isActive ? 'btn' : 'btn-outline',
     ]"
   >
     {{ text }}

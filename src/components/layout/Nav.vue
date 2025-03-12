@@ -10,6 +10,7 @@
         ? 'opacity-0 hover:opacity-80 bg-white'
         : 'bg-white',
     ]"
+    :dir="isRTL ? 'rtl' : 'ltr'"
   >
     <div
       class="w-full h-[39px] flex items-center justify-between px-4 m-auto py-8 md:px-0 md:w-[810px] md:h-[39px]"
@@ -41,7 +42,7 @@
               : 'text-[#333333]'
           "
         >
-          {{ link.name }}
+          {{ $t(link.name) }}
         </router-link>
       </div>
 
@@ -51,9 +52,7 @@
           <button
             class="hover:opacity-80 transition-opacity"
             aria-label="Search"
-          >
-            
-          </button>
+          ></button>
           <router-link
             :to="isUserLoggedIn ? '/profile' : '/login'"
             class="hover:opacity-80 transition-opacity"
@@ -63,6 +62,32 @@
           <router-link to="/cart" class="hover:opacity-80 transition-opacity">
             <img src="@/assets/images/cart.png" alt="Cart" class="w-5 h-5" />
           </router-link>
+
+          <div class="relative">
+            <button @click="toggleLangMenu">
+              <i
+                class="fa-solid fa-earth-americas hover:opacity-80 transition-opacity text-[#339e3f]"
+              ></i>
+            </button>
+            <div
+              v-if="isLangMenuOpen"
+              class="absolute bg-white shadow-md right-[-50px] mt-2 w-28 rounded-md top-full"
+            >
+              <button
+                @click="changeLanguage('en')"
+                class="block w-full px-4 py-2 hover:bg-gray-100"
+              >
+                English
+              </button>
+              <button
+                @click="changeLanguage('ar')"
+                class="block w-full px-4 py-2 hover:bg-gray-100"
+              >
+                العربية
+              </button>
+            </div>
+          </div>
+
           <button
             @click="toggleMenu"
             class="md:hidden hover:opacity-80 transition-opacity"
@@ -137,7 +162,7 @@
           "
           @click="toggleMenu"
         >
-          {{ link.name }}
+          {{ $t(link.name) }}
         </router-link>
       </div>
     </div>
@@ -158,19 +183,23 @@ export default {
       isUserLoggedIn: false,
       currentUser: null,
       userUnsubscribe: null,
+      isLangMenuOpen: false,
       navLinks: [
-        { path: "/", name: "Home" },
-        { path: "/menu", name: "Menu" },
-        { path: "/meal-plans", name: "Meal plans" },
-        { path: "/order-tracking", name: "Orders" },
-        { path: "/aboutus", name: "About" },
-        { path: "/contact", name: "Contact" },
+        { path: "/", name: "nav.home" },
+        { path: "/menu", name: "nav.menu" },
+        { path: "/meal-plans", name: "nav.mealPlans" },
+        { path: "/order-tracking", name: "nav.orders" },
+        { path: "/aboutus", name: "nav.about" },
+        { path: "/contact", name: "nav.contact" },
       ],
     };
   },
   computed: {
     isDashboardRoute() {
       return this.$route.path.includes("dashboard");
+    },
+    isRTL() {
+      return this.$i18n.locale === "ar";
     },
   },
   mounted() {
@@ -203,6 +232,7 @@ export default {
     });
     console.log(`user: ${this.currentUser}`);
     console.log(`is logged in: ${this.isUserLoggedIn}`);
+    this.$i18n.locale = localStorage.getItem("lang") || "en";
   },
   unmounted() {
     window.removeEventListener("scroll", this.handleScroll);
@@ -225,6 +255,15 @@ export default {
       } catch (error) {
         console.error("Error signing out:", error);
       }
+    },
+    toggleLangMenu(event) {
+      this.isLangMenuOpen = !this.isLangMenuOpen;
+      event.stopPropagation();
+    },
+    changeLanguage(lang) {
+      this.$i18n.locale = lang;
+      localStorage.setItem("lang", lang);
+      this.isLangMenuOpen = false;
     },
   },
 };
