@@ -4,6 +4,7 @@
 
     <div class="flex flex-col mt-15 mb-10">
       <div class="flex gap-4 justify-center mb-4">
+
         <tab-button
           text="Overview"
           :isActive="activeTab === '' || activeTab === 'overview'"
@@ -24,10 +25,12 @@
           :isActive="activeTab === 'delivery'"
           @click="activeTab = 'delivery'"
         />
+
       </div>
 
       <!-- Conditional Add Staff Button -->
       <div class="flex justify-end">
+
         <button
           v-if="activeTab === 'kitchen'"
           @click="showAddStaffModal('kitchen')"
@@ -41,6 +44,7 @@
           @click="showAddStaffModal('delivery')"
           class="px-4 py-2 md:py-3 btn mr-40"
         >
+
           Add Delivery Staff
         </button>
       </div>
@@ -86,70 +90,37 @@
       >
         <h2 class="text-lg font-medium mb-3">Add {{ staffRoleText }}</h2>
 
-        <div
-          v-if="modalError"
-          class="bg-red-100 border border-red-400 text-red-700 px-3 py-2 rounded mb-3 text-sm"
-        >
+
+        <div v-if="modalError" class="bg-red-100 border border-red-400 text-red-700 px-3 py-2 rounded mb-3 text-sm">
+
           {{ modalError }}
         </div>
 
         <div class="space-y-3">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <FormInput
-              label="Full Name"
-              v-model="staffForm.displayName"
-              iconType="user"
-              placeholder="User Name"
-              class="custom-form-input"
-            />
-            <FormInput
-              label="Email"
-              v-model="staffForm.email"
-              iconType="email"
-              inputType="email"
-              placeholder="staff@example.com"
-              class="custom-form-input"
-            />
+
+            <FormInput label="Full Name" v-model="staffForm.displayName" iconType="user" placeholder="User Name"
+              class="custom-form-input" :isRequired="true" />
+            <FormInput label="Email" v-model="staffForm.email" iconType="email" inputType="email"
+              placeholder="staff@example.com" class="custom-form-input" :isRequired="true" />
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <FormInput
-              label="Password"
-              v-model="staffForm.password"
-              iconType="password"
-              :inputType="showPassword ? 'text' : 'password'"
-              placeholder="********"
-              :isPassword="true"
-              @toggle-password="showPassword = !showPassword"
-              class="custom-form-input"
-            />
+            <FormInput label="Password" v-model="staffForm.password" iconType="password"
+              :inputType="showPassword ? 'text' : 'password'" placeholder="********" :isPassword="true"
+              @toggle-password="showPassword = !showPassword" class="custom-form-input" :isRequired="true" />
 
-            <FormInput
-              label="Phone"
-              v-model="staffForm.phone"
-              iconType="phone"
-              inputType="tel"
-              placeholder="+1 234 567 8900"
-              class="custom-form-input"
-            />
+            <FormInput label="Phone" v-model="staffForm.phone" iconType="phone" inputType="tel"
+              placeholder="+1 234 567 8900" class="custom-form-input" :isRequired="true" />
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <FormInput
-              label="Address"
-              v-model="staffForm.address"
-              iconType="address"
-              placeholder="123 Main St"
-              class="custom-form-input"
-            />
+            <FormInput label="Address" v-model="staffForm.address" iconType="address" placeholder="123 Main St"
+              class="custom-form-input" :isRequired="true" />
 
-            <FormInput
-              label="City"
-              v-model="staffForm.city"
-              iconType="address"
-              placeholder="Cairo"
-              class="custom-form-input"
-            />
+            <FormInput label="City" v-model="staffForm.city" iconType="address" placeholder="Cairo"
+              class="custom-form-input" :isRequired="true" />
+
           </div>
         </div>
 
@@ -157,12 +128,14 @@
           <button @click="closeModal" class="btn-outline py-3 px-7">
             Cancel
           </button>
+
           <button
             @click="addStaffAccount"
             :disabled="isAddingStaff"
             class="btn py-3 px-7"
           >
             {{ isAddingStaff ? "Adding..." : "Add Staff" }}
+
           </button>
         </div>
       </div>
@@ -332,6 +305,7 @@ export default {
       }
     },
 
+
     async fetchChartData() {
       try {
         // Set up listener for client users only
@@ -421,6 +395,7 @@ export default {
       this.chartOrdersData = ordersData;
     },
 
+
     showAddStaffModal(role) {
       this.staffForm = {
         displayName: "",
@@ -440,6 +415,18 @@ export default {
       this.showModal = false;
     },
 
+
+    validateEmail(email) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return emailRegex.test(email);
+    },
+
+    validatePhone(phone) {
+      const phoneRegex = /^[0-9+\-\s]{8,}$/;
+      return phoneRegex.test(phone);
+    },
+
+
     async addStaffAccount() {
       this.modalError = null;
 
@@ -453,10 +440,39 @@ export default {
         return;
       }
 
+
+      if (!this.validateEmail(this.staffForm.email)) {
+        this.modalError = "Please enter a valid email address";
+        return;
+      }
+
+
       if (!this.staffForm.password || this.staffForm.password.length < 6) {
         this.modalError = "Password must be at least 6 characters";
         return;
       }
+
+
+      if (!this.staffForm.phone) {
+        this.modalError = "Please enter a phone number";
+        return;
+      }
+
+      if (!this.validatePhone(this.staffForm.phone)) {
+        this.modalError = "Please enter a valid phone number";
+        return;
+      }
+
+      if (!this.staffForm.address) {
+        this.modalError = "Please enter an address";
+        return;
+      }
+
+      if (!this.staffForm.city) {
+        this.modalError = "Please enter a city";
+        return;
+      }
+
 
       try {
         this.isAddingStaff = true;
@@ -489,6 +505,7 @@ export default {
         });
       } catch (error) {
         let errorMessage = `Failed to create ${this.staffRoleText.toLowerCase()} account`;
+
 
         if (error.code === "auth/email-already-in-use") {
           errorMessage = "This email is already in use";
