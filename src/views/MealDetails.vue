@@ -87,12 +87,11 @@ export default {
       similarMeals: [],
       removedIngredients: [],
       nutritionDetails: [
-        { name: 'Calories', value: '650 kcal' },
+        { name: 'Calories', value: '430 kcal' },
         { name: 'Protein', value: '52g' },
         { name: 'Carbohydrates', value: '35g' },
-        { name: 'Fat', value: '28g' },
+        { name: 'Fat', value: '4.6g' },
         { name: 'Fiber', value: '4g' },
-        { name: 'Iron', value: '3.5mg' }
       ]
     }
   },
@@ -155,7 +154,8 @@ export default {
       }
     },
 
-    toggleIngredient(ingredientName) {
+    
+    /* toggleIngredient(ingredientName) {
       if (!this.isCoreIngredient(ingredientName)) {
         if (this.removedIngredients.includes(ingredientName)) {
           this.removedIngredients = this.removedIngredients.filter(ing => ing !== ingredientName)
@@ -164,6 +164,16 @@ export default {
         }
         this.isCustomized = this.removedIngredients.length > 0
       }
+    } */
+
+    
+    toggleIngredient(ingredientName) {
+      if (this.removedIngredients.includes(ingredientName)) {
+        this.removedIngredients = this.removedIngredients.filter(ing => ing !== ingredientName)
+      } else {
+        this.removedIngredients.push(ingredientName)
+      }
+      this.isCustomized = this.removedIngredients.length > 0
     }
   },
   created() {

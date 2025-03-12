@@ -103,11 +103,18 @@
             $route.path.includes('/dashboard/admin')
           "
         >
+        <span 
+              v-if="currentUser.warned" 
+              class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-xs"
+            >
+              Warned
+            </span>
           <span
             v-if="isUserLoggedIn && currentUser"
             class="text-[#339e3f] font-bold font-['Poppins']"
             >{{ currentUser.displayName || "User" }}</span
           >
+
           <div class="flex justify-center items-center">
             <button
               @click="logout"
@@ -126,9 +133,13 @@
           </router-link>
           <span
             v-if="isUserLoggedIn && currentUser"
-            class="text-[#339e3f] font-bold font-['Poppins']"
-            >{{ currentUser.displayName || "User" }}</span
+            class="flex items-center gap-2"
           >
+            <span class="text-[#339e3f] font-bold font-['Poppins']">
+              {{ currentUser.displayName || "User" }}
+            </span>
+           
+          </span>
         </template>
       </div>
     </div>
@@ -171,6 +182,7 @@ export default {
       isScrolled: false,
       isUserLoggedIn: false,
       currentUser: null,
+      userUnsubscribe: null,
       isLangMenuOpen: false,
       navLinks: [
         { path: "/", name: "nav.home" },
@@ -197,16 +209,15 @@ export default {
       this.isUserLoggedIn = !!user;
 
       if (user) {
-        // Fetch the complete user document from Firestore
         try {
           const userDocRef = doc(db, "users", user.uid);
           const userDoc = await getDoc(userDocRef);
 
           if (userDoc.exists()) {
-            // Combine auth user with Firestore data
             this.currentUser = {
               ...user,
               ...userDoc.data(),
+              warned: userDoc.data().warned || false
             };
           } else {
             this.currentUser = user;

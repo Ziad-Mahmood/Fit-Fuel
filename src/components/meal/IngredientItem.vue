@@ -12,7 +12,7 @@
       </span>
     </div>
     <button 
-      v-if="!isCore && isUserLoggedIn"
+      v-if="!isCore && isUserLoggedIn && showActions"
       @click="$emit('toggle-ingredient', name)"
       :class="[
         'px-2 py-1 rounded text-sm',
@@ -24,7 +24,7 @@
   </div>
 </template>
 
-z<script>
+<script>
 import { auth } from '@/firebase/config'
 
 export default {
@@ -41,6 +41,10 @@ export default {
     isRemoved: {
       type: Boolean,
       default: false
+    },
+    showActions: {
+      type: Boolean,
+      default: true
     }
   },
   computed: {

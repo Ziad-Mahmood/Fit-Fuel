@@ -1,16 +1,16 @@
 <template>
-  <div
-    class="meal-card w-[370px] h-[484px] rounded-3xl shadow-md overflow-hidden"
+  <button
+    class="meal-card w-[370px] h-[484px] rounded-3xl  shadow-md text-start overflow-hidden hover:shadow-2xl hover:cursor-pointer"
     :style="{ backgroundImage: `url(${meal.image})` }"
-  >
-    <div class="pl-10 pb-5 bg-opacity-80 rounded-b-lg absolute bottom-0 w-full card-content leading-12">
-      <h3 class="text-2xl text-white font-medium mb-2">{{ meal.name }}</h3>
+    @click="goToMealDetails">
+    <div class="pl-5 pb-5 bg-opacity-80 rounded-b-lg absolute bottom-0 w-full card-content leading-12">
+    <h3  class="text-2xl text-white font-medium mb-2">{{ meal.name }}</h3>
       <p class="text-xl font-medium text-white">{{ meal.price }} EG</p>
-      <button class="text-white font-normal cursor-pointer" @click="goToMealDetails">
+      <p class="text-white font-normal ">
         Order Now <i class="fa-solid fa-chevron-right"></i>
-      </button>
+      </p>
     </div>
-  </div>
+  </button>
 </template>
 
 <script>
