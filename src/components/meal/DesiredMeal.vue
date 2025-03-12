@@ -1,9 +1,10 @@
 <template>
-  <div class="flex flex-col gap-6 py-10 border-b border-[#339e3f]">
+  <div class="flex flex-col gap-4">
+    
     <div class="flex flex-col md:flex-row justify-between items-start">
       <div>
         <h1 class="text-[32px] font-bold text-[#191919]">{{ meal.name }}</h1>
-        <span v-if="isCustomized" class="text-sm text-purple-600 bg-purple-100 px-2 py-1 rounded-full">
+        <span v-if="isCustomized" class="text-sm text-green-600 bg-green-100 px-2 py-1 rounded-full">
           Customized
         </span>
       </div>
@@ -41,7 +42,11 @@
 
 <script>
 import { mapActions } from 'vuex'
+
 import Swal from 'sweetalert2'
+
+import { auth } from '@/firebase/config'
+
 
 export default {
   name: "DesiredMeal",
@@ -57,7 +62,16 @@ export default {
   },
   data() {
     return {
-      quantity: 1
+      quantity: 1,
+      isAdding: false
+    }
+  },
+  computed: {
+    totalPrice() {
+      return this.meal.price * this.quantity
+    },
+    isCustomized() {
+      return this.removedIngredients.length > 0
     }
   },
   methods: {
@@ -71,23 +85,32 @@ export default {
       }
     },
     async handleAddToCart() {
+      if (!auth.currentUser) {
+        this.$router.push('/login')
+        return
+      }
+
       try {
         this.isAdding = true
         const cartItem = {
-          id: this.meal.id,
           name: this.meal.name,
           price: Number(this.meal.price),
           image: this.meal.image,
           category: this.meal.category,
           quantity: this.quantity,
-          total: Number(this.meal.price) * this.quantity,
-          removedIngredients: [...this.removedIngredients],
+          total: this.totalPrice,
+          removedIngredients: this.removedIngredients,
           isCustomized: this.isCustomized,
-          ingredients: this.meal.ingredients,
-          coreIngredients: this.meal.coreIngredients
+          userId: auth.currentUser.uid,
+          addedAt: new Date().toISOString()
         }
 
-        await this.addToCart({ id: this.meal.id, item: cartItem })
+        
+        await this.addToCart({ 
+          id: this.meal.id, 
+          item: cartItem 
+        })
+
         await this.loadCart()
         this.showCheckoutAlert()
       } catch (error) {
@@ -115,6 +138,7 @@ export default {
         }
       });
     }
+
   },
   computed: {
     totalPrice() {
@@ -124,5 +148,6 @@ export default {
       return this.removedIngredients.length > 0
     }
   },
+
 }
 </script>

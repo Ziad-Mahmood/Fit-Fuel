@@ -3,7 +3,17 @@
     <td class="px-1 sm:px-6 py-6 text-[#191919] text-sm sm:text-base text-center">#{{ item.id }}</td>
     <td class="px-1 sm:px-6 py-6 text-[#191919] text-sm sm:text-base text-center">{{ item.date }}</td>
 
-    <td class="px-1 sm:px-6 py-6 text-[#191919] text-sm sm:text-base text-center">{{ item.address }} {{ item.city ? ', ' + item.city : '' }}</td>
+    <td class="px-1 sm:px-6 py-6 text-[#191919] text-sm sm:text-base text-center">
+      <div class="flex flex-col items-center gap-1">
+        {{ item.address }} {{ item.city ? ', ' + item.city : '' }}
+        <div v-if="item.removedIngredients?.length" class="text-xs text-gray-500 mt-1">
+          Without: {{ item.removedIngredients.join(', ') }}
+        </div>
+        <span v-if="item.isCustomized" class="text-sm text-green-600 bg-green-100 px-2 py-1 rounded-full mt-1">
+          Customized
+        </span>
+      </div>
+    </td>
     <td class="px-1 sm:px-6 py:1 sm:py-6 ">
 
       <button 
