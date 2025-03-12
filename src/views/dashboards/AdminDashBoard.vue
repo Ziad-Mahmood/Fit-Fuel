@@ -44,17 +44,32 @@
     <div class="bg-white p-6">
       <!-- Users Tab Content -->
       <div v-if="activeTab === 'users'">
-        <users-table :users="users" />
+        <users-table 
+          :users="users" 
+          :isStaff="false"
+          @delete-user="handleDeleteUser"
+          @toggle-ban="handleToggleBan"
+        />
       </div>
       
       <!-- Kitchen Staff Tab Content -->
       <div v-if="activeTab === 'kitchen'">
-        <users-table :users="chefs" />
+        <users-table 
+          :users="chefs" 
+          :isStaff="true"
+          @warn-staff="handleWarnStaff"
+          @remove-staff="handleRemoveStaff"
+        />
       </div>
       
       <!-- Delivery Staff Tab Content -->
       <div v-if="activeTab === 'delivery'">
-        <users-table :users="drivers" />
+        <users-table 
+          :users="drivers" 
+          :isStaff="true"
+          @warn-staff="handleWarnStaff"
+          @remove-staff="handleRemoveStaff"
+        />
       </div>
     </div>
 
@@ -155,6 +170,7 @@ import FormInput from "@/components/auth/FormInput.vue";
 import { collection, query, where, onSnapshot, doc, updateDoc } from "firebase/firestore";
 import { db } from "@/firebase/config";
 import { createStaffAccount } from "@/firebase/auth";
+import { deleteUser } from 'firebase/auth';
 import Swal from 'sweetalert2'
 
 export default {
@@ -364,7 +380,89 @@ export default {
       } finally {
         this.isAddingStaff = false;
       }
+    },
+    
+    async handleDeleteUser(user) {
+      try {
+        const userRef = doc(db, "users", user.id);
+        await deleteDoc(userRef);
+        Swal.fire({
+          title: 'User Deleted',
+          text: 'User has been successfully deleted',
+          icon: 'success'
+        });
+      } catch (error) {
+        console.error("Error deleting user:", error);
+        Swal.fire({
+          title: 'Error',
+          text: 'Failed to delete user',
+          icon: 'error'
+        });
+      }
+    },
+    
+    async handleToggleBan(user) {
+      try {
+        const userRef = doc(db, "users", user.id);
+        await updateDoc(userRef, {
+          banned: !user.banned,
+          bannedAt: !user.banned ? new Date().toISOString() : null
+        });
+        Swal.fire({
+          title: user.banned ? 'User Unbanned' : 'User Banned',
+          text: `User has been ${user.banned ? 'unbanned' : 'banned'} successfully`,
+          icon: 'success'
+        });
+      } catch (error) {
+        console.error("Error toggling ban status:", error);
+        Swal.fire({
+          title: 'Error',
+          text: 'Failed to update user status',
+          icon: 'error'
+        });
+      }
+    },
+    
+    async handleWarnStaff(user) {
+      try {
+        const userRef = doc(db, "users", user.id);
+        await updateDoc(userRef, {
+          warned: !user.warned,
+          warnedAt: !user.warned ? new Date().toISOString() : null
+        });
+        Swal.fire({
+          title: user.warned ? 'Warning Removed' : 'Warning Issued',
+          text: `Staff member has been ${user.warned ? 'cleared' : 'warned'}`,
+          icon: user.warned ? 'success' : 'warning'
+        });
+      } catch (error) {
+        console.error("Error updating staff warning:", error);
+        Swal.fire({
+          title: 'Error',
+          text: 'Failed to update warning status',
+          icon: 'error'
+        });
+      }
+    },
+    
+    async handleRemoveStaff(user) {
+      try {
+        const userRef = doc(db, "users", user.id);
+        await deleteDoc(userRef);
+        Swal.fire({
+          title: 'Staff Removed',
+          text: 'Staff member has been removed successfully',
+          icon: 'success'
+        });
+      } catch (error) {
+        console.error("Error removing staff:", error);
+        Swal.fire({
+          title: 'Error',
+          text: 'Failed to remove staff member',
+          icon: 'error'
+        });
+      }
     }
-  },
+  }
 };
 </script>

@@ -95,12 +95,24 @@ export default {
     async acceptOrder(orderId) {
       try {
         const orderRef = doc(db, "orders", orderId);
+        const userRef = doc(db, "users", auth.currentUser.uid);
+        const userDoc = await getDoc(userRef);
+
+        if (userDoc.exists() && userDoc.data().warned) {
+          throw new Error("You are currently warned and cannot accept new orders");
+        }
+
         await updateDoc(orderRef, {
           status: "Preparing",
           updatedAt: new Date()
         });
       } catch (error) {
         console.error("Error updating order:", error);
+        Swal.fire({
+          title: 'Error',
+          text: error.message,
+          icon: 'error'
+        });
       }
     },
 

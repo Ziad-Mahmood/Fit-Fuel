@@ -1,6 +1,7 @@
 import { reactive } from 'vue';
-import { onAuthStateChanged } from 'firebase/auth';
-import { auth } from '@/firebase/config'; // Import from config, not from auth.js
+import { onAuthStateChanged, signOut } from 'firebase/auth';
+import { auth, db } from '@/firebase/config';
+import { doc, getDoc } from 'firebase/firestore';
 
 const state = reactive({
   user: null,
@@ -12,6 +13,17 @@ onAuthStateChanged(auth, async (user) => {
   state.isLoading = true;
   
   if (user) {
+    const userDocRef = doc(db, 'users', user.uid);
+    const userDoc = await getDoc(userDocRef);
+    
+    if (userDoc.exists() && userDoc.data().banned) {
+      await signOut(auth);
+      alert('Your account has been banned. Please contact support for more information.');
+      state.user = null;
+      state.userRole = null;
+      return;
+    }
+    
     state.user = user;
     state.userRole = localStorage.getItem('userRole') || 'client';
   } else {
