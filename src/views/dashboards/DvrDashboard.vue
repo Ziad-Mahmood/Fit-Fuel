@@ -23,8 +23,9 @@
 <script>
 import Header from '../../components/layout/Header.vue'
 import DashTable from '../../components/dashboard/DashTable.vue'
-import { collection, getDocs, query, where, updateDoc, doc, onSnapshot } from 'firebase/firestore'
-import { db } from '@/firebase/config'
+import { collection, getDocs, query, where, updateDoc, doc, onSnapshot, getDoc } from 'firebase/firestore'
+import { db, auth } from '@/firebase/config'
+import Swal from 'sweetalert2'
 
 export default {
   name: "DriverDashboard",
@@ -53,8 +54,7 @@ export default {
     }
   },
   async created() {
-    this.setupOrdersListener(); 
-    await this.fetchOrders(); 
+    this.setupOrdersListener();  
   },
   beforeUnmount() {
     if (this.unsubscribeOrders) this.unsubscribeOrders(); 
@@ -64,59 +64,36 @@ export default {
       try {
         const ordersQuery = query(
           collection(db, "orders"),
-          where("status", "==", "ready_for_delivery")
+          where("status", "in", ["On Delivery", "Being Delivered"]) 
         );
-        this.unsubscribeOrders = onSnapshot(
-          ordersQuery,
-          (snapshot) => {
-            this.orders = snapshot.docs.map((doc) => {
-              const orderData = doc.data();
-              return {
-                id: doc.id,
-                date: orderData.orderDate
-                  ? new Date(orderData.orderDate.toDate()).toLocaleDateString()
-                  : "No Date",
-                address: orderData.address?.city || "No Address",
-                city: orderData.address?.state || "No City",
-                isComplete: orderData.isComplete || false,
-              };
-            });
-          },
-          (error) => {
-            console.error("Error fetching orders:", error);
-            this.error = "Failed to load orders";
-          }
-        );
+        
+        this.unsubscribeOrders = onSnapshot(ordersQuery, (snapshot) => {
+          this.orders = snapshot.docs.map((doc) => {
+            const orderData = doc.data();
+            return {
+              id: doc.id,
+              ...orderData,
+              timestamp: orderData.timestamp,
+              shippingDetails: orderData.shippingDetails || {},
+              totalPrice: orderData.totalPrice,
+              status: orderData.status
+            };
+          });
+          
+          this.orders.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+          this.loading = false;
+        }, (error) => {
+          console.error("Error fetching orders:", error);
+          this.error = "Failed to load orders";
+          this.loading = false;
+        });
       } catch (error) {
         console.error("Error setting up orders listener:", error);
         this.error = "Failed to set up real-time orders";
-      }
-    },
-  
-    async fetchOrders() {
-      try {
-        this.loading = true;
-        const ordersRef = collection(db, "orders");
-        const q = query(
-          ordersRef,
-          where("status", "in", ["On Delivery", "Being Delivered"])
-        );
-  
-        const querySnapshot = await getDocs(q);
-        this.orders = querySnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-  
-        this.orders.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-      } catch (error) {
-        console.error("Error fetching orders:", error);
-        this.error = "Failed to load orders";
-      } finally {
         this.loading = false;
       }
     },
-  
+
     async acceptOrder(orderId) {
       try {
         const userRef = doc(db, "users", auth.currentUser.uid);
@@ -128,14 +105,10 @@ export default {
 
         const orderRef = doc(db, "orders", orderId);
         await updateDoc(orderRef, {
-          isAccepted: true,
           status: "Being Delivered",
+          driverId: auth.currentUser.uid,
+          updatedAt: new Date()
         });
-        const order = this.orders.find((o) => o.id === orderId);
-        if (order) {
-          order.isAccepted = true;
-          order.status = "Being Delivered";
-        }
       } catch (error) {
         console.error("Error accepting order:", error);
         Swal.fire({
@@ -145,16 +118,21 @@ export default {
         });
       }
     },
-  
-    async markAsDelivered(orderId) {
+
+     async markAsDelivered(orderId) {
       try {
         const orderRef = doc(db, "orders", orderId);
         await updateDoc(orderRef, {
           status: "Delivered",
+          updatedAt: new Date()
         });
-        await this.fetchOrders();
       } catch (error) {
         console.error("Error updating order:", error);
+        Swal.fire({
+          title: 'Error',
+          text: 'Failed to mark order as delivered',
+          icon: 'error'
+        });
       }
     }
   }

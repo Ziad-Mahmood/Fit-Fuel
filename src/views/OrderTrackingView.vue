@@ -41,7 +41,7 @@
 <script>
 import Header from "@/components/layout/Header.vue";
 import OrderTable from "@/components/orders/OrderTable.vue";
-import { collection, getDocs, query, orderBy, where } from 'firebase/firestore';
+import { collection, query, orderBy, where, onSnapshot } from 'firebase/firestore';
 import { db } from '@/firebase/config';
 import { auth } from '@/firebase/config';
 import { onAuthStateChanged } from 'firebase/auth';
@@ -57,7 +57,8 @@ export default {
       orders: [],
       loading: true,
       error: null,
-      user: null
+      user: null,
+      unsubscribe: null 
     };
   },
   computed: {
@@ -95,20 +96,31 @@ export default {
           where('userId', '==', userId)
         );
         
-        const querySnapshot = await getDocs(q);
-        this.orders = querySnapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data()
-        }));
-        
-        // Sort orders by timestamp locally
-        this.orders.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+        this.unsubscribe = onSnapshot(q, (snapshot) => {
+          this.orders = snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+          }));
+          
+          this.orders.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+          this.loading = false;
+        }, (error) => {
+          console.error('Error fetching orders:', error);
+          this.error = 'Failed to load orders. Please try again later.';
+          this.loading = false;
+        });
       } catch (error) {
         console.error('Error fetching orders:', error);
         this.error = 'Failed to load orders. Please try again later.';
       } finally {
         this.loading = false;
       }
+    }
+  },
+  beforeUnmount() {
+    
+    if (this.unsubscribe) {
+      this.unsubscribe();
     }
   }
 };
