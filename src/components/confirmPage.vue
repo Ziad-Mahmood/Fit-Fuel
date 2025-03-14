@@ -98,6 +98,7 @@
           >
         </div>
       </div>
+
       <div v-else class="text-center">
         <h2 class="text-xl text-[#339e3f] font-semibold mb-8">
           No orders found for this user.
@@ -143,13 +144,14 @@ export default {
       try {
         const ordersRef = collection(db, "orders");
         const querySnapshot = await getDocs(ordersRef);
-
         const userOrders = querySnapshot.docs
           .map((doc) => doc.data())
           .filter((order) => order.userId === userId);
 
         if (userOrders.length > 0) {
-          const latestOrder = userOrders[userOrders.length - 1];
+          userOrders.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+          const latestOrder = userOrders[0];
           this.order = {
             items: latestOrder.items,
             totalPrice: latestOrder.totalPrice,
@@ -166,6 +168,12 @@ export default {
         }
       } catch (error) {
         console.error("Error fetching orders:", error);
+        this.order = {
+          items: [],
+          totalPrice: 0,
+          shippingDetails: {},
+          paymentDetails: {},
+        };
       }
     },
   },
