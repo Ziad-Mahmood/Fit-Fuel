@@ -94,6 +94,11 @@ export default {
           text: "You will pay on delivery",
           draggable: true,
         });
+
+        localStorage.setItem("order", JSON.stringify(order));
+        await this.clearCart();
+        this.$router.push("/order-confirmation");
+        
       } else if (paymentDetails.method === "card") {
         try {
           const response = await fetch(
@@ -134,6 +139,10 @@ export default {
               text: "Payment completed",
               draggable: true,
             });
+
+            localStorage.setItem("order", JSON.stringify(order));
+            await this.clearCart();
+            this.$router.push("/order-confirmation");
           }
         } catch (error) {
           console.error("Error processing payment:", error);
@@ -144,10 +153,6 @@ export default {
           });
         }
       }
-
-      localStorage.setItem("order", JSON.stringify(order));
-      await this.clearCart();
-      this.$router.push("/order-confirmation");
     },
 
     async saveOrderToFirebase(order) {
