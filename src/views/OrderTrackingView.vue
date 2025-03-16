@@ -41,10 +41,11 @@
 <script>
 import Header from "@/components/layout/Header.vue";
 import OrderTable from "@/components/orders/OrderTable.vue";
-import { collection, query, orderBy, where, onSnapshot } from 'firebase/firestore';
+import { collection, query, orderBy, where, onSnapshot, doc, updateDoc, getDocs } from 'firebase/firestore';
 import { db } from '@/firebase/config';
 import { auth } from '@/firebase/config';
 import { onAuthStateChanged } from 'firebase/auth';
+import Swal from 'sweetalert2';
 
 export default {
   name: "OrderTrackingView",
@@ -58,8 +59,78 @@ export default {
       loading: true,
       error: null,
       user: null,
-      unsubscribe: null 
+      unsubscribe: null,
+      deliveredOrdersCount: 0  
     };
+  },
+
+  methods: {
+    async fetchOrders(userId) {
+      try {
+        const ordersRef = collection(db, 'orders');
+        const q = query(
+          ordersRef,
+          where('userId', '==', userId)
+        );
+        
+        this.unsubscribe = onSnapshot(q, (snapshot) => {
+          snapshot.docChanges().forEach(change => {
+            if (change.type === "modified") {
+              const newData = change.doc.data();
+              const oldStatus = this.orders.find(o => o.id === change.doc.id)?.status;
+              
+              if (oldStatus && oldStatus !== newData.status) {
+                const audio = new Audio('/src/assets/sounds/notification.mp3');
+                audio.play().catch(e => console.log('Audio play failed:', e));
+                
+                Swal.fire({
+                  title: 'Order Updated',
+                  text: `Your order status changed to: ${newData.status}`,
+                  icon: 'info',
+                  toast: true,
+                  position: 'top-end',
+                  showConfirmButton: false,
+                  timer: 5000
+                });
+              }
+            }
+          });
+          
+          this.orders = snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+          }));
+          
+          this.deliveredOrdersCount = this.orders.filter(order => order.status === 'Delivered').length;
+          
+          try {
+            const userRef = doc(db, 'users', userId);
+            updateDoc(userRef, {
+              deliveredOrders: this.deliveredOrdersCount
+            }).catch(err => console.error('Error updating delivered orders count:', err));
+          } catch (error) {
+            console.error('Error updating delivered orders count:', error);
+          }
+          
+          this.orders.sort((a, b) => {
+            if (a.timestamp && b.timestamp) {
+              return new Date(b.timestamp) - new Date(a.timestamp);
+            }
+            return 0;
+          });
+          
+          this.loading = false;
+        }, (error) => {
+          console.error('Error fetching orders:', error);
+          this.error = 'Failed to load orders. Please try again later.';
+          this.loading = false;
+        });
+      } catch (error) {
+        console.error('Error fetching orders:', error);
+        this.error = 'Failed to load orders. Please try again later.';
+        this.loading = false;
+      }
+    }
   },
   computed: {
     formattedOrders() {
@@ -86,36 +157,6 @@ export default {
         this.loading = false;
       }
     });
-  },
-  methods: {
-    async fetchOrders(userId) {
-      try {
-        const ordersRef = collection(db, 'orders');
-        const q = query(
-          ordersRef,
-          where('userId', '==', userId)
-        );
-        
-        this.unsubscribe = onSnapshot(q, (snapshot) => {
-          this.orders = snapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data()
-          }));
-          
-          this.orders.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-          this.loading = false;
-        }, (error) => {
-          console.error('Error fetching orders:', error);
-          this.error = 'Failed to load orders. Please try again later.';
-          this.loading = false;
-        });
-      } catch (error) {
-        console.error('Error fetching orders:', error);
-        this.error = 'Failed to load orders. Please try again later.';
-      } finally {
-        this.loading = false;
-      }
-    }
   },
   beforeUnmount() {
     

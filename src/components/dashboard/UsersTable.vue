@@ -20,7 +20,7 @@
         <div class="py-4 break-words">{{ user.phone }}</div>
         <div class="py-4 break-words">{{ user.email }}</div>
         <div class="py-4 break-words">
-          {{ user.address || "No Address" }}
+          {{ user.address.street || "No Address" }}
         </div>
         <div class="py-4 break-words">{{ user.city }}</div>
         <div class="py-4">

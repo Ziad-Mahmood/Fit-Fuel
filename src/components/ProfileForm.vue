@@ -135,7 +135,7 @@
               </h2>
               <div class="flex items-center justify-between">
                 <p class="text-gray-800 mt-2">
-                  {{ user.deliveredOrders }} Orders
+                  {{ user.deliveredOrders || '0' }} Orders
                 </p>
                 <img
                   src="../assets/images/down-arrow.png"

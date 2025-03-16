@@ -104,7 +104,7 @@
           "
         >
         <span 
-              v-if="currentUser.warned" 
+              v-if="currentUser && currentUser.warned" 
               class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-xs"
             >
               Warned
@@ -112,8 +112,7 @@
           <span
             v-if="isUserLoggedIn && currentUser"
             class="text-[#339e3f] font-bold font-['Poppins']"
-            >{{ currentUser.displayName || "User" }}</span
-          >
+          >{{ currentUser.displayName || "User" }}</span>
 
           <div class="flex justify-center items-center">
             <button

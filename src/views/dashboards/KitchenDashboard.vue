@@ -23,7 +23,7 @@
 <script>
 import Header from '../../components/layout/Header.vue'
 import DashTable from '../../components/dashboard/DashTable.vue'
-import { collection, getDocs, query, where, updateDoc, doc, onSnapshot, getDoc } from 'firebase/firestore'
+import { collection, getDocs, query, where, updateDoc, doc, onSnapshot, getDoc, addDoc } from 'firebase/firestore'
 import { db, auth } from '@/firebase/config'
 import Swal from 'sweetalert2'
 
@@ -77,6 +77,26 @@ export default {
         );
         
         this.unsubscribeOrders = onSnapshot(ordersQuery, (snapshot) => {
+          // Check for new orders
+          snapshot.docChanges().forEach(async (change) => {
+            if (change.type === "added" && change.doc.data().status === "Order Placed") {
+              // Play sound for new order
+              const audio = new Audio('/src/assets/sounds/notification.mp3');
+              audio.play().catch(e => console.log('Audio play failed:', e));
+              
+              // Show toast notification
+              Swal.fire({
+                title: 'New Order!',
+                text: 'A new order has been placed',
+                icon: 'info',
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000
+              });
+            }
+          });
+          
           this.orders = snapshot.docs.map((doc) => ({
             id: doc.id,
             ...doc.data(),
@@ -120,9 +140,31 @@ export default {
     async markAsReady(orderId) {
       try {
         const orderRef = doc(db, "orders", orderId);
+        const orderDoc = await getDoc(orderRef);
+        const orderData = orderDoc.data();
+        
         await updateDoc(orderRef, {
           status: "On Delivery",
           updatedAt: new Date()
+        });
+        
+        // Create notification for user
+        if (orderData && orderData.userId) {
+          await addDoc(collection(db, "notifications"), {
+            userId: orderData.userId,
+            title: "Order Ready for Delivery",
+            message: `Your order #${orderId.slice(0, 6)} is now ready for delivery.`,
+            read: false,
+            createdAt: new Date()
+          });
+        }
+        
+        // Notify delivery drivers
+        Swal.fire({
+          title: 'Order Ready',
+          text: 'Order has been marked ready for delivery',
+          icon: 'success',
+          timer: 2000
         });
       } catch (error) {
         console.error("Error updating order:", error);
