@@ -23,8 +23,9 @@
 <script>
 import Header from '../../components/layout/Header.vue'
 import DashTable from '../../components/dashboard/DashTable.vue'
-import { collection, getDocs, query, where, updateDoc, doc, onSnapshot } from 'firebase/firestore'
-import { db } from '@/firebase/config'
+import { collection, getDocs, query, where, updateDoc, doc, onSnapshot, getDoc } from 'firebase/firestore'
+import { db, auth } from '@/firebase/config'
+import Swal from 'sweetalert2'
 
 export default {
   name: "KitchenDashboard",
@@ -125,6 +126,11 @@ export default {
         });
       } catch (error) {
         console.error("Error updating order:", error);
+        Swal.fire({
+          title: 'Error',
+          text: 'Failed to mark order as ready',
+          icon: 'error'
+        });
       }
     }
   },

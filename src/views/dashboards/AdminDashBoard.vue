@@ -81,6 +81,7 @@
           :isStaff="true"
           @warn-staff="handleWarnStaff"
           @remove-staff="handleRemoveStaff"
+          @update-staff="handleUpdateStaff"
         />
       </div>
 
@@ -91,6 +92,7 @@
           :isStaff="true"
           @warn-staff="handleWarnStaff"
           @remove-staff="handleRemoveStaff"
+          @update-staff="handleUpdateStaff"
         />
       </div>
     </div>
@@ -195,7 +197,7 @@ export default {
       users: [],
       chefs: [],
       drivers: [],
-      allUsers: [], // Added for chart data
+      allUsers: [], 
       deliveredOrders: [],
       chartLabels: [],
       chartUsersData: [],
@@ -634,7 +636,40 @@ export default {
           icon: 'error'
         });
       }
-    }
+    },
+        async handleUpdateStaff(user, updatedData) {
+          try {
+            const userRef = doc(db, "users", user.id);
+            await updateDoc(userRef, {
+              displayName: updatedData.name,
+              email: updatedData.email,
+              phone: updatedData.phone,
+              address: {
+                street: updatedData.address || "",
+                city: updatedData.city || ""
+              },
+              updatedAt: new Date().toISOString()
+            });
+            
+            Swal.fire({
+              title: 'Staff Updated',
+              text: 'Staff member has been updated successfully',
+              icon: 'success'
+            });
+          } catch (error) {
+            console.error("Error updating staff:", error);
+            Swal.fire({
+              title: 'Error',
+              text: 'Failed to update staff member',
+              icon: 'error'
+            });
+          }
+        }
   }
 };
 </script>
+<style scoped>
+.fixed {
+  background: none !important;
+}
+</style>

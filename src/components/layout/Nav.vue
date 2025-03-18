@@ -171,7 +171,7 @@
 <script>
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth, db } from "@/firebase/config";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, onSnapshot } from "firebase/firestore";  
 
 export default {
   name: "Nav",
@@ -210,17 +210,19 @@ export default {
       if (user) {
         try {
           const userDocRef = doc(db, "users", user.uid);
-          const userDoc = await getDoc(userDocRef);
-
-          if (userDoc.exists()) {
-            this.currentUser = {
-              ...user,
-              ...userDoc.data(),
-              warned: userDoc.data().warned || false,
-            };
-          } else {
-            this.currentUser = user;
-          }
+          
+          this.userUnsubscribe = onSnapshot(userDocRef, (doc) => {
+            if (doc.exists()) {
+              this.currentUser = {
+                ...user,
+                ...doc.data(),
+                warned: doc.data().warned || false
+              };
+            } else {
+              this.currentUser = user;
+            }
+          });
+          
         } catch (error) {
           console.error("Error fetching user data:", error);
           this.currentUser = user;
@@ -229,15 +231,18 @@ export default {
         this.currentUser = null;
       }
     });
-    console.log(`user: ${this.currentUser}`);
-    console.log(`is logged in: ${this.isUserLoggedIn}`);
+    
     this.$i18n.locale = localStorage.getItem("lang") || "en";
   },
+  
   unmounted() {
     window.removeEventListener("scroll", this.handleScroll);
 
     if (this.unsubscribe) {
       this.unsubscribe();
+    }
+    if (this.userUnsubscribe) {
+      this.userUnsubscribe();
     }
   },
   methods: {
