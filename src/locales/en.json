@@ -43,5 +43,34 @@
     "menu": "Menu",
     "contact": "Contact Us",
     "location": "Cairo, Egypt"
+  },
+  "contact": {
+    "title": "Contact Us",
+    "name": "Name",
+    "email": "Email",
+    "message": "Message",
+    "placeholder": {
+      "name": "Your Name",
+      "email": "your@email.com",
+      "message": "Your message..."
+    },
+    "errors": {
+      "name": "Please enter your name",
+      "email": "Please enter your email",
+      "email_invalid": "Please enter a valid email address",
+      "message": "Please enter your message"
+    },
+    "button": {
+      "send": "Send Message",
+      "sending": "Sending..."
+    },
+    "status": {
+      "success": "Your message has been sent successfully!",
+      "error": "Failed to send message. Please try again later."
+    },
+    "header": {
+      "title": "Get in touch",
+      "description": "We are here for you! How can we help?"
+    }
   }
 }
