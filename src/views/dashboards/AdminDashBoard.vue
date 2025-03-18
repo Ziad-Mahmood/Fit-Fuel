@@ -4,11 +4,15 @@
 
     <div class="flex flex-col mt-15 mb-10">
       <div class="flex gap-4 justify-center mb-4">
-
         <tab-button
           text="Overview"
           :isActive="activeTab === '' || activeTab === 'overview'"
           @click="activeTab = 'overview'"
+        />
+        <tab-button
+          text="Meals"
+          :isActive="activeTab === 'meals'"
+          @click="activeTab = 'meals'"
         />
         <tab-button
           text="Users"
@@ -25,12 +29,10 @@
           :isActive="activeTab === 'delivery'"
           @click="activeTab = 'delivery'"
         />
-
       </div>
 
       <!-- Conditional Add Staff Button -->
       <div class="flex justify-end">
-
         <button
           v-if="activeTab === 'kitchen'"
           @click="showAddStaffModal('kitchen')"
@@ -44,8 +46,14 @@
           @click="showAddStaffModal('delivery')"
           class="px-4 py-2 md:py-3 btn mr-40"
         >
-
           Add Delivery Staff
+        </button>
+        <button
+          v-if="activeTab === 'meals'"
+          @click="openMealForm"
+          class="px-4 py-2 md:py-3 btn mr-40"
+        >
+          Add New Meals
         </button>
       </div>
     </div>
@@ -66,8 +74,8 @@
     <div class="bg-white p-6">
       <!-- Users Tab Content -->
       <div v-if="activeTab === 'users'">
-        <users-table 
-          :users="users" 
+        <users-table
+          :users="users"
           :isStaff="false"
           @delete-user="handleDeleteUser"
           @toggle-ban="handleToggleBan"
@@ -76,8 +84,8 @@
 
       <!-- Kitchen Staff Tab Content -->
       <div v-if="activeTab === 'kitchen'">
-        <users-table 
-          :users="chefs" 
+        <users-table
+          :users="chefs"
           :isStaff="true"
           @warn-staff="handleWarnStaff"
           @remove-staff="handleRemoveStaff"
@@ -87,12 +95,30 @@
 
       <!-- Delivery Staff Tab Content -->
       <div v-if="activeTab === 'delivery'">
-        <users-table 
-          :users="drivers" 
+        <users-table
+          :users="drivers"
           :isStaff="true"
           @warn-staff="handleWarnStaff"
           @remove-staff="handleRemoveStaff"
           @update-staff="handleUpdateStaff"
+        />
+      </div>
+
+      <!-- meals  Tab Content -->
+      <div v-if="activeTab === 'meals'">
+        <MealsTable :meals="meals" />
+      </div>
+
+      <div
+        v-if="showMealForm"
+        class="fixed inset-0 flex items-center justify-center z-50"
+      >
+        <MealForm
+          :meal="currentMeal"
+          :categories="mealCategories"
+          :isEditMode="false"
+          @cancel="closeMealForm"
+          @save="handleSaveMeal"
         />
       </div>
     </div>
@@ -107,37 +133,76 @@
       >
         <h2 class="text-lg font-medium mb-3">Add {{ staffRoleText }}</h2>
 
-
-        <div v-if="modalError" class="bg-red-100 border border-red-400 text-red-700 px-3 py-2 rounded mb-3 text-sm">
-
+        <div
+          v-if="modalError"
+          class="bg-red-100 border border-red-400 text-red-700 px-3 py-2 rounded mb-3 text-sm"
+        >
           {{ modalError }}
         </div>
 
         <div class="space-y-3">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-
-            <FormInput label="Full Name" v-model="staffForm.displayName" iconType="user" placeholder="User Name"
-              class="custom-form-input" :isRequired="true" />
-            <FormInput label="Email" v-model="staffForm.email" iconType="email" inputType="email"
-              placeholder="staff@example.com" class="custom-form-input" :isRequired="true" />
+            <FormInput
+              label="Full Name"
+              v-model="staffForm.displayName"
+              iconType="user"
+              placeholder="User Name"
+              class="custom-form-input"
+              :isRequired="true"
+            />
+            <FormInput
+              label="Email"
+              v-model="staffForm.email"
+              iconType="email"
+              inputType="email"
+              placeholder="staff@example.com"
+              class="custom-form-input"
+              :isRequired="true"
+            />
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <FormInput label="Password" v-model="staffForm.password" iconType="password"
-              :inputType="showPassword ? 'text' : 'password'" placeholder="********" :isPassword="true"
-              @toggle-password="showPassword = !showPassword" class="custom-form-input" :isRequired="true" />
+            <FormInput
+              label="Password"
+              v-model="staffForm.password"
+              iconType="password"
+              :inputType="showPassword ? 'text' : 'password'"
+              placeholder="********"
+              :isPassword="true"
+              @toggle-password="showPassword = !showPassword"
+              class="custom-form-input"
+              :isRequired="true"
+            />
 
-            <FormInput label="Phone" v-model="staffForm.phone" iconType="phone" inputType="tel"
-              placeholder="+1 234 567 8900" class="custom-form-input" :isRequired="true" />
+            <FormInput
+              label="Phone"
+              v-model="staffForm.phone"
+              iconType="phone"
+              inputType="tel"
+              placeholder="+1 234 567 8900"
+              class="custom-form-input"
+              :isRequired="true"
+            />
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <FormInput label="Address" v-model="staffForm.address" iconType="address" placeholder="123 Main St"
-              class="custom-form-input" :isRequired="true" />
+            <FormInput
+              label="Address"
+              v-model="staffForm.address"
+              iconType="address"
+              placeholder="123 Main St"
+              class="custom-form-input"
+              :isRequired="true"
+            />
 
-            <FormInput label="City" v-model="staffForm.city" iconType="address" placeholder="Cairo"
-              class="custom-form-input" :isRequired="true" />
-
+            <FormInput
+              label="City"
+              v-model="staffForm.city"
+              iconType="address"
+              placeholder="Cairo"
+              class="custom-form-input"
+              :isRequired="true"
+            />
           </div>
         </div>
 
@@ -152,7 +217,6 @@
             class="btn py-3 px-7"
           >
             {{ isAddingStaff ? "Adding..." : "Add Staff" }}
-
           </button>
         </div>
       </div>
@@ -173,14 +237,17 @@ import {
   onSnapshot,
   doc,
   updateDoc,
+  addDoc,
   getDocs,
   orderBy,
   limit,
 } from "firebase/firestore";
 import { db } from "@/firebase/config";
 import { createStaffAccount } from "@/firebase/auth";
-import { deleteUser } from 'firebase/auth';
-import Swal from 'sweetalert2'
+import { deleteUser } from "firebase/auth";
+import Swal from "sweetalert2";
+import MealsTable from "@/components/dashboard/MealsTable.vue";
+import MealForm from "@/components/dashboard/MealForm.vue";
 
 export default {
   name: "AdminDashboard",
@@ -190,6 +257,9 @@ export default {
     UsersTable,
     FormInput,
     AdminChart,
+    MealsTable,
+    MealForm,
+    MealsTable,
   },
   data() {
     return {
@@ -197,7 +267,7 @@ export default {
       users: [],
       chefs: [],
       drivers: [],
-      allUsers: [], 
+      allUsers: [],
       deliveredOrders: [],
       chartLabels: [],
       chartUsersData: [],
@@ -220,6 +290,19 @@ export default {
       unsubscribeDrivers: null,
       unsubscribeOrders: null,
       unsubscribeChartUsers: null, // Added for chart users listener
+      meals: [],
+      showMealForm: false,
+      currentMeal: {
+        name: "",
+        price: 0,
+        category: "",
+        image: "",
+        description: "",
+        mealDetails: "",
+        ingredients: [],
+        coreIngredients: [],
+      },
+      mealCategories: ["Breakfast", "Lunch", "Dinner", "Snacks", "Desserts"],
     };
   },
   computed: {
@@ -232,6 +315,7 @@ export default {
   created() {
     this.setupUsersListeners();
     this.fetchChartData();
+    this.fetchMeals();
   },
   beforeUnmount() {
     // Clean up all listeners
@@ -322,7 +406,6 @@ export default {
         console.error("Error setting up listeners:", error);
       }
     },
-
 
     async fetchChartData() {
       try {
@@ -431,7 +514,6 @@ export default {
       this.chartOrdersData = ordersData;
     },
 
-
     showAddStaffModal(role) {
       this.staffForm = {
         displayName: "",
@@ -451,7 +533,6 @@ export default {
       this.showModal = false;
     },
 
-
     validateEmail(email) {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       return emailRegex.test(email);
@@ -461,7 +542,6 @@ export default {
       const phoneRegex = /^[0-9+\-\s]{8,}$/;
       return phoneRegex.test(phone);
     },
-
 
     async addStaffAccount() {
       this.modalError = null;
@@ -476,18 +556,15 @@ export default {
         return;
       }
 
-
       if (!this.validateEmail(this.staffForm.email)) {
         this.modalError = "Please enter a valid email address";
         return;
       }
 
-
       if (!this.staffForm.password || this.staffForm.password.length < 6) {
         this.modalError = "Password must be at least 6 characters";
         return;
       }
-
 
       if (!this.staffForm.phone) {
         this.modalError = "Please enter a phone number";
@@ -508,7 +585,6 @@ export default {
         this.modalError = "Please enter a city";
         return;
       }
-
 
       try {
         this.isAddingStaff = true;
@@ -542,7 +618,6 @@ export default {
       } catch (error) {
         let errorMessage = `Failed to create ${this.staffRoleText.toLowerCase()} account`;
 
-
         if (error.code === "auth/email-already-in-use") {
           errorMessage = "This email is already in use";
         } else if (error.code === "auth/invalid-email") {
@@ -555,117 +630,155 @@ export default {
         this.isAddingStaff = false;
       }
     },
-    
+
     async handleDeleteUser(user) {
       try {
         const userRef = doc(db, "users", user.id);
         await deleteDoc(userRef);
         Swal.fire({
-          title: 'User Deleted',
-          text: 'User has been successfully deleted',
-          icon: 'success'
+          title: "User Deleted",
+          text: "User has been successfully deleted",
+          icon: "success",
         });
       } catch (error) {
         console.error("Error deleting user:", error);
         Swal.fire({
-          title: 'Error',
-          text: 'Failed to delete user',
-          icon: 'error'
+          title: "Error",
+          text: "Failed to delete user",
+          icon: "error",
         });
       }
     },
-    
+
     async handleToggleBan(user) {
       try {
         const userRef = doc(db, "users", user.id);
         await updateDoc(userRef, {
           banned: !user.banned,
-          bannedAt: !user.banned ? new Date().toISOString() : null
+          bannedAt: !user.banned ? new Date().toISOString() : null,
         });
         Swal.fire({
-          title: user.banned ? 'User Unbanned' : 'User Banned',
-          text: `User has been ${user.banned ? 'unbanned' : 'banned'} successfully`,
-          icon: 'success'
+          title: user.banned ? "User Unbanned" : "User Banned",
+          text: `User has been ${
+            user.banned ? "unbanned" : "banned"
+          } successfully`,
+          icon: "success",
         });
       } catch (error) {
         console.error("Error toggling ban status:", error);
         Swal.fire({
-          title: 'Error',
-          text: 'Failed to update user status',
-          icon: 'error'
+          title: "Error",
+          text: "Failed to update user status",
+          icon: "error",
         });
       }
     },
-    
+
     async handleWarnStaff(user) {
       try {
         const userRef = doc(db, "users", user.id);
         await updateDoc(userRef, {
           warned: !user.warned,
-          warnedAt: !user.warned ? new Date().toISOString() : null
+          warnedAt: !user.warned ? new Date().toISOString() : null,
         });
         Swal.fire({
-          title: user.warned ? 'Warning Removed' : 'Warning Issued',
-          text: `Staff member has been ${user.warned ? 'cleared' : 'warned'}`,
-          icon: user.warned ? 'success' : 'warning'
+          title: user.warned ? "Warning Removed" : "Warning Issued",
+          text: `Staff member has been ${user.warned ? "cleared" : "warned"}`,
+          icon: user.warned ? "success" : "warning",
         });
       } catch (error) {
         console.error("Error updating staff warning:", error);
         Swal.fire({
-          title: 'Error',
-          text: 'Failed to update warning status',
-          icon: 'error'
+          title: "Error",
+          text: "Failed to update warning status",
+          icon: "error",
         });
       }
     },
-    
+
     async handleRemoveStaff(user) {
       try {
         const userRef = doc(db, "users", user.id);
         await deleteDoc(userRef);
         Swal.fire({
-          title: 'Staff Removed',
-          text: 'Staff member has been removed successfully',
-          icon: 'success'
+          title: "Staff Removed",
+          text: "Staff member has been removed successfully",
+          icon: "success",
         });
       } catch (error) {
         console.error("Error removing staff:", error);
         Swal.fire({
-          title: 'Error',
-          text: 'Failed to remove staff member',
-          icon: 'error'
+          title: "Error",
+          text: "Failed to remove staff member",
+          icon: "error",
         });
       }
     },
-        async handleUpdateStaff(user, updatedData) {
-          try {
-            const userRef = doc(db, "users", user.id);
-            await updateDoc(userRef, {
-              displayName: updatedData.name,
-              email: updatedData.email,
-              phone: updatedData.phone,
-              address: {
-                street: updatedData.address || "",
-                city: updatedData.city || ""
-              },
-              updatedAt: new Date().toISOString()
-            });
-            
-            Swal.fire({
-              title: 'Staff Updated',
-              text: 'Staff member has been updated successfully',
-              icon: 'success'
-            });
-          } catch (error) {
-            console.error("Error updating staff:", error);
-            Swal.fire({
-              title: 'Error',
-              text: 'Failed to update staff member',
-              icon: 'error'
-            });
-          }
-        }
-  }
+    async handleUpdateStaff(user, updatedData) {
+      try {
+        const userRef = doc(db, "users", user.id);
+        await updateDoc(userRef, {
+          displayName: updatedData.name,
+          email: updatedData.email,
+          phone: updatedData.phone,
+          address: {
+            street: updatedData.address || "",
+            city: updatedData.city || "",
+          },
+          updatedAt: new Date().toISOString(),
+        });
+
+        Swal.fire({
+          title: "Staff Updated",
+          text: "Staff member has been updated successfully",
+          icon: "success",
+        });
+      } catch (error) {
+        console.error("Error updating staff:", error);
+        Swal.fire({
+          title: "Error",
+          text: "Failed to update staff member",
+          icon: "error",
+        });
+      }
+    },
+    async fetchMeals() {
+      const mealsQuery = collection(db, "meals");
+      onSnapshot(mealsQuery, (snapshot) => {
+        this.meals = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+      });
+    },
+    openMealForm() {
+      this.currentMeal = {
+        name: "",
+        price: 0,
+        category: "",
+        image: "",
+        description: "",
+        mealDetails: "",
+        ingredients: [],
+        coreIngredients: [],
+      };
+      this.showMealForm = true;
+    },
+    closeMealForm() {
+      this.showMealForm = false;
+    },
+    async handleSaveMeal(meal) {
+      try {
+        await addDoc(collection(db, "meals"), meal);
+        this.closeMealForm();
+        this.fetchMeals();
+        Swal.fire("Added", "Meal has been added successfully", "success");
+      } catch (error) {
+        console.log("Error saving meal:", error);
+        Swal.fire("Error", "Failed to save meal", "error");
+      }
+    },
+  },
 };
 </script>
 <style scoped>
