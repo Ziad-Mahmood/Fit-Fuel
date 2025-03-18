@@ -1,15 +1,27 @@
 /* @import './base.css'; */
 @import 'tailwindcss';
 
-body{
+body {
     font-family: "Poppins", serif;
 }
-.btn{
-    @apply bg-[#339e3f] text-white font-semibold rounded-full hover:bg-[#2b843a] hover:cursor-pointer transition-colors text-sm md:text-base 
+
+.btn {
+    @apply bg-[#339e3f] text-white font-semibold rounded-full hover:bg-[#2b843a] hover:cursor-pointer transition-colors text-sm md:text-base
 }
-.btn-outline{
+
+.btn-outline {
     @apply border border-gray-300 text-gray-600 rounded-full hover:bg-gray-50;
 }
-.btn-logout{
-    @apply bg-red-600 text-white font-semibold rounded-full hover:bg-red-800 hover:cursor-pointer transition-colors text-sm md:text-base 
+
+.meal-btn {
+    @apply border border-[#339e3f] text-[#339e3f] rounded-full hover:bg-[#339e3f] hover:text-white hover:cursor-pointer transition-colors text-sm md:text-base;
+
+}
+
+.delete-btn {
+    @apply border border-red-700 text-red-700 rounded-full cursor-pointer hover:bg-red-700 hover:text-white;
+}
+
+.btn-logout {
+    @apply bg-red-600 text-white font-semibold rounded-full hover:bg-red-800 hover:cursor-pointer transition-colors text-sm md:text-base
 }
