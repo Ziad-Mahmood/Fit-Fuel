@@ -34,7 +34,10 @@
     </div>
 
     <button type="submit" :disabled="isLoading" class="w-full py-2 md:py-3 btn">
-      {{ isLoading ? 'Signing In...' : 'Sign In' }}
+      <span v-if="isLoading">
+        <i class="fas fa-circle-notch fa-spin mr-2"></i>Signing In...
+      </span>
+      <span v-else>Sign In</span>
     </button>
 
     <div class="relative flex items-center justify-center w-full my-2">

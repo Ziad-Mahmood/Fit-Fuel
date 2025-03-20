@@ -130,7 +130,6 @@ export default {
           updatedAt: new Date()
         });
         
-        // Create notification for user
         if (orderData && orderData.userId) {
           await addDoc(collection(db, "notifications"), {
             userId: orderData.userId,

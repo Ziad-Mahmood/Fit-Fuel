@@ -77,14 +77,11 @@ export default {
         );
         
         this.unsubscribeOrders = onSnapshot(ordersQuery, (snapshot) => {
-          // Check for new orders
           snapshot.docChanges().forEach(async (change) => {
             if (change.type === "added" && change.doc.data().status === "Order Placed") {
-              // Play sound for new order
               const audio = new Audio('/src/assets/sounds/notification.mp3');
               audio.play().catch(e => console.log('Audio play failed:', e));
               
-              // Show toast notification
               Swal.fire({
                 title: 'New Order!',
                 text: 'A new order has been placed',
@@ -148,7 +145,6 @@ export default {
           updatedAt: new Date()
         });
         
-        // Create notification for user
         if (orderData && orderData.userId) {
           await addDoc(collection(db, "notifications"), {
             userId: orderData.userId,
@@ -159,7 +155,6 @@ export default {
           });
         }
         
-        // Notify delivery drivers
         Swal.fire({
           title: 'Order Ready',
           text: 'Order has been marked ready for delivery',

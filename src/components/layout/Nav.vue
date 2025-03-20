@@ -17,7 +17,7 @@
     >
       <!-- Logo -->
       <div class="w-[110px] h-[35px] self-end">
-        <router-link to="/">
+        <router-link :to="isDashboardRoute?'/dashboard':'/'">
           <img
             src="@/assets/images/Logo.png"
             alt="FitFuel Logo"
@@ -35,7 +35,7 @@
           v-for="link in navLinks"
           :key="link.path"
           :to="link.path"
-          class="text-base font-['Poppins'] transition-colors"
+          class="text-base font-['Poppins'] transition-colors relative"
           :class="
             $route.path === link.path
               ? 'text-[#339e3f] font-bold'
@@ -43,6 +43,11 @@
           "
         >
           {{ $t(link.name) }}
+          <!-- Add notification dot for order tracking -->
+          <span 
+            v-if="link.path === '/order-tracking' && hasUnreadOrders" 
+            class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"
+          ></span>
         </router-link>
       </div>
 
@@ -167,11 +172,11 @@
     </div>
   </div>
 </template>
-
 <script>
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth, db } from "@/firebase/config";
 import { doc, getDoc, onSnapshot } from "firebase/firestore";  
+import { mapGetters } from 'vuex';
 
 export default {
   name: "Nav",
@@ -200,7 +205,9 @@ export default {
     isRTL() {
       return this.$i18n.locale === "ar";
     },
+    ...mapGetters('notifications', ['hasUnreadOrders'])
   },
+  
   mounted() {
     window.addEventListener("scroll", this.handleScroll);
 
@@ -233,6 +240,9 @@ export default {
     });
     
     this.$i18n.locale = localStorage.getItem("lang") || "en";
+    
+    // Initialize notifications
+    this.$store.dispatch('notifications/initNotifications');
   },
   
   unmounted() {

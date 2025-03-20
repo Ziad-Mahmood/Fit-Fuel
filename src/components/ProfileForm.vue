@@ -7,18 +7,76 @@
         class="relative h-48 bg-gradient-to-r from-green-500 via-green-200 to-green-500"
       >
         <div class="absolute -bottom-16 left-1/2 -translate-x-1/2">
-          <img
-            :src="getImageSrc"
-            :alt="user.name + '\'s Profile Picture'"
-            class="w-32 h-32 rounded-full border-4 border-white shadow-lg transition-transform hover:scale-110 duration-300"
-          />
+          <div class="relative group">
+            <img
+              :src="getImageSrc"
+              :alt="user.name + '\'s Profile Picture'"
+              class="w-32 h-32 rounded-full border-4 border-white shadow-lg transition-transform hover:scale-110 duration-300"
+            />
+            <div 
+              @click="triggerImageUpload" 
+              class="absolute inset-0 flex items-center justify-center bg-green-600 bg-opacity-50 rounded-full opacity-0 group-hover:opacity-100 cursor-pointer transition-opacity duration-300"
+            >
+              <span class="text-white text-sm">Change Photo</span>
+            </div>
+            <input 
+              type="file" 
+              ref="imageInput" 
+              @change="handleImageChange" 
+              accept="image/*" 
+              class="hidden" 
+            />
+          </div>
         </div>
       </div>
 
       <div class="pt-20 px-6 pb-8">
         <div class="text-center mb-8">
-          <h1 class="text-2xl font-bold text-gray-800">{{ user.name }}</h1>
-          <p class="text-gray-600 mt-1">{{ user.username }}</p>
+          <div class="flex items-center justify-center">
+            <input
+              v-if="editingName"
+              v-model="editedName"
+              type="text"
+              class="text-2xl font-bold text-gray-800 text-center border-b border-green-500 focus:outline-none"
+              @keyup.enter="saveName"
+            />
+            <h1 v-else class="text-2xl font-bold text-gray-800">{{ user.name }}</h1>
+            <button
+              @click="editingName ? saveName() : startEditingName()"
+              class="ml-2 text-green-500 hover:text-green-600"
+            >
+              <span v-if="editingName">✓</span>
+              <img
+                v-else
+                src="../assets/images/edit.png"
+                alt="Edit"
+                class="w-5 h-5"
+              />
+            </button>
+          </div>
+          
+          <div class="flex items-center justify-center mt-1">
+            <input
+              v-if="editingUsername"
+              v-model="editedUsername"
+              type="text"
+              class="text-gray-600 text-center border-b border-green-500 focus:outline-none"
+              @keyup.enter="saveUsername"
+            />
+            <p v-else class="text-gray-600">{{ user.username }}</p>
+            <button
+              @click="editingUsername ? saveUsername() : startEditingUsername()"
+              class="ml-2 text-green-500 hover:text-green-600"
+            >
+              <span v-if="editingUsername">✓</span>
+              <img
+                v-else
+                src="../assets/images/edit.png"
+                alt="Edit"
+                class="w-5 h-5"
+              />
+            </button>
+          </div>
         </div>
 
         <div class="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
@@ -174,19 +232,35 @@ export default {
       editingEmail: false,
       editingPhone: false,
       editingAddress: false,
+      editingName: false,
+      editingUsername: false,
       editedEmail: "",
       editedPhone: "",
       editedAddress: "",
+      editedName: "",
+      editedUsername: "",
       emailError: "",
       phoneError: "",
+      selectedImage: null,
     };
   },
   computed: {
     getImageSrc() {
+      if (this.selectedImage) {
+        return URL.createObjectURL(this.selectedImage);
+      }
       return new URL(`${this.user.profilePicture}`, import.meta.url).href;
     },
   },
   methods: {
+    startEditingName() {
+      this.editedName = this.user.name;
+      this.editingName = true;
+    },
+    startEditingUsername() {
+      this.editedUsername = this.user.username;
+      this.editingUsername = true;
+    },
     startEditingEmail() {
       this.editedEmail = this.user.email;
       this.editingEmail = true;
@@ -200,6 +274,18 @@ export default {
     startEditingAddress() {
       this.editedAddress = this.user.address;
       this.editingAddress = true;
+    },
+    saveName() {
+      if (this.editedName.trim()) {
+        this.$emit("update:name", this.editedName);
+        this.editingName = false;
+      }
+    },
+    saveUsername() {
+      if (this.editedUsername.trim()) {
+        this.$emit("update:username", this.editedUsername);
+        this.editingUsername = false;
+      }
     },
     validateEmail(email) {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -244,6 +330,16 @@ export default {
     handleOrdersClick() {
       this.$emit("orders-click", this.user.deliveredOrders);
     },
+    triggerImageUpload() {
+      this.$refs.imageInput.click();
+    },
+    handleImageChange(event) {
+      const file = event.target.files[0];
+      if (file && file.type.startsWith('image/')) {
+        this.selectedImage = file;
+        this.$emit('update:profilePicture', file);
+      }
+    }
   },
 };
 </script>

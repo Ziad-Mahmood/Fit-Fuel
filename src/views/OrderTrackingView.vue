@@ -120,6 +120,8 @@ export default {
           });
           
           this.loading = false;
+          
+          this.markOrdersAsSeen();
         }, (error) => {
           console.error('Error fetching orders:', error);
           this.error = 'Failed to load orders. Please try again later.';
@@ -129,6 +131,12 @@ export default {
         console.error('Error fetching orders:', error);
         this.error = 'Failed to load orders. Please try again later.';
         this.loading = false;
+      }
+    },
+    
+    markOrdersAsSeen() {
+      if (this.orders.length > 0) {
+        this.$store.dispatch('notifications/markOrdersAsSeen');
       }
     }
   },
@@ -151,6 +159,8 @@ export default {
       if (user) {
         this.user = user;
         this.fetchOrders(user.uid);
+        
+        localStorage.setItem('lastSeenOrderUpdate', new Date().toISOString());
       } else {
         this.user = null;
         this.error = 'Please login to view your orders';
@@ -158,11 +168,11 @@ export default {
       }
     });
   },
+  
   beforeUnmount() {
-    
     if (this.unsubscribe) {
       this.unsubscribe();
     }
   }
-};
+}
 </script>

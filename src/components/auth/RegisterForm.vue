@@ -21,7 +21,13 @@
       </label>
     </div>
 
-    <button type="submit" :disabled="isLoading" class="w-full py-2 md:py-3 btn"> Sign Up </button>
+    <!-- Update the Sign Up button -->
+    <button type="submit" :disabled="isLoading" class="w-full py-2 md:py-3 btn">
+      <span v-if="isLoading">
+        <i class="fas fa-circle-notch fa-spin mr-2"></i>Signing Up...
+      </span>
+      <span v-else>Sign Up</span>
+    </button>
 
     <div class="relative flex items-center justify-center w-full my-2">
       <hr class="w-full border-t border-gray-300" />
@@ -29,10 +35,14 @@
       <hr class="w-full border-t border-gray-300" />
     </div>
 
-    <button type="button" @click="handleGoogleSignUp"
+    <!-- Update the Google Sign Up button -->
+    <button type="button" @click="handleGoogleSignUp" :disabled="isLoading"
       class="w-full flex justify-center items-center gap-2 py-2 md:py-3 border border-slate-300 rounded-full text-slate-700 hover:bg-slate-50">
       <img src="@/assets/images/google.png" alt="Google" class="w-5 h-5" />
-      <span>Sign up with Google</span>
+      <span v-if="isLoading">
+        <i class="fas fa-circle-notch fa-spin mr-2"></i>Signing Up...
+      </span>
+      <span v-else>Sign up with Google</span>
     </button>
 
     <p class="text-center text-xs md:text-sm text-slate-600 font-['Plus Jakarta Sans']">
@@ -58,7 +68,8 @@ export default {
       password: '',
       showPassword: false,
       acceptTerms: false,
-      error: null
+      error: null,
+      isLoading: false
     }
   },
   methods: {
