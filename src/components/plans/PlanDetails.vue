@@ -30,6 +30,8 @@
 
 <script>
 import { mapActions } from 'vuex'
+import Swal from 'sweetalert2'
+import { auth } from '@/firebase/config'
 
 export default {
   name: 'PlanDetails',
@@ -58,6 +60,11 @@ export default {
   methods: {
     ...mapActions('cart', ['addToCart']),
     async addPlanToCart() {
+      if (!auth.currentUser) {
+        this.$router.push('/login')
+        return
+      }
+      
       const planId = `plan-${this.planType.toLowerCase()}`
       const planItem = {
         name: `${this.planType} Plan`,
@@ -69,7 +76,9 @@ export default {
         details: {
           subtitle: this.subtitle,
           mealTypes: this.mealTypes
-        }
+        },
+        userId: auth.currentUser.uid,
+        addedAt: new Date()
       }
 
       try {
@@ -81,7 +90,7 @@ export default {
     },
     showCheckoutAlert() {
       Swal.fire({
-        title: "<strong>Item Added Successfully</strong>",
+        title: "<strong>Plan Added Successfully</strong>",
         icon: "success",
         html: `
       You can view it in your cart
@@ -94,7 +103,6 @@ export default {
       }).then((result) => {
         if (result.isConfirmed) {
           this.$router.push('/cart');
-        } else {
         }
       });
     }

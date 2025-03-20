@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
-import { requireAuth, redirectIfAuthenticated, requireRole } from './auth-guard';
+import { requireAuth, redirectIfAuthenticated, requireRole, restrictStaffToTheirPages } from './auth-guard';
 
 
 import LoginView from "@/views/auth/LoginView.vue";
@@ -13,6 +13,7 @@ import MealDetails from "@/views/MealDetails.vue";
 import CheckoutView from "@/views/CheckoutView.vue";
 import DvrDashboard from "@/views/dashboards/DvrDashboard.vue";
 import KitchenDashboard from "@/views/dashboards/KitchenDashboard.vue";
+import Dashboard from "@/views/dashboards/Dashboard.vue";
 import PlansView from "@/views/PlansView.vue";
 
 import OrderTrackingView from "@/views/OrderTrackingView.vue";
@@ -24,6 +25,7 @@ import AdminDashBoard from "@/views/dashboards/AdminDashBoard.vue";
 import AboutUsView from "@/views/AboutUsView.vue";
 import NotFound from "@/views/NotFound.vue";
 import OrderConfirmation from "@/views/OrderConfirmation.vue";
+import Forbidden from "@/views/Forbidden.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -68,6 +70,12 @@ const router = createRouter({
       path: "/checkout",
       name: "checkout",
       component: CheckoutView,
+      beforeEnter: requireAuth 
+    },
+    {
+      path: "/403",
+      name: "forbidden",
+      component: Forbidden
     },
     {
       path: "/profile",
@@ -121,12 +129,20 @@ const router = createRouter({
       path: "/:pathMatch(.*)*",
       name: "NotFound",
       component: NotFound
-    }
+    },
+    {
+      path: "/dashboard",
+      name: "dashboard",
+      component: Dashboard,
+      beforeEnter: requireAuth
+    },
   ],
   scrollBehavior(to, from, savedPosition) {
     return { top: 0 }
   },
 }
 );
+
+router.beforeEach(restrictStaffToTheirPages);
 
 export default router;

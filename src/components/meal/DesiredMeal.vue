@@ -1,5 +1,29 @@
 <template>
-  <div class="flex flex-col gap-4">
+  <!-- Loading State -->
+  <div v-if="loading" class="flex flex-col gap-4 animate-pulse">
+    <div class="flex flex-col md:flex-row justify-between items-start">
+      <div>
+        <div class="h-8 bg-gray-200 rounded w-48 mb-2"></div>
+        <div class="h-4 bg-gray-200 rounded w-24"></div>
+      </div>
+      <div class="h-4 bg-gray-200 rounded w-32 mt-2"></div>
+    </div>
+
+    <div class="h-20 bg-gray-200 rounded w-full"></div>
+
+    <div class="flex flex-col md:flex-row justify-between">
+      <div class="h-8 bg-gray-200 rounded w-32"></div>
+      <div class="flex items-center gap-1">
+        <div class="w-10 h-10 bg-gray-200 rounded"></div>
+        <div class="w-10 h-10 bg-gray-200 rounded"></div>
+        <div class="w-10 h-10 bg-gray-200 rounded"></div>
+      </div>
+    </div>
+    <div class="h-12 bg-gray-200 rounded w-full"></div>
+  </div>
+
+  <!-- Actual Content -->
+  <div v-else class="flex flex-col gap-4">
     
     <div class="flex flex-col md:flex-row justify-between items-start">
       <div>
@@ -63,8 +87,14 @@ export default {
   data() {
     return {
       quantity: 1,
-      isAdding: false
+      isAdding: false,
+      loading: true
     }
+  },
+  mounted() {
+    setTimeout(() => {
+      this.loading = false;
+    }, 1000);
   },
   computed: {
     totalPrice() {
@@ -75,7 +105,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions('cart', ['addToCart', 'loadCart']),
+    ...mapActions('cart', ['addToCart']),
     increaseQuantity() {
       this.quantity++
     },
@@ -102,16 +132,14 @@ export default {
           removedIngredients: this.removedIngredients,
           isCustomized: this.isCustomized,
           userId: auth.currentUser.uid,
-          addedAt: new Date().toISOString()
+          addedAt: new Date()
         }
 
-        
         await this.addToCart({ 
           id: this.meal.id, 
           item: cartItem 
         })
 
-        await this.loadCart()
         this.showCheckoutAlert()
       } catch (error) {
         console.error('Error adding to cart:', error)
@@ -134,7 +162,6 @@ export default {
       }).then((result) => {
         if (result.isConfirmed) {
           this.$router.push('/cart');
-        } else {
         }
       });
     }

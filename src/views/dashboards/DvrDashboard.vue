@@ -23,7 +23,7 @@
 <script>
 import Header from '../../components/layout/Header.vue'
 import DashTable from '../../components/dashboard/DashTable.vue'
-import { collection, getDocs, query, where, updateDoc, doc, onSnapshot, getDoc } from 'firebase/firestore'
+import { collection, getDocs, query, where, updateDoc, doc, onSnapshot, getDoc, addDoc } from 'firebase/firestore'
 import { db, auth } from '@/firebase/config'
 import Swal from 'sweetalert2'
 
@@ -122,10 +122,23 @@ export default {
      async markAsDelivered(orderId) {
       try {
         const orderRef = doc(db, "orders", orderId);
+        const orderDoc = await getDoc(orderRef);
+        const orderData = orderDoc.data();
+        
         await updateDoc(orderRef, {
           status: "Delivered",
           updatedAt: new Date()
         });
+        
+        if (orderData && orderData.userId) {
+          await addDoc(collection(db, "notifications"), {
+            userId: orderData.userId,
+            title: "Order Delivered",
+            message: `Your order #${orderId.slice(0, 6)} has been delivered.`,
+            read: false,
+            createdAt: new Date()
+          });
+        }
       } catch (error) {
         console.error("Error updating order:", error);
         Swal.fire({

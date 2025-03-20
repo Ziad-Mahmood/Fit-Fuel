@@ -115,7 +115,6 @@ export default {
     },
     initializePlansData({ commit }) {
       commit('SET_LOADING', true)
-      // Since data is already in state, just set loading to false
       setTimeout(() => {
         commit('SET_LOADING', false)
       }, 500)

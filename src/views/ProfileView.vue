@@ -96,8 +96,9 @@ export default {
                   this.userData.address = userData.address || "";
                 }
 
-                this.userData.deliveredOrders = userData.deliveredOrders || "0";
-                // Update any other fields that might have changed
+                this.userData.deliveredOrders = 
+                  userData.deliveredOrders ? userData.deliveredOrders.toString() : "0";
+                
                 if (userData.email) this.userData.email = userData.email;
               }
             }

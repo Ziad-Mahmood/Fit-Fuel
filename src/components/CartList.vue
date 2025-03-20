@@ -1,11 +1,20 @@
 <template>
   <div>
-    <div v-if="!cartItems || cartItems.length === 0" class="text-center py-12">
+    <div v-if="loading" class="text-center py-12">
+      <div class="flex flex-col items-center justify-center">
+        <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-green-500 mb-4"></div>
+        <h2 class="text-xl text-gray-600">Loading your cart...</h2>
+        <p class="text-gray-500 mt-2">Please wait while we fetch your items</p>
+      </div>
+    </div>
+    
+    <div v-else-if="!cartItems || cartItems.length === 0" class="text-center py-12">
       <h2 class="text-xl text-gray-600 mb-4">Your cart is empty</h2>
       <router-link to="/menu" class="btn px-6 py-2"> Browse Menu </router-link>
     </div>
 
     <div v-else>
+      <!-- Cart content remains the same -->
       <div class="w-full md:w-[80%] px-16 py-6 mx-auto">
         <div class="space-y-8">
           <!-- Cart Header -->
@@ -46,9 +55,9 @@
     </div>
   </div>
 </template>
-NEW [5:33 PM]
+
 <script>
-import { mapState, mapActions } from "vuex";
+import { mapState, mapActions, mapGetters } from "vuex";
 import CartItem from "./CartItem.vue";
 
 export default {
@@ -58,12 +67,16 @@ export default {
   },
   computed: {
     ...mapState("cart", ["cartItems"]),
+    ...mapGetters("cart", ["isLoading"]),
+    loading() {
+      return this.isLoading;
+    },
     calculateTotal() {
       return this.cartItems.reduce((total, item) => total + item.total, 0);
     },
   },
   methods: {
-    ...mapActions("cart", ["updateCartItem", "removeFromCart"]),
+    ...mapActions("cart", ["updateCartItem", "removeFromCart", "testPageLoad"]),
     async updateQuantity(id, newQuantity) {
       if (newQuantity > 0) {
         const item = this.cartItems.find((item) => item.id === id);
@@ -81,8 +94,11 @@ export default {
       await this.removeFromCart(id);
     },
   },
-  created() {
-    this.$store.dispatch("cart/loadCart");
-  },
+  async created() {
+    await this.testPageLoad();
+    if (this.cartItems.length === 0) {
+      this.$store.dispatch("cart/initializeCart");
+    }
+  }
 };
 </script>
