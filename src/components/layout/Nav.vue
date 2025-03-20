@@ -69,9 +69,9 @@
           </router-link>
 
           <div class="relative">
-            <button @click="toggleLangMenu">
+            <button @click="toggleLangMenu" >
               <i
-                class="fa-solid fa-earth-americas hover:opacity-80 transition-opacity text-[#339e3f]"
+                class="fa-solid fa-earth-americas cursor-pointer hover:opacity-80 transition-opacity text-[#339e3f]"
               ></i>
             </button>
             <div
@@ -80,13 +80,13 @@
             >
               <button
                 @click="changeLanguage('en')"
-                class="block w-full px-4 py-2 hover:bg-gray-100"
+                class="block w-full px-4 py-2 hover:bg-gray-100 hover:text-[#339e3f] cursor-pointer"
               >
                 English
               </button>
               <button
                 @click="changeLanguage('ar')"
-                class="block w-full px-4 py-2 hover:bg-gray-100"
+                class="block w-full px-4 py-2 hover:bg-gray-100 hover:text-[#339e3f] cursor-pointer"
               >
                 العربية
               </button>
@@ -142,7 +142,6 @@
             <span class="text-[#339e3f] font-bold font-['Poppins']">
               {{ currentUser.displayName || "User" }}
             </span>
-           
           </span>
         </template>
       </div>
