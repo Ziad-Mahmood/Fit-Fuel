@@ -1,6 +1,6 @@
 <template>
   <button
-    class="meal-card w-[370px] h-[484px] rounded-3xl text-start overflow-hidden hover:shadow-xl hover:cursor-pointer hover:scale-[.99] duration-300 ease-out"
+    class="meal-card w-[370px] h-[484px] rounded-3xl text-start overflow-hidden hover:shadow-xl hover:cursor-pointer hover:scale-[.99] duration-300 ease-out "
     :style="{ backgroundImage: `url(${meal.image})` }"
     @click="goToMealDetails">
     <div class="pl-5 pb-5 bg-opacity-80 rounded-b-lg absolute bottom-0 w-full card-content leading-12">
