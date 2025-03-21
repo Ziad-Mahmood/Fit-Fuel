@@ -18,7 +18,7 @@
       <div class="flex justify-center items-center">
         <button
           @click="logout"
-          class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors flex items-center"
+          class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors flex items-center mb-5"
         >
           <span>Logout</span>
         </button>
@@ -96,9 +96,10 @@ export default {
                   this.userData.address = userData.address || "";
                 }
 
-                this.userData.deliveredOrders = 
-                  userData.deliveredOrders ? userData.deliveredOrders.toString() : "0";
-                
+                this.userData.deliveredOrders = userData.deliveredOrders
+                  ? userData.deliveredOrders.toString()
+                  : "0";
+
                 if (userData.email) this.userData.email = userData.email;
               }
             }
