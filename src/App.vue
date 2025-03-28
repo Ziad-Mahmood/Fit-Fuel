@@ -13,9 +13,6 @@ import { doc, onSnapshot, collection, query, where } from 'firebase/firestore'
 import { logoutUser } from './firebase/auth'
 import Nav from "./components/layout/Nav.vue";
 import Footer from "./components/layout/Footer.vue";
-import mitt from 'mitt'
-
-const emitter = mitt()
 
 export default {
   name: "App", 
@@ -27,8 +24,6 @@ export default {
     }
   },
   created() {
-    window.emitter = emitter;
-    
     onAuthStateChanged(auth, (user) => {
       if (user) {
         this.$store.dispatch('cart/initializeCart');
@@ -64,7 +59,7 @@ export default {
     
     this.$router.beforeEach((to, from, next) => {
       if (to.path === '/order-tracking') {
-        window.emitter.emit('orders-viewed');
+        this.$store.dispatch('notifications/markOrdersAsSeen');
       }
       next();
     });
@@ -89,12 +84,6 @@ export default {
                 const orderData = change.doc.data();
                 
                 this.$store.dispatch('notifications/checkForNewOrders', {
-                  id: change.doc.id,
-                  status: orderData.status || 'Order Placed',
-                  timestamp: orderData.timestamp
-                });
-                
-                window.emitter.emit('order-update', {
                   id: change.doc.id,
                   status: orderData.status || 'Order Placed',
                   timestamp: orderData.timestamp

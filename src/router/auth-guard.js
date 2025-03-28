@@ -143,7 +143,8 @@ export const restrictStaffToTheirPages = (to, from, next) => {
             '/dashboard/admin', 
             '/dashboard/kitchen', 
             '/dashboard/delivery',
-            '/403'
+            '/403',
+            '/login'
           ]
           
           if (!allowedPaths.some(path => to.path.startsWith(path))) {

@@ -46,7 +46,8 @@
           <!-- Add notification dot for order tracking -->
           <span 
             v-if="link.path === '/order-tracking' && hasUnreadOrders" 
-            class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"
+            class="absolute -top-1 -right-2 w-[.55rem] h-[.55rem] rounded-full"
+            :class="getNotificationDotColor"
           ></span>
         </router-link>
       </div>
@@ -204,7 +205,35 @@ export default {
     isRTL() {
       return this.$i18n.locale === "ar";
     },
-    ...mapGetters('notifications', ['hasUnreadOrders'])
+    ...mapGetters('notifications', ['hasUnreadOrders', 'notifications']),
+    getNotificationDotColor() {
+      if (!this.notifications || this.notifications.length === 0) {
+        return 'bg-red-500';
+      }
+      
+      // Get the most recent unread notification
+      const latestNotification = this.notifications.find(n => !n.read);
+      
+      if (!latestNotification) {
+        return 'bg-red-500';
+      }
+      
+      // Change color based on status
+      switch (latestNotification.status) {
+        case 'Order Placed':
+          return 'bg-blue-500';
+        case 'Preparing':
+          return 'bg-yellow-500';
+        case 'On Delivery':
+          return 'bg-orange-500';
+        case 'Delivered':
+          return 'bg-green-500';
+        case 'Cancelled':
+          return 'bg-red-500';
+        default:
+          return 'bg-red-500';
+      }
+    }
   },
   
   mounted() {

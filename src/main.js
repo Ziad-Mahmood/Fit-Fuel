@@ -6,7 +6,6 @@ import router from './router/router'
 import emailjs from '@emailjs/browser'
 import Swal from 'sweetalert2'
 
-window.Swal = Swal
 
 import i18n from './i18n'; 
 
