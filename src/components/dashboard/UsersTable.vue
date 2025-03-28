@@ -1,5 +1,34 @@
 <template>
   <div class="overflow-x-auto">
+    <!-- Loading overlay -->
+    <div v-if="loading" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div class="bg-white p-6 rounded-lg shadow-xl w-[80%] max-w-4xl">
+        <h3 class="text-lg font-medium mb-4">{{ loadingMessage }}</h3>
+        
+        <!-- Table placeholder -->
+        <div class="w-full">
+          <!-- Header -->
+          <div class="grid grid-cols-8 text-gray-800 mb-5 text-center">
+            <div class="py-4 font-medium">User ID</div>
+            <div class="py-4 font-medium">Name</div>
+            <div class="py-4 font-medium">Phone Number</div>
+            <div class="py-4 font-medium">Email</div>
+            <div class="py-4 font-medium">Address</div>
+            <div class="py-4 font-medium">City</div>
+            <div class="py-4 font-medium">Status</div>
+            <div class="py-4 font-medium">Actions</div>
+          </div>
+          
+          <!-- Placeholder rows -->
+          <div v-for="i in 5" :key="i" class="grid grid-cols-8 text-gray-700 border-b border-gray-300 text-center items-center">
+            <div v-for="j in 8" :key="j" class="py-4">
+              <div class="h-6 bg-gray-200 rounded animate-pulse"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="w-[100%] lg:w-[80%] m-auto">
       <!-- Header -->
       <div class="grid grid-cols-8 text-gray-800 mb-5 text-center">
@@ -209,6 +238,8 @@ export default {
       confirmationMessage: "",
       pendingAction: null,
       pendingUser: null,
+      loading: false,
+      loadingMessage: "Processing...",
       editForm: {
         id: "",
         name: "",
@@ -254,6 +285,9 @@ export default {
     },
 
     async confirmAction() {
+      this.loading = true;
+      this.loadingMessage = `Processing ${this.pendingAction} action...`;
+      
       try {
         const userRef = doc(db, "users", this.pendingUser.id);
 
@@ -308,11 +342,13 @@ export default {
           icon: "error",
         });
       } finally {
+        this.loading = false;
         this.showConfirmModal = false;
         this.pendingAction = null;
         this.pendingUser = null;
       }
     },
+    
     editStaff(user) {
       this.editForm = {
         id: user.id,
@@ -327,6 +363,9 @@ export default {
     },
 
     async updateStaff() {
+      this.loading = true;
+      this.loadingMessage = "Updating staff member...";
+      
       try {
         const userRef = doc(db, "users", this.editForm.id);
         const updateData = {
@@ -361,6 +400,8 @@ export default {
           text: error.message || "Failed to update staff member",
           icon: "error",
         });
+      } finally {
+        this.loading = false;
       }
     },
   },
@@ -370,5 +411,14 @@ export default {
 <style scoped>
 .fixed {
   background: none !important;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.animate-spin {
+  animation: spin 1s linear infinite;
 }
 </style>

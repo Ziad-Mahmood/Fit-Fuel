@@ -12,7 +12,7 @@
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
         <!-- Admin Dashboard -->
         <div v-if="userRole === 'admin'" class="dashboard-card" @click="navigateTo('/dashboard/admin')">
-          <img src="@/assets/images/admin.png" alt="Admin Dashboard" class="w-full h-64 object-cover rounded-t-lg">
+          <img src="@/assets/images/admin.jpeg" alt="Admin Dashboard" class="w-full h-64 object-cover rounded-t-lg">
           <div class="p-6 text-center">
             <h3 class="text-xl font-bold mb-2">Admin Dashboard</h3>
             <p class="text-gray-600 mb-4">Manage users, products, and system settings</p>

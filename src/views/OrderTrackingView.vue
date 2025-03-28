@@ -90,7 +90,15 @@ export default {
                   toast: true,
                   position: 'top-end',
                   showConfirmButton: false,
-                  timer: 5000
+                  timer: 5000,
+                  didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer);
+                    toast.addEventListener('mouseleave', Swal.resumeTimer);
+                    toast.addEventListener('click', () => {
+                      this.$store.dispatch('notifications/markNotificationRead', change.doc.id);
+                      Swal.close();
+                    });
+                  }
                 });
               }
             }
@@ -160,7 +168,7 @@ export default {
         this.user = user;
         this.fetchOrders(user.uid);
         
-        localStorage.setItem('lastSeenOrderUpdate', new Date().toISOString());
+        this.$store.dispatch('notifications/markOrdersAsSeen');
       } else {
         this.user = null;
         this.error = 'Please login to view your orders';
