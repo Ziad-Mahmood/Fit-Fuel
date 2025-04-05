@@ -14,7 +14,6 @@ export default {
       localStorage.setItem('lastSeenOrderUpdate', timestamp);
     },
     ADD_NOTIFICATION(state, notification) {
-      // Check for duplicates
       const existingIndex = state.notifications.findIndex(n => n.id === notification.id);
       if (existingIndex !== -1) {
         state.notifications.splice(existingIndex, 1);
@@ -25,7 +24,6 @@ export default {
         state.notifications.pop();
       }
       
-      // Always set unread flag when adding a notification
       state.hasUnreadOrders = true;
     },
     CLEAR_NOTIFICATIONS(state) {
@@ -37,7 +35,6 @@ export default {
         notification.read = true;
       }
       
-      // Check if all notifications are read
       const allRead = state.notifications.every(n => n.read);
       if (allRead) {
         state.hasUnreadOrders = false;
@@ -57,10 +54,8 @@ export default {
       commit('MARK_ALL_READ');
       commit('SET_UNREAD_ORDERS', false);
       
-      // Save to localStorage
       localStorage.setItem('unreadNotifications', JSON.stringify(state.notifications));
       
-      // Update read status in Firestore for all notifications
       if (rootState.auth && rootState.auth.user) {
         const userId = rootState.auth.user.uid;
         
@@ -89,10 +84,8 @@ export default {
     markNotificationRead({ commit, state }, notificationId) {
       commit('MARK_NOTIFICATION_READ', notificationId);
       
-      // Save to localStorage
       localStorage.setItem('unreadNotifications', JSON.stringify(state.notifications));
       
-      // Update read status in Firestore for this notification
       import('firebase/firestore').then(({ collection, query, where, getDocs, updateDoc, doc }) => {
         import('@/firebase/config').then(({ db }) => {
           const notificationsRef = collection(db, 'notifications');
@@ -129,10 +122,8 @@ export default {
       
       commit('ADD_NOTIFICATION', notification);
       
-      // Save to localStorage
       localStorage.setItem('unreadNotifications', JSON.stringify(state.notifications));
       
-      // Add notification to Firestore
       if (rootState.auth && rootState.auth.user) {
         const userId = rootState.auth.user.uid;
         
@@ -154,37 +145,43 @@ export default {
         });
       }
       
-      // Play notification sound
-      try {
-        const audio = new Audio('/src/assets/sounds/notification.mp3');
-        audio.play().catch(e => console.log('Audio play failed:', e));
-      } catch (error) {
-        console.error('Error playing notification sound:', error);
+      if (orderUpdate.status === 'Delivered') {
+        try {
+          const audio = new Audio('/src/assets/sounds/notification.mp3');
+          audio.play().catch(e => console.log('Audio play failed:', e));
+        } catch (error) {
+          console.error('Error playing notification sound:', error);
+        }
       }
       
-      // Show SweetAlert notification with click handler
-      import('sweetalert2').then((Swal) => {
-        Swal.default.fire({
-          title: 'Order Updated',
-          text: `Your order status changed to: ${orderUpdate.status || 'Updated'}`,
-          icon: 'info',
-          toast: true,
-          position: 'top-end',
-          showConfirmButton: false,
-          timer: 5000,
-          didOpen: (toast) => {
-            toast.addEventListener('mouseenter', Swal.default.stopTimer);
-            toast.addEventListener('mouseleave', Swal.default.resumeTimer);
-            toast.addEventListener('click', () => {
-              commit('MARK_NOTIFICATION_READ', orderUpdate.id);
-              localStorage.setItem('unreadNotifications', JSON.stringify(state.notifications));
-              Swal.default.close();
-            });
-          }
+      const currentRoute = window.location.pathname;
+      const isOrderPage = currentRoute.includes('/order-tracking') || 
+                          currentRoute.includes('/order-confirmation');
+      
+      if (!isOrderPage) {
+        import('sweetalert2').then((Swal) => {
+          Swal.default.fire({
+            title: 'Order Updated',
+            text: `Your order status changed to: ${orderUpdate.status || 'Updated'}`,
+            icon: 'info',
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 8000,
+            didOpen: (toast) => {
+              toast.addEventListener('mouseenter', Swal.default.stopTimer);
+              toast.addEventListener('mouseleave', Swal.default.resumeTimer);
+              toast.addEventListener('click', () => {
+                commit('MARK_NOTIFICATION_READ', orderUpdate.id);
+                localStorage.setItem('unreadNotifications', JSON.stringify(state.notifications));
+                Swal.default.close();
+              });
+            }
+          });
+        }).catch(error => {
+          console.error('Error showing notification:', error);
         });
-      }).catch(error => {
-        console.error('Error showing notification:', error);
-      });
+      }
     },
     
     initNotifications({ commit, rootState }) {
@@ -193,7 +190,6 @@ export default {
         commit('SET_LAST_SEEN', lastSeen);
       }
       
-      // Check for any unread notifications in localStorage
       const unreadNotifications = localStorage.getItem('unreadNotifications');
       if (unreadNotifications) {
         try {
@@ -203,7 +199,6 @@ export default {
               commit('ADD_NOTIFICATION', notification);
             });
             
-            // Check if all notifications are read
             const allRead = parsedNotifications.every(n => n.read);
             if (allRead) {
               commit('SET_UNREAD_ORDERS', false);
@@ -214,7 +209,6 @@ export default {
         }
       }
       
-      // Also fetch notifications from Firestore
       if (rootState.auth && rootState.auth.user) {
         const userId = rootState.auth.user.uid;
         

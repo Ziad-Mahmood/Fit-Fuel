@@ -40,22 +40,22 @@
         />
       </div>
       <div class="grid grid-cols-5 text-gray-800 text-center mb-5">
-        <div class="py-4 font-medium">Meal ID</div>
-        <div class="py-4 font-medium">Name</div>
-        <div class="py-4 font-medium">Price</div>
-        <div class="py-4 font-medium">Category</div>
-        <div class="py-4 font-medium">Actions</div>
+        <div class="py-4 text-sm md:text-base font-medium">Meal ID</div>
+        <div class="py-4 text-sm md:text-base font-medium">Name</div>
+        <div class="py-4 text-sm md:text-base font-medium">Price</div>
+        <div class="py-4 text-sm md:text-base font-medium">Category</div>
+        <div class="py-4 text-sm md:text-base font-medium">Actions</div>
       </div>
       <div
         v-for="meal in meals"
         :key="meal.id"
-        class="grid grid-cols-5 text-gray-700 border-b border-gray-300 text-center items-center py-5"
+        class="grid grid-cols-5 text-gray-700 border-b border-gray-300 text-center items-center py-5 text-sm md:text-base"
       >
-        <div class="py-4 break-words">#{{ meal.id }}</div>
-        <div class="py-4 break-words">{{ meal.name }}</div>
-        <div class="py-4 break-words">${{ meal.price }}</div>
-        <div class="py-4 break-words">{{ meal.category }}</div>
-        <div class="py-4 flex justify-center gap-5">
+        <div class="py-4 text-sm md:text-base break-words">#{{ meal.id.substring(0, 6) }}</div>
+        <div class="py-4 text-sm md:text-base break-words">{{ meal.name }}</div>
+        <div class="py-4 text-sm md:text-base break-words">${{ meal.price }}</div>
+        <div class="py-4 text-sm md:text-base break-words">{{ meal.category }}</div>
+        <div class="py-4 flex flex-col md:flex-row justify-center gap-5">
           <button
             @click="openEditForm(meal)"
             class="meal-btn px-5 py-2 text-md cursor-pointer"

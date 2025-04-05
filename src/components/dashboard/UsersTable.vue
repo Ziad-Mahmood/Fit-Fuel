@@ -9,14 +9,14 @@
         <div class="w-full">
           <!-- Header -->
           <div class="grid grid-cols-8 text-gray-800 mb-5 text-center">
-            <div class="py-4 font-medium">User ID</div>
-            <div class="py-4 font-medium">Name</div>
-            <div class="py-4 font-medium">Phone Number</div>
-            <div class="py-4 font-medium">Email</div>
-            <div class="py-4 font-medium">Address</div>
-            <div class="py-4 font-medium">City</div>
-            <div class="py-4 font-medium">Status</div>
-            <div class="py-4 font-medium">Actions</div>
+            <div class="py-4 text-sm md:text-base font-medium">User ID</div>
+            <div class="py-4 text-sm md:text-base font-medium">Name</div>
+            <div class="py-4 text-sm md:text-base font-medium">Phone Number</div>
+            <div class="py-4 text-sm md:text-base font-medium">Email</div>
+            <div class="py-4 text-sm md:text-base font-medium">Address</div>
+            <div class="py-4 text-sm md:text-base font-medium">City</div>
+            <div class="py-4 text-sm md:text-base font-medium">Status</div>
+            <div class="py-4 text-sm md:text-base font-medium">Actions</div>
           </div>
           
           <!-- Placeholder rows -->
@@ -32,14 +32,14 @@
     <div class="w-[100%] lg:w-[80%] m-auto">
       <!-- Header -->
       <div class="grid grid-cols-8 text-gray-800 mb-5 text-center">
-        <div class="py-4 font-medium">User ID</div>
-        <div class="py-4 font-medium">Name</div>
-        <div class="py-4 font-medium">Phone Number</div>
-        <div class="py-4 font-medium">Email</div>
-        <div class="py-4 font-medium">Address</div>
-        <div class="py-4 font-medium">City</div>
-        <div class="py-4 font-medium">Status</div>
-        <div class="py-4 font-medium">Actions</div>
+        <div class="py-4 text-sm md:text-base font-medium">User ID</div>
+        <div class="py-4 text-sm md:text-base font-medium">Name</div>
+        <div class="py-4 text-sm md:text-base font-medium">Phone Number</div>
+        <div class="py-4 text-sm md:text-base font-medium">Email</div>
+        <div class="py-4 text-sm md:text-base font-medium">Address</div>
+        <div class="py-4 text-sm md:text-base font-medium">City</div>
+        <div class="py-4 text-sm md:text-base font-medium">Status</div>
+        <div class="py-4 text-sm md:text-base font-medium">Actions</div>
       </div>
 
       <!-- Rows -->
@@ -48,14 +48,14 @@
         :key="user.id"
         class="grid grid-cols-8 text-gray-700 border-b border-gray-300 text-center items-center"
       >
-        <div class="py-4 break-words">#{{ user.id }}</div>
-        <div class="py-4 break-words">{{ user.name }}</div>
-        <div class="py-4 break-words">{{ user.phone }}</div>
-        <div class="py-4 break-words">{{ user.email }}</div>
-        <div class="py-4 break-words">
+        <div class="py-4 text-sm md:text-base break-words">#{{ user.id.substring(0, 6) }}</div>
+        <div class="py-4 text-sm md:text-base break-words">{{ user.name }}</div>
+        <div class="py-4 text-sm md:text-base break-words">{{ user.phone }}</div>
+        <div class="py-4 text-sm md:text-base break-words">{{ user.email }}</div>
+        <div class="py-4 text-sm md:text-base break-words">
           {{ user.address.street || "No Address" }}
         </div>
-        <div class="py-4 break-words">{{ user.city }}</div>
+        <div class="py-4 text-sm md:text-base break-words">{{ user.city }}</div>
         <div class="py-4">
           <span
             v-if="user.warned"
@@ -72,7 +72,7 @@
             Banned
           </span>
         </div>
-        <div class="py-4 flex justify-center gap-2">
+        <div class="py-4 flex flex-col md:flex-row justify-center gap-2">
           <!-- Staff Actions -->
           <template v-if="isStaff">
             <button
