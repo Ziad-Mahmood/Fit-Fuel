@@ -3,7 +3,7 @@
     <Header title="Admin" bgImage="admin header.png" position="right" />
 
     <div class="flex flex-col mt-15 mb-10">
-      <div class="flex gap-4 justify-center mb-4">
+      <div class="flex gap-4 flex-wrap justify-center mb-4">
         <tab-button
           text="Overview"
           :isActive="activeTab === '' || activeTab === 'overview'"

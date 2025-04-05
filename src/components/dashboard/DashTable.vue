@@ -54,7 +54,11 @@
             :is-delivery-view="$route.path.includes('delivery')"
             @accept-order="$emit('accept-order', $event)"
             @mark-ready="$emit('mark-ready', $event)"
-          />
+          >
+            <template #cell(id)="data">
+              #{{ data.item.id.substring(0, 6) }}
+            </template>
+          </TableItem>
         </tbody>
       </table>
     </div>

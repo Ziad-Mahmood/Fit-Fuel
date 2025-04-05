@@ -11,7 +11,7 @@
       
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
         <!-- Admin Dashboard -->
-        <div v-if="userRole === 'admin'" class="dashboard-card" @click="navigateTo('/dashboard/admin')">
+        <div v-if="userRole === 'admin'" class=" hover:shadow-2xl  border-2 border-white rounded-lg" @click="navigateTo('/dashboard/admin')">
           <img src="@/assets/images/admin.jpeg" alt="Admin Dashboard" class="w-full h-64 object-cover rounded-t-lg">
           <div class="p-6 text-center">
             <h3 class="text-xl font-bold mb-2">Admin Dashboard</h3>
@@ -21,7 +21,7 @@
         </div>
         
         <!-- Kitchen Dashboard -->
-        <div v-if="userRole === 'admin' || userRole === 'kitchen'" class="dashboard-card" @click="navigateTo('/dashboard/kitchen')">
+        <div v-if="userRole === 'admin' || userRole === 'kitchen'" class=" hover:shadow-2xl  border-2 border-white rounded-lg" @click="navigateTo('/dashboard/kitchen')">
           <img src="@/assets/images/sideKitchen.png" alt="Kitchen Dashboard" class="w-full h-64 object-cover rounded-t-lg">
           <div class="p-6 text-center">
             <h3 class="text-xl font-bold mb-2">Kitchen Dashboard</h3>
@@ -31,7 +31,7 @@
         </div>
         
         <!-- Delivery Dashboard -->
-        <div v-if="userRole === 'admin' || userRole === 'delivery'" class="dashboard-card" @click="navigateTo('/dashboard/delivery')">
+        <div v-if="userRole === 'admin' || userRole === 'delivery'" class=" hover:shadow-2xl  border-2 border-white rounded-lg" @click="navigateTo('/dashboard/delivery')">
           <img src="@/assets/images/SideDelivery.png" alt="Delivery Dashboard" class="w-full h-64 object-cover rounded-t-lg">
           <div class="p-6 text-center">
             <h3 class="text-xl font-bold mb-2">Delivery Dashboard</h3>

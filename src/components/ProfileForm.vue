@@ -199,9 +199,14 @@
                   src="../assets/images/down-arrow.png"
                   alt="Arrow"
                   class="w-6 h-6 mr-4"
+                  :class="{ 'rotate-180': showOrderHistory }"
                 />
               </div>
             </div>
+            <UserOrderHistory 
+              :show="showOrderHistory"
+              :userId="user.id"
+            />
           </div>
         </div>
       </div>
@@ -210,6 +215,8 @@
 </template>
 
 <script>
+import UserOrderHistory from './UserOrderHistory.vue'
+
 export default {
   name: "ProfileForm",
   props: {
@@ -242,6 +249,7 @@ export default {
       emailError: "",
       phoneError: "",
       selectedImage: null,
+      showOrderHistory: false,
     };
   },
   computed: {
@@ -329,6 +337,7 @@ export default {
     },
     handleOrdersClick() {
       this.$emit("orders-click", this.user.deliveredOrders);
+      this.showOrderHistory = !this.showOrderHistory;
     },
     triggerImageUpload() {
       this.$refs.imageInput.click();
@@ -339,7 +348,10 @@ export default {
         this.selectedImage = file;
         this.$emit('update:profilePicture', file);
       }
-    }
+        }
   },
+  components: {
+    UserOrderHistory
+  }
 };
 </script>

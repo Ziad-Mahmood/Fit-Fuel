@@ -36,7 +36,13 @@
           v-for="order in orders"
           :key="order.id"
           :order="order"
-        />
+        >
+          <template v-slot:order-id>
+            <td class="px-4 lg:px-8 py-4 text-center">
+              <span class="text-gray-600">#{{ order.id.substring(0, 6) }}</span>
+            </td>
+          </template>
+        </order-item>
       </tbody>
     </table>
   </div>

@@ -80,8 +80,17 @@ export default {
               const oldStatus = this.orders.find(o => o.id === change.doc.id)?.status;
               
               if (oldStatus && oldStatus !== newData.status) {
-                const audio = new Audio('/src/assets/sounds/notification.mp3');
-                audio.play().catch(e => console.log('Audio play failed:', e));
+                if (newData.status === 'Delivered') {
+                  const audio = new Audio('/src/assets/sounds/notification.mp3');
+                  audio.play().catch(e => console.log('Audio play failed:', e));
+                }
+                
+                this.$store.dispatch('notifications/checkForNewOrders', {
+                  id: change.doc.id,
+                  status: newData.status,
+                  timestamp: newData.timestamp
+                });
+              }
                 
                 Swal.fire({
                   title: 'Order Updated',
@@ -90,7 +99,7 @@ export default {
                   toast: true,
                   position: 'top-end',
                   showConfirmButton: false,
-                  timer: 5000,
+                  timer: 8000,
                   didOpen: (toast) => {
                     toast.addEventListener('mouseenter', Swal.stopTimer);
                     toast.addEventListener('mouseleave', Swal.resumeTimer);
@@ -102,7 +111,7 @@ export default {
                 });
               }
             }
-          });
+          );
           
           this.orders = snapshot.docs.map(doc => ({
             id: doc.id,
