@@ -72,5 +72,35 @@
       "title": "Get in touch",
       "description": "We are here for you! How can we help?"
     }
+  },
+  "hero": {
+    "healthy": "Healthy",
+    "delicious": "Delicious",
+    "title": "Meals Delivered to Your Doorstep",
+    "description": "Fuel your body with balanced, delicious meals made from fresh, high-quality ingredients—packed with the nutrition you need and the flavors you love",
+    "orderNow": "Order Now",
+    "imageAlt": "Healthy meal delivery service",
+    "&": "&"
+  },
+ "homeWork": {
+    "title": "How does it work",
+    "works": {
+      "0": {
+        "title": "Select location",
+        "description": "Choose the location where your food will be delivered."
+      },
+      "1": {
+        "title": "Choose order",
+        "description": "Check over hundreds of items to pick your favorite food."
+      },
+      "2": {
+        "title": "Pay advanced",
+        "description": "It's quick, safe, and simple. Select payment method."
+      },
+      "3": {
+        "title": "Enjoy meals",
+        "description": "Food is made and delivered directly to your home."
+      }
+    }
   }
 }
