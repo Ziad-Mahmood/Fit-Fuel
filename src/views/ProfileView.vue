@@ -12,6 +12,7 @@
         @update:email="updateEmail($event)"
         @update:phone="updatePhone($event)"
         @update:address="updateAddress($event)"
+        @update:profilePicture="updateProfilePicture($event)"
         @orders-click="handleOrdersClick"
       />
 
@@ -59,16 +60,21 @@ export default {
     };
   },
   mounted() {
+    // Load saved profile picture from localStorage if available
+    const savedProfilePicture = localStorage.getItem('profilePicture');
+    
     this.unsubscribe = onAuthStateChanged(auth, (user) => {
       this.user = user;
       if (user) {
-        // Initialize with default values
+        // Initialize with default values and include the user ID
         this.userData = {
+          id: user.uid,
           name: user.displayName || "User",
           username: user.displayName
             ? "@" + user.displayName.toLowerCase().replace(/\s+/g, "")
             : "@user",
-          profilePicture: "/src/assets/images/logo.png",
+          // Use saved profile picture from localStorage if available, otherwise use default
+          profilePicture: savedProfilePicture || "/src/assets/images/logo.png",
           email: user.email || "",
           phone: "",
           address: "",
@@ -207,6 +213,51 @@ export default {
 
     handleOrdersClick() {
       console.log("Orders clicked");
+    },
+    async updateProfilePicture(file) {
+      if (!file) return;
+      
+      try {
+        this.isLoading = true;
+        
+        // Create a FileReader to convert the image to a data URL
+        const reader = new FileReader();
+        
+        reader.onload = async (e) => {
+          const dataUrl = e.target.result;
+          
+          // Save the image data URL to localStorage
+          localStorage.setItem('profilePicture', dataUrl);
+          
+          // Update local state
+          this.userData = {
+            ...this.userData,
+            profilePicture: dataUrl
+          };
+          
+          this.$swal.fire({
+            title: 'Success!',
+            text: 'Profile picture updated successfully',
+            icon: 'success',
+            timer: 2000,
+            showConfirmButton: false
+          });
+          
+          this.isLoading = false;
+        };
+        
+        // Read the file as a data URL
+        reader.readAsDataURL(file);
+        
+      } catch (error) {
+        console.error("Error updating profile picture:", error);
+        this.$swal.fire({
+          title: 'Error',
+          text: 'Failed to update profile picture',
+          icon: 'error'
+        });
+        this.isLoading = false;
+      }
     },
   },
 };

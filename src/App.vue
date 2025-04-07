@@ -1,7 +1,18 @@
 <template>
   <div>
     <Nav />
-    <router-view></router-view>
+    <Suspense>
+      <template #default>
+        <router-view v-slot="{ Component }">
+          <component :is="Component" />
+        </router-view>
+      </template>
+      <template #fallback>
+        <div class="min-h-screen flex items-center justify-center">
+          <div class="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-[#339e3f]"></div>
+        </div>
+      </template>
+    </Suspense>
     <Footer />
   </div>
 </template>

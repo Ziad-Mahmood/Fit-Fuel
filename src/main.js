@@ -18,11 +18,19 @@ document.documentElement.setAttribute('dir', savedLocale === 'ar' ? 'rtl' : 'ltr
 
 const app = createApp(App)
 
+// Add error handler
+app.config.errorHandler = (err, vm, info) => {
+  console.error('Vue Error:', err, info);
+};
+
 app.use(store)
 app.use(router)
+app.use(i18n)
+
+// Wait for router to be ready
+router.isReady().then(() => {
+  app.mount('#app')
+});
 
 app.config.globalProperties.$swal = Swal
-
-app.use(i18n)
-app.mount('#app')
 

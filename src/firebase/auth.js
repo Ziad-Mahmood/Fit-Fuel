@@ -8,6 +8,7 @@ import {
   setPersistence,
   browserLocalPersistence,
   updateProfile,
+  signInWithRedirect,
 } from "firebase/auth";
 import { auth, db } from "./config";
 import {
@@ -190,6 +191,21 @@ export const loginWithGoogle = async () => {
     throw error;
   }
 };
+
+export const signInWithGoogle = async () => {
+  try {
+    const provider = new GoogleAuthProvider();
+    // Use signInWithRedirect for mobile and popup for desktop
+    if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+      await signInWithRedirect(auth, provider);
+    } else {
+      await signInWithPopup(auth, provider);
+    }
+  } catch (error) {
+    console.error("Google Sign In Error:", error);
+    throw error;
+  }
+}
 
 // Reset password
 export const resetPassword = async (email) => {

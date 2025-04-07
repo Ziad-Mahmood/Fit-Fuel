@@ -144,8 +144,15 @@ export const restrictStaffToTheirPages = (to, from, next) => {
             '/dashboard/kitchen', 
             '/dashboard/delivery',
             '/403',
-            '/login'
+            '/login',
+            '/register',
+            '/profile'
           ]
+          
+          if (to.name === 'NotFound' || to.matched.length === 0) {
+            next()
+            return
+          }
           
           if (!allowedPaths.some(path => to.path.startsWith(path))) {
             next({
