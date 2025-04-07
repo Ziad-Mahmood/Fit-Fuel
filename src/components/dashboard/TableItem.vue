@@ -37,7 +37,11 @@
         class="hover:cursor-pointer text-red-600 text-4xl font-bold"
         @click="$emit('mark-ready', item.id)"
       >
-        X
+      <img 
+        :src="checkloadSrc"
+        alt="Complete" 
+        class="w-10 h-10"
+      /> 
       </button>
       <img 
         v-else-if="!isDeliveryView && item.status === 'On Delivery' || isDeliveryView && item.status === 'Delivered'"
@@ -65,7 +69,11 @@ export default {
   computed: {
     checkMarkSrc() {
       return new URL('../../assets/images/Check Mark.png', import.meta.url).href
+    },
+    checkloadSrc() {
+      return new URL('../../assets/images/load.png', import.meta.url).href
     }
+
   },
   emits: ['accept-order', 'mark-ready']
 }
