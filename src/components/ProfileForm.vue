@@ -205,7 +205,7 @@
             </div>
             <UserOrderHistory 
               :show="showOrderHistory"
-              :userId="user.id"
+              :userId="user.id || user.uid"
             />
           </div>
         </div>
@@ -257,8 +257,21 @@ export default {
       if (this.selectedImage) {
         return URL.createObjectURL(this.selectedImage);
       }
-      return new URL(`${this.user.profilePicture}`, import.meta.url).href;
+      
+      if (this.user.profilePicture && this.user.profilePicture.startsWith('data:')) {
+        return this.user.profilePicture;
+      }
+      
+      try {
+        return new URL(`${this.user.profilePicture}`, import.meta.url).href;
+      } catch (error) {
+        return this.user.profilePicture || '/src/assets/images/logo.png';
+      }
     },
+    // Add this computed property to ensure we always have a valid user ID
+    userId() {
+      return this.user.id || this.user.uid;
+    }
   },
   methods: {
     startEditingName() {

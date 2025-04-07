@@ -16,6 +16,21 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     },
   },
+  build: {
+    chunkSizeWarningLimit: 1600,
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            return 'vendor';
+          }
+        }
+      }
+    }
+  },
+  optimizeDeps: {
+    include: ['firebase/app', 'firebase/auth', 'firebase/firestore']
+  }
 })
 
 

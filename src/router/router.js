@@ -138,10 +138,23 @@ const router = createRouter({
     },
   ],
   scrollBehavior(to, from, savedPosition) {
-    return { top: 0 }
-  },
-}
-);
+    if (savedPosition) {
+      return savedPosition
+    } else {
+      return { top: 0 }
+    }
+  }
+});
+
+// Add global navigation guard
+router.beforeEach((to, from, next) => {
+  // Ensure the page exists
+  if (!to.matched.length) {
+    next('/');
+    return;
+  }
+  next();
+});
 
 router.beforeEach(restrictStaffToTheirPages);
 
